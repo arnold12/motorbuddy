@@ -1,0 +1,464 @@
+$( document ).ready(function() {
+
+    $("#shop_all").click(function () {
+        $(".shop_time").prop('checked', $(this).prop('checked'));
+    });
+
+    $("#payment_all").click(function () {
+        $(".payment_method").prop('checked', $(this).prop('checked'));
+    });
+
+    $("#service_all").click(function () {
+        $(".shop_service").prop('checked', $(this).prop('checked'));
+    });
+
+    $("#insurance_all").click(function () {
+        $(".insurance").prop('checked', $(this).prop('checked'));
+    });
+
+    $("#amenities_all").click(function () {
+        $(".amenities").prop('checked', $(this).prop('checked'));
+    });
+
+    $("#brand_all").click(function () {
+        $(".brand").prop('checked', $(this).prop('checked'));
+    });
+
+});
+
+function validate_dealer_info() {
+
+  var phone_match = /^[-+]?[0-9]+$/;
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#dealer_name").val()) == "") {
+    $("#err_msg_dealer_name").show();
+    $("#err_msg_dealer_name").html("Enter Delaer Name 1.");
+    $("#dealer_name").focus();
+    return false;
+  }
+
+  if ($.trim($("#dealer_name2").val()) == "") {
+    $("#err_msg_dealer_name2").show();
+    $("#err_msg_dealer_name2").html("Enter Delaer Name 2.");
+    $("#dealer_name2").focus();
+    return false;
+  }
+
+  if ($.trim($("#address").val()) == "") {
+    $("#err_msg_address").show();
+    $("#err_msg_address").html("Enter Address.");
+    $("#address").focus();
+    return false;
+  }
+
+  if ($.trim($("#landmark").val()) == "") {
+    $("#err_msg_landmark").show();
+    $("#err_msg_landmark").html("Enter Landmark.");
+    $("#landmark").focus();
+    return false;
+  }
+
+  if ($.trim($("#city").val()) == "") {
+    $("#err_msg_city").show();
+    $("#err_msg_city").html("Enter City.");
+    $("#city").focus();
+    return false;
+  }
+
+  if ($.trim($("#state").val()) == "") {
+    $("#err_msg_state").show();
+    $("#err_msg_state").html("Enter State.");
+    $("#state").focus();
+    return false;
+  }
+
+  if ($.trim($("#pincode").val()) == "") {
+    $("#err_msg_pincode").show();
+    $("#err_msg_pincode").html("Enter Pincode.");
+    $("#pincode").focus();
+    return false;
+  }
+
+  if ($.trim($("#mobile_no").val()) == "") {
+    $("#err_msg_mobile_no").show();
+    $("#err_msg_mobile_no").html("Enter Mobile Number.");
+    $("#mobile_no").focus();
+    return false;
+  }
+
+  if ($.trim($("#mobile_no").val()) != "") {
+    if (!$.trim($("#mobile_no").val()).match(phone_match)) {
+      $("#err_msg_mobile_no").show();
+      $("#err_msg_mobile_no").html("Inavalid Mobile Number.");
+      $("#mobile_no").focus();
+      return false;
+    }
+
+    if (
+      $.trim($("#mobile_no").val()).length > 10 ||
+      $.trim($("#mobile_no").val()).length < 10
+    ) {
+      $("#err_msg_mobile_no").show();
+      $("#err_msg_mobile_no").html("Mobile Number Must be 10 Digit.");
+      $("#mobile_no").focus();
+      return false;
+    }
+  }
+
+  if ($.trim($("#establishment_year").val()) == "") {
+    $("#err_msg_establishment_year").show();
+    $("#err_msg_establishment_year").html("Enter Establishment year.");
+    $("#establishment_year").focus();
+    return false;
+  }
+
+  if ($.trim($("#lat").val()) == "") {
+    $("#err_msg_lat").show();
+    $("#err_msg_lat").html("Enter Latitude.");
+    $("#lat").focus();
+    return false;
+  }
+
+  if ($.trim($("#long").val()) == "") {
+    $("#err_msg_long").show();
+    $("#err_msg_long").html("Enter Longitude.");
+    $("#long").focus();
+    return false;
+  }
+
+  if ($.trim($("#lat").val()) != "") {
+    if (isNaN($.trim($("#lat").val()))) {
+      $("#err_msg_lat").show();
+      $("#err_msg_lat").html("Invalid Latitude.");
+      $("#lat").focus();
+      return false;
+    }
+  }
+
+  if ($.trim($("#long").val()) != "") {
+    if (isNaN($.trim($("#long").val()))) {
+      $("#err_msg_long").show();
+      $("#err_msg_long").html("Invalid Longitude.");
+      $("#long").focus();
+      return false;
+    }
+  }
+
+  if ($.trim($("#gstn").val()) == "") {
+    $("#err_msg_gstn").show();
+    $("#err_msg_gstn").html("Enter gstn.");
+    $("#gstn").focus();
+    return false;
+  }
+
+  var shop_time_checkboxs=document.getElementsByClassName("shop_time");
+  var shop_time_cond=false;
+  for(var i=0,l=shop_time_checkboxs.length;i<l;i++)
+  {
+      if(shop_time_checkboxs[i].checked)
+      {
+          shop_time_cond=true;
+          break;
+      }
+  }
+  if(!shop_time_cond)
+  {
+    $('html, body').animate({scrollTop: $('.shop_time').offset().top -100 }, 'slow');
+    $("#err_msg_shop_time").show();
+    $("#err_msg_shop_time").html("Please check atleast one checkbox in shope timings.");
+    return false;
+  }
+
+  var payment_method_checkboxs=document.getElementsByClassName("payment_method");
+  var payment_method_cond=false;
+  for(var i=0,l=payment_method_checkboxs.length;i<l;i++)
+  {
+      if(payment_method_checkboxs[i].checked)
+      {
+          payment_method_cond=true;
+          break;
+      }
+  }
+  if(!payment_method_cond)
+  {
+    $('html, body').animate({scrollTop: $('.payment_method').offset().top -100 }, 'slow');
+    $("#err_msg_payment_method").show();
+    $("#err_msg_payment_method").html("Please check atleast one checkbox in payment method.");
+    return false;
+  }
+
+  var shop_service_checkboxs=document.getElementsByClassName("shop_service");
+  var shop_service_cond=false;
+  for(var i=0,l=shop_service_checkboxs.length;i<l;i++)
+  {
+      if(shop_service_checkboxs[i].checked)
+      {
+          shop_service_cond=true;
+          break;
+      }
+  }
+  if(!shop_service_cond)
+  {
+    $('html, body').animate({scrollTop: $('.shop_service').offset().top -100 }, 'slow');
+    $("#err_msg_shop_service").show();
+    $("#err_msg_shop_service").html("Please check atleast one checkbox in shop service.");
+    return false;
+  }
+
+
+  /*var insurance_checkboxs=document.getElementsByClassName("insurance");
+  var insurance_cond=false;
+  for(var i=0,l=insurance_checkboxs.length;i<l;i++)
+  {
+      if(insurance_checkboxs[i].checked)
+      {
+          insurance_cond=true;
+          break;
+      }
+  }
+  if(!insurance_cond)
+  {
+    $('html, body').animate({scrollTop: $('.insurance').offset().top -100 }, 'slow');
+    $("#err_msg_shop_insurance").show();
+    $("#err_msg_shop_insurance").html("Please check atleast one checkbox in insurance tie ups.");
+    return false;
+  }*/
+
+
+  /*var amenities_checkboxs=document.getElementsByClassName("amenities");
+  var amenities_cond=false;
+  for(var i=0,l=amenities_checkboxs.length;i<l;i++)
+  {
+      if(amenities_checkboxs[i].checked)
+      {
+          amenities_cond=true;
+          break;
+      }
+  }
+  if(!amenities_cond)
+  {
+    $('html, body').animate({scrollTop: $('.amenities').offset().top -100 }, 'slow');
+    $("#err_msg_shop_amenities").show();
+    $("#err_msg_shop_amenities").html("Please check atleast one checkbox in shop amenities.");
+    return false;
+  }*/
+
+  var brand_checkboxs=document.getElementsByClassName("brand");
+  var brand_cond=false;
+  for(var i=0,l=brand_checkboxs.length;i<l;i++)
+  {
+      if(brand_checkboxs[i].checked)
+      {
+          brand_cond=true;
+          break;
+      }
+  }
+  if(!brand_cond)
+  {
+    $('html, body').animate({scrollTop: $('.brand').offset().top -100 }, 'slow');
+    $("#err_msg_brand").show();
+    $("#err_msg_brand").html("Please check atleast one checkbox in multi brand.");
+    return false;
+  }
+
+  //$('input:submit').attr("disabled", true);
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+
+// Delete dealer
+
+function delete_dealer_info(val) {
+  var action = "delete_dealer_info";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        $("#row_" + val + "").remove();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+
+function validate_brand_model() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#brand_name").val()) == "") {
+    $("#err_msg_brand_name").show();
+    $("#err_msg_brand_name").html("Enter Brands.");
+    $("#brand_name").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+function validate_payment_method() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#payment_method").val()) == "") {
+    $("#err_msg_payment_method").show();
+    $("#err_msg_payment_method").html("Enter Payment method.");
+    $("#payment_method").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+function validate_insurance_company() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#insurance_company").val()) == "") {
+    $("#err_msg_insurance_company").show();
+    $("#err_msg_insurance_company").html("Enter Insurance Company.");
+    $("#insurance_company").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+function validate_shop_amenities() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#shop_amenities").val()) == "") {
+    $("#err_msg_shop_amenities").show();
+    $("#err_msg_shop_amenities").html("Enter Shop Amenities.");
+    $("#shop_amenities").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+function validate_shop_service() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#shop_service").val()) == "") {
+    $("#err_msg_shop_service").show();
+    $("#err_msg_shop_service").html("Enter Shop Service.");
+    $("#shop_service").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+
+function delete_brand_model(val) {
+  var action = "delete_brand_model";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+function delete_payment_method(val) {
+  var action = "delete_payment_method";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+function delete_insurance_company(val) {
+  var action = "delete_insurance_company";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+function delete_shop_amenities(val) {
+  var action = "delete_shop_amenities";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+function delete_shop_service(val) {
+  var action = "delete_shop_service";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+
+function delete_dealer_img(id, col_name) {
+  var action = "delete_dealer_img";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, col_name: col_name, action: action },
+    success: function(result) {
+      location.reload();
+    }
+  });
+}
