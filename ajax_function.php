@@ -31,6 +31,10 @@ switch ($action){
     case "delete_shop_service":
         delete_shop_service();
         break;
+        
+    case "delete_shop_amenities":
+        delete_shop_amenities();
+        break;
 }
     
 function delete_brand_model(){
