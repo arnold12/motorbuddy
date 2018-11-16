@@ -16,11 +16,11 @@
               </a>
             </li>
 
-            <li>
+            <!-- <li>
               <a href="view_payment_method.php">
                 <i class="fa fa-th"></i> <span>Payment Method Master</span>
               </a>
-            </li>
+            </li> -->
 
             <li>
               <a href="view_insurance_company.php">
