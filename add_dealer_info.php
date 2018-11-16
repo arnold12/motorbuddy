@@ -333,7 +333,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     	$add_dealer_imges_names = "";
 
         for( $i=1; $i<=3; $i++){
-
+            
         	if($_FILES["dealer_image".$i]["name"] !== ''){
             
 	            $fileFormatExtArr = explode('.', basename($_FILES["dealer_image".$i]["name"]));
@@ -343,7 +343,10 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 				move_uploaded_file($_FILES["dealer_image".$i]["tmp_name"], $target_file_img);
 				$add_dealer_imges_cols .= " ,`img_".$i."` ";
 				$add_dealer_imges_names .= ", '".$target_file_img."'";
-			}
+			} else {
+                $add_dealer_imges_cols .= " ,`img_".$i."` ";
+                $add_dealer_imges_names .= ", ''";
+            } 
 
         }
         
