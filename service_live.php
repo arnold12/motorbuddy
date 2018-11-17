@@ -77,9 +77,32 @@ function sendDealerList(){
 
 	$lat = mysql_real_escape_string(trim($body_params['lat']));
 	$long = mysql_real_escape_string(trim($body_params['long']));
+	$brand = mysql_real_escape_string(trim($body_params['brand']));
 
+	$select_dealer_id = "SELECT `dealer_id` FROM tbl_mb_delaer_brand_service WHERE `brand_name` = '".$brand."' ";
+	$select_dealer_id_res = $DBI->query($select_dealer_id);
+	$res_dealer_id_row = $DBI->get_result($select_dealer_id);
+
+	$is_empty = $DBI->is_empty($select_dealer_id);
+
+	if( $is_empty ){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found for selected brand";
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	$dealer_id_arr = array();
+	foreach ($res_dealer_id_row as $key => $value) {
+		$dealer_id_arr[] = $value['dealer_id'];
+	}
+
+	$dealer_id_str = implode(',', $dealer_id_arr);
 	
-	$select = "SELECT `id`, `dealer_name`, `dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `gstn`, `dealer_rating`, `img_1`, round(111.045 * DEGREES(ACOS(COS(RADIANS($lat)) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS($long)) + SIN(RADIANS($lat)) * SIN(RADIANS(`lat`))))) AS distance_in_km FROM tbl_mb_delaer_master WHERE status = 'Active' ORDER BY distance_in_km ASC LIMIT 0,100";
+	$select = "SELECT `id`, `dealer_name`, `dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `gstn`, `dealer_rating`, `img_1`, round(111.045 * DEGREES(ACOS(COS(RADIANS($lat)) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS($long)) + SIN(RADIANS($lat)) * SIN(RADIANS(`lat`))))) AS distance_in_km FROM tbl_mb_delaer_master WHERE status = 'Active' AND `id` IN (".$dealer_id_str.") ORDER BY distance_in_km ASC LIMIT 0,100";
 	
 	$select_res = $DBI->query($select);
 	$res_row = $DBI->get_result($select);
@@ -114,7 +137,7 @@ function sendDealerDtls(){
 	$long = mysql_real_escape_string(trim($body_params['long']));
 	
 	/* select basic info */
-	$select_dealer_master = "SELECT  `id` ,  `dealer_name` , `dealer_name2` , `address` ,  `landmark` ,  `city` ,  `state` ,  `pincode` ,  `mobile_no` ,  `telephone_no` ,  `establishment_year` ,  `website` ,  `about_dealer` ,  `payment_mode` ,  `lat` ,  `long` ,  `gstn` ,  `img_1` ,  `img_2` ,  `img_3`, round(111.045 * DEGREES(ACOS(COS(RADIANS($lat)) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS($long)) + SIN(RADIANS($lat)) * SIN(RADIANS(`lat`))))) AS distance_in_km FROM  `tbl_mb_delaer_master` WHERE  `status` =  'Active' AND `id` = $id ";
+	$select_dealer_master = "SELECT  `id` ,  `dealer_name` , `dealer_name2` , `address` ,  `landmark` ,  `city` ,  `state` ,  `pincode` ,  `mobile_no` ,  `telephone_no` ,  `establishment_year` ,  `website` ,  `about_dealer` ,  `payment_mode` ,  `lat` ,  `long` ,  `gstn`, `dealer_rating` ,  `img_1` ,  `img_2` ,  `img_3`, round(111.045 * DEGREES(ACOS(COS(RADIANS($lat)) * COS(RADIANS(`lat`)) * COS(RADIANS(`long`) - RADIANS($long)) + SIN(RADIANS($lat)) * SIN(RADIANS(`lat`))))) AS distance_in_km FROM  `tbl_mb_delaer_master` WHERE  `status` =  'Active' AND `id` = $id ";
 	
 	$select_res_dealer_master 	= $DBI->query($select_dealer_master);
 	$res_row_dealer_master 		= $DBI->get_result($select_dealer_master);
@@ -156,7 +179,7 @@ function sendDealerDtls(){
 		foreach ($res_row_dealer_timing as $key => $value) {
 			if( $value['is_open'] == 'Y' ){
 				$open_days .= $value['day'].",";
-				$timing = $value['open_at']." - ".$value['close_at'];
+				$timing = $value['open_at']." To ".$value['close_at'];
 			} else if( $value['is_open'] == 'N' ){
 				$close_days .= $value['day'].",";
 			}
