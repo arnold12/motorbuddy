@@ -51,6 +51,22 @@ switch ($body_params['action']) {
         $result = sendBrandModelLst();
         break;
 
+    case 'userreg':
+        $result = addNewUser();
+        break;
+
+    case 'login':
+        $result = login();
+        break;
+
+    case 'otpverification':
+        $result = otpVerification();
+        break;
+
+    case 'feedback':
+        $result = saveFeedback();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -260,6 +276,406 @@ function sendBrandModelLst(){
 	return $final_result;
 }
 
+
+/**
+ * 
+ * @add new user
+ * 
+ **/
+
+function addNewUser(){
+	GLOBAl $DBI , $body_params;
+
+	$email 		=		mysql_real_escape_string(trim($body_params['email']));
+	$password	= 		mysql_real_escape_string(trim($body_params['password']));
+	$address	= 		mysql_real_escape_string(trim($body_params['address']));
+	$pincode	= 		mysql_real_escape_string(trim($body_params['pincode']));
+	$gender		= 		mysql_real_escape_string(trim($body_params['gender']));
+	$fname		= 		mysql_real_escape_string(trim($body_params['fname']));
+	$lname		= 		mysql_real_escape_string(trim($body_params['lname']));
+	$mobile		= 		mysql_real_escape_string(trim($body_params['mobile']));
+ 
+	/* input data validation */
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid email format"; 
+
+	}
+
+	if ( strlen($password) < 4 ) {
+
+		$error[] = "password should be atleast 4 characters "; 
+
+	}
+
+	if ( $address == "" ) {
+
+		$error[] = "invalid address"; 
+
+	}
+
+	if ( strlen($pincode) != 6 ) {
+
+		$error[] = "invalid pin code"; 
+
+	}
+
+	if ( $gender == "" ) {
+
+		$error[] = "invalid gender"; 
+
+	}
+
+	if ( $fname == "" ) {
+
+		$error[] = "invalid first name"; 
+
+	}
+
+	if ( $lname == "" ) {
+
+		$error[] = "invalid last name"; 
+
+	}
+
+	$mobileregex = "/^[6-9][0-9]{9}$/" ; 
+
+	if ( $mobile == "" || preg_match($mobileregex, $mobile) !== 1) {
+
+		$error[] = "invalid mobile no"; 
+
+	}
+
+	/* check email id already exist or not */
+
+	$select = "SELECT email FROM tbl_mb_register_users WHERE email = '".$email."' ";
+	$select_res = $DBI->query($select);
+	$is_empty = $DBI->is_empty($select);
+	
+	if( ! $is_empty ){
+		$error[] = "email id already exist"; 
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	/*generate otp */
+
+	$otp = otp();
+
+	/* insert user */
+
+	$table = "tbl_mb_register_users";
+
+	$insert['email']			=		$email;  
+	$insert['password']			=		$password;  
+	$insert['address']			=		$address;  
+	$insert['pin']				=		$pincode;  
+	$insert['gender']			=		$gender;  
+	$insert['last_login_date']	=		'now()';  
+	$insert['created_date']		=		'now()';  
+	$insert['updated_date']		=		'now()';  
+	$insert['status']			=		'Inactive';  
+	$insert['otp']				=		$otp;  
+	$insert['otp_sent_date']	=		'now()';
+	$insert['fname']			=		$fname;
+	$insert['lname']			=		$lname;
+	$insert['mobile']			=		$mobile;
+
+
+	$res = $DBI->insert_query($insert, $table);
+
+	if( $res ){
+
+		sendOtp($insert);
+
+		$msg = "User registered successfully";
+		$success = true;
+	} else {
+		$msg = "Registration fail!!!";	
+		$success = false;
+	}
+
+	$response = array();
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+}
+
+/* send otp to user */
+function sendOtp($data){
+	$to = $data['email'];
+	$subject = "Motorbuddy Reg OTP";
+	$message = "Your OTP is ".$data['otp'];
+	$headers = 'From: motorbuddy2016@gmail.com' . "\r\n" .
+	'Reply-To: motorbuddy2016@gmail.com';
+
+	mail($to, $subject, $message, $headers);
+}
+
+
+/* verify user OTP */
+function otpVerification(){
+
+	GLOBAl $DBI , $body_params;
+
+	$email 		=		mysql_real_escape_string(trim($body_params['email']));
+	$otp		= 		mysql_real_escape_string(trim($body_params['otp']));
+
+	/* validations */
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid emailid"; 
+
+	}
+
+	if ( strlen($otp) != 4 ) {
+
+		$error[] = "Invalid otp"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	$select = "SELECT otp, otp_sent_date, is_otp_verify, status FROM tbl_mb_register_users WHERE email = '".$email."' ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+	
+	if( $is_empty ){
+		$error[] = "emailid not registered"; 
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	if( ! $is_empty ){
+
+		if( $res_row[0]['is_otp_verify'] == 'Y' ){
+			$error[] = "otp already verfied"; 		
+		}
+
+		if( $res_row[0]['status'] == 'Active' ){
+			$error[] = "member already active. Contact to motorbuddy team"; 		
+		}
+
+		if( $res_row[0]['otp'] != $otp ){
+			$error[] = "invalid otp"; 		
+		}
+
+		if( count($error) ){
+			$response = array();
+
+			$final_result['success'] = false;
+			$final_result['message'] = implode("||", $error);
+			$final_result['result'] = $response;
+
+			return $final_result;
+		}
+
+		$update = "UPDATE tbl_mb_register_users SET is_otp_verify = 'Y', otp_verification_date = now(), status = 'Active', updated_date = now() WHERE email = '".$email."'";
+
+		$update_res = $DBI->query($update);
+
+		$response = array();
+
+		$final_result['success'] = true;
+		$final_result['message'] = "otp verified successfully";
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+}
+
+/* user login */
+function login(){
+
+	GLOBAl $DBI , $body_params;
+
+	$email 		=		mysql_real_escape_string(trim($body_params['email']));
+	$password	= 		mysql_real_escape_string(trim($body_params['password']));
+
+	/* validations */
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid emailid"; 
+
+	}
+
+	if ( strlen($password) < 4 ) {
+
+		$error[] = "Invalid password"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	/* check user login */
+	$select = "SELECT id, email, fname, lname, mobile, gender FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' AND status = 'Active' ";
+	$select_res = $DBI->query($select);
+	$is_empty = $DBI->is_empty($select);
+	$res_row = $DBI->get_result($select);
+	
+	if( $is_empty ){
+		$error[] = "invalid email or password"; 
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	if( ! $is_empty ){
+
+		$access_token = md5(randomString());
+
+		$access_token_expire_on = date('Y-m-d H:i:s', strtotime('+'.ACCESS_TOKEN_EXPIRY_LIMIT.' months'));
+
+		$update = "UPDATE tbl_mb_register_users SET login_count = login_count + 1, last_login_date = now(), access_token = '".$access_token."', access_token_expire_on = '".$access_token_expire_on."', updated_date = now() WHERE email = '".$email."'";
+
+		$update_res = $DBI->query($update);
+
+		$res_row[0]['access_token'] = $access_token;
+
+		$response = $res_row;
+		
+		$final_result['success'] = true;
+		$final_result['message'] = "Loged in successfully";
+		$final_result['result'] = $response;
+
+		return $final_result;
+	} 
+
+}
+
+/*
+** save feedback submitted by user
+*/
+
+function saveFeedback(){
+
+	GLOBAl $DBI , $body_params;
+
+	$email 			=		mysql_real_escape_string(trim($body_params['email']));
+	$feedback		= 		mysql_real_escape_string(trim($body_params['feedback']));
+	$access_token 	= 		mysql_real_escape_string(trim($body_params['access_token']));
+
+	/*
+	** input validation
+	*/
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid emailid"; 
+
+	}
+
+	$select = "SELECT id, access_token FROM tbl_mb_register_users WHERE email = '".$email."' AND  access_token = '".$access_token."' ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	$is_empty = $DBI->is_empty($select);	
+
+	if ( $access_token == "" || $is_empty ) {
+
+		$error[] = "Invalid access token"; 
+
+	}
+
+	if ( $feedback == ""  ) {
+
+		$error[] = "Feedback should not be empty"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	/*
+	** submit user feedback data
+	*/
+
+	$table = "tbl_mb_feedback";
+
+	$insert['feedback']			=		$feedback;  
+	$insert['userid']			=		$res_row[0]['id'];  
+	$insert['created_date']		=		'now()';  
+	
+	$res = $DBI->insert_query($insert, $table);
+
+	if( $res ){
+
+		$msg = "feedback submitted successfully";
+		$success = true;
+	} else {
+		$msg = "feedback submission fail!!!";	
+		$success = false;
+	}
+
+	$response = array();
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+
+}
 
 /* invalid action */
 function defaultAction($msg){
