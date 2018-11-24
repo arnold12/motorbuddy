@@ -67,6 +67,14 @@ switch ($body_params['action']) {
         $result = saveFeedback();
 		break;
 
+	case 'resendtotp':
+        $result = resendOTP();
+		break;
+
+	case 'conatctus':
+        $result = contactUs();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -387,6 +395,7 @@ function addNewUser(){
 	$insert['updated_date']		=		'now()';  
 	$insert['status']			=		'Inactive';  
 	$insert['otp']				=		$otp;  
+	$insert['otp_sent_count']	=		'1';  
 	$insert['otp_sent_date']	=		'now()';
 	$insert['fname']			=		$fname;
 	$insert['lname']			=		$lname;
@@ -403,6 +412,81 @@ function addNewUser(){
 		$success = true;
 	} else {
 		$msg = "Registration fail!!!";	
+		$success = false;
+	}
+
+	$response = array();
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+}
+
+/* resend otp to user */
+function resendOTP(){
+
+	GLOBAl $DBI , $body_params;
+
+	$email 		=		mysql_real_escape_string(trim($body_params['email']));
+
+	/* input data validation */
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid email format"; 
+
+	}
+
+	$select = "SELECT email, otp_sent_count, is_otp_verify FROM tbl_mb_register_users WHERE email = '".$email."' ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	$is_empty = $DBI->is_empty($select);
+	
+	if( $is_empty ){
+		$error[] = "Email not present"; 
+	}
+
+	if( ! $is_empty ){
+		if( $res_row[0]['otp_sent_count'] >= 4 ){
+			$error[] = "Allready 3 attempts you performed for resend otp";
+		}
+		if( $res_row[0]['is_otp_verify'] == 'Y' ){
+			$error[] = "OTP Allready verfied for provide email id";
+		}		
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	/*generate otp */
+	$otp 		= otp();
+
+	$update = "UPDATE tbl_mb_register_users SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = now() WHERE email = '".$email."'";
+
+	$update_res = $DBI->query($update);
+
+	if( $update_res ){
+
+		$param['email'] = $email;
+		$param['otp']   = $otp;
+
+		sendOtp($param);
+
+		$msg = "OTP resend successfully";
+		$success = true;
+	} else {
+		$msg = "Resend otp fail!!!";	
 		$success = false;
 	}
 
@@ -554,7 +638,7 @@ function login(){
 	}
 
 	/* check user login */
-	$select = "SELECT id, email, fname, lname, mobile, gender FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' AND status = 'Active' ";
+	$select = "SELECT id, email, fname, lname, mobile, gender, is_otp_verify FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' AND status = 'Active' ";
 	$select_res = $DBI->query($select);
 	$is_empty = $DBI->is_empty($select);
 	$res_row = $DBI->get_result($select);
@@ -563,8 +647,14 @@ function login(){
 		$error[] = "invalid email or password"; 
 	}
 
+	if( !$is_empty ){
+		if( $res_row[0]['is_otp_verify'] == 'N' ){
+			$error[] = "OTP verfication pending"; 		
+		}
+	}
+
 	if( count($error) ){
-		$response = array();
+		$response = $res_row;
 
 		$final_result['success'] = false;
 		$final_result['message'] = implode("||", $error);
@@ -676,6 +766,9 @@ function saveFeedback(){
 	return $final_result;
 
 }
+
+
+
 
 /* invalid action */
 function defaultAction($msg){
