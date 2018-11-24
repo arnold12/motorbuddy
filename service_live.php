@@ -71,7 +71,7 @@ switch ($body_params['action']) {
         $result = resendOTP();
 		break;
 
-	case 'conatctus':
+	case 'contactus':
         $result = contactUs();
 		break;
 
@@ -638,7 +638,7 @@ function login(){
 	}
 
 	/* check user login */
-	$select = "SELECT id, email, fname, lname, mobile, gender, is_otp_verify FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' AND status = 'Active' ";
+	$select = "SELECT id, email, fname, lname, mobile, gender, is_otp_verify, status FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' ";
 	$select_res = $DBI->query($select);
 	$is_empty = $DBI->is_empty($select);
 	$res_row = $DBI->get_result($select);
@@ -767,7 +767,85 @@ function saveFeedback(){
 
 }
 
+/*
+** save contacct us data submitted by user
+*/
+function contactUs(){
 
+	GLOBAl $DBI , $body_params;
+
+	$email 			=		mysql_real_escape_string(trim($body_params['email']));
+	$mobile			=		mysql_real_escape_string(trim($body_params['mobile']));
+	$contact_text	= 		mysql_real_escape_string(trim($body_params['contact_text']));
+	$access_token 	= 		mysql_real_escape_string(trim($body_params['access_token']));
+
+	/*
+	** input validation
+	*/
+	$error = array();
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+		$error[] = "Invalid emailid"; 
+
+	}
+
+	$mobileregex = "/^[6-9][0-9]{9}$/" ; 
+
+	if ( $mobile == "" || preg_match($mobileregex, $mobile) !== 1) {
+
+		$error[] = "invalid mobile no"; 
+
+	}
+
+	if ( $contact_text == ""  ) {
+
+		$error[] = "Contact us should not be empty"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	/*
+	** submit user contactus data
+	*/
+
+	$table = "tbl_mb_contact_us";
+
+	$insert['contact_text']		=		$contact_text;  
+	$insert['mobile']			=		$mobile;  
+	$insert['emailid']			=		$email;  
+	$insert['access_token']		=		$access_token;  
+	$insert['created_date']		=		'now()';  
+	
+	$res = $DBI->insert_query($insert, $table);
+
+	if( $res ){
+
+		$msg = "contact us submitted successfully";
+		$success = true;
+	} else {
+		$msg = "contact us submission fail!!!";	
+		$success = false;
+	}
+
+	$response = array();
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+
+}
 
 
 /* invalid action */

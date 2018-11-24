@@ -250,9 +250,10 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 	            $fileFormatExtArr = explode('.', basename($_FILES["dealer_image".$i]["name"]));
 	            $file_name = $fileFormatExtArr[0] . '_' . date('YmdHis') . '.' . $fileFormatExtArr[1];
 
-				$target_file_img = $target_dir_img . $file_name;
+                $target_file_img = $target_dir_img . $file_name;
+				$img_url = SITE_URL."/".$target_dir_img . $file_name;
 				move_uploaded_file($_FILES["dealer_image".$i]["tmp_name"], $target_file_img);
-				$update_dealer_imges .= " ,`img_".$i."`='".$target_file_img."' ";
+				$update_dealer_imges .= " ,`img_".$i."`='".$img_url."' ";
 			}
 
         }
@@ -340,9 +341,10 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 	            $file_name = $fileFormatExtArr[0] . '_' . date('YmdHis') . '.' . $fileFormatExtArr[1];
 
 				$target_file_img = $target_dir_img . $file_name;
+                $img_url = SITE_URL."/".$target_dir_img . $file_name;
 				move_uploaded_file($_FILES["dealer_image".$i]["tmp_name"], $target_file_img);
 				$add_dealer_imges_cols .= " ,`img_".$i."` ";
-				$add_dealer_imges_names .= ", '".$target_file_img."'";
+				$add_dealer_imges_names .= ", '".$img_url."'";
 			} else {
                 $add_dealer_imges_cols .= " ,`img_".$i."` ";
                 $add_dealer_imges_names .= ", ''";
