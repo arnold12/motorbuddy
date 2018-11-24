@@ -184,7 +184,7 @@ function sendDealerDtls(){
 
 			}
 
-			$payment_method_str = rtrim($payment_method_str,',');
+			$payment_method_str = rtrim($payment_method_str,', ');
 		}
 
 		$res_row_dealer_master[0]['payment_mode'] = $payment_method_str;
