@@ -179,7 +179,7 @@ function sendDealerDtls(){
 			foreach ($payment_method_bitwise as $payment_method => $value) {
 					
 				if($res_row_dealer_master[0]['payment_mode'] & $value){
-					$payment_method_str .= $payment_method.",";
+					$payment_method_str .= $payment_method.", ";
 				}
 
 			}
