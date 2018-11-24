@@ -776,6 +776,7 @@ function contactUs(){
 
 	$email 			=		mysql_real_escape_string(trim($body_params['email']));
 	$mobile			=		mysql_real_escape_string(trim($body_params['mobile']));
+	$name			=		mysql_real_escape_string(trim($body_params['name']));
 	$contact_text	= 		mysql_real_escape_string(trim($body_params['contact_text']));
 	$access_token 	= 		mysql_real_escape_string(trim($body_params['access_token']));
 
@@ -783,6 +784,12 @@ function contactUs(){
 	** input validation
 	*/
 	$error = array();
+
+	if ( $name == "" ) {
+
+		$error[] = "Invalid Name"; 
+
+	}
 
 	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
@@ -823,6 +830,7 @@ function contactUs(){
 	$insert['contact_text']		=		$contact_text;  
 	$insert['mobile']			=		$mobile;  
 	$insert['emailid']			=		$email;  
+	$insert['name']				=		$name;  
 	$insert['access_token']		=		$access_token;  
 	$insert['created_date']		=		'now()';  
 	
