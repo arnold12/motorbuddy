@@ -10,10 +10,10 @@ $DBI->query("SET NAMES 'utf8'");
 $select_condition = '';
 
 if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
-	$select_condition .= " AND `dealer_name` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `address` LIKE '%".addslashes($_GET['global_serach'])."%' OR `landmark` LIKE '%".addslashes($_GET['global_serach'])."%' OR `city` LIKE '%".addslashes($_GET['global_serach'])."%' OR `state` LIKE '%".addslashes($_GET['global_serach'])."%' OR `pincode` LIKE '%".addslashes($_GET['global_serach'])."%' OR `mobile_no` LIKE '%".addslashes($_GET['global_serach'])."%' OR `telephone_no` LIKE '%".addslashes($_GET['global_serach'])."%'";
+	$select_condition .= " AND `dealer_name` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `dealer_name2` LIKE '%".addslashes($_GET['global_serach'])."%' OR `address` LIKE '%".addslashes($_GET['global_serach'])."%' OR `landmark` LIKE '%".addslashes($_GET['global_serach'])."%' OR `city` LIKE '%".addslashes($_GET['global_serach'])."%' OR `state` LIKE '%".addslashes($_GET['global_serach'])."%' OR `pincode` LIKE '%".addslashes($_GET['global_serach'])."%' OR `mobile_no` LIKE '%".addslashes($_GET['global_serach'])."%' OR `telephone_no` LIKE '%".addslashes($_GET['global_serach'])."%'";
 }
 
-$select_dealer_info = "SELECT `id` , `dealer_name` , `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `website` FROM `tbl_mb_delaer_master` WHERE `status` = 'Active' ".$select_condition." ";
+$select_dealer_info = "SELECT `id` , `dealer_name` , `dealer_name2`, `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `website` FROM `tbl_mb_delaer_master` WHERE `status` = 'Active' ".$select_condition." ";
 $result_dealer_info = $DBI->query($select_dealer_info);
 $rows_dealer_info = $DBI->get_result($select_dealer_info);
 
@@ -90,7 +90,8 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								<?php if(!empty($rows_dealer_info )){?>
 								<tr>
 								  <th>Id</th>
-								  <th>Delaer Name</th>
+								  <th>Delaer Name1</th>
+								  <th>Delaer Name2</th>
 								  <th>Landmark</th>
 								  <th>City</th>
 								  <th>State</th>
@@ -108,6 +109,7 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								<tr id="row_<?=$value['id']?>">
 								  <td><?=$i?></td>
 								  <td><?=$value['dealer_name']?></td>
+								  <td><?=$value['dealer_name2']?></td>
 								  <td><?=$value['landmark']?></td>
 								  <td><?=$value['city']?></td>
 								  <td><?=$value['state']?></td>
