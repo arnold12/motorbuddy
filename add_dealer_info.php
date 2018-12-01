@@ -197,8 +197,9 @@ if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
     }
 
     // Shop amenities checked
-    $result_brand_count = count($result_brand_arry);
-    $brand_arry_count = count($brand_arry);
+    $result_brand_count = count($result_brand_master_arry);
+    $brand_arry_count = count($result_brand_arry);
+    
     if($brand_arry_count == $result_brand_count){
         $brand_all_checked = "checked";
     }
