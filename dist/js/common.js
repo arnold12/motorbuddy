@@ -462,3 +462,15 @@ function delete_dealer_img(id, col_name) {
     }
   });
 }
+
+function read_feedback(id){
+  var action = "read_feedback";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, action: action },
+    success: function(result) {
+      location.reload();
+    }
+  });
+}

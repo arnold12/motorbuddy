@@ -35,6 +35,10 @@ switch ($action){
     case "delete_shop_amenities":
         delete_shop_amenities();
         break;
+
+    case "read_feedback":
+        read_feedback();
+        break;
 }
     
 function delete_brand_model(){
@@ -150,6 +154,20 @@ function delete_dealer_img(){
 		echo "SQL Error!!! Please Try again";exit;
 	}
 
+}
+
+function read_feedback(){
+	global $DBI;
+
+	$update = "UPDATE `tbl_mb_feedback` SET `is_read` = 'Y' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' ";
+
+	$res_update = $DBI->query($update);
+
+	if($res_update){
+		echo "Record Updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}	
 }
 
 ?>

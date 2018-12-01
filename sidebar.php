@@ -40,6 +40,12 @@
               </a>
             </li>
 
+            <li>
+              <a href="view_cust_feedback.php">
+                <i class="fa fa-th"></i> <span>Custmore Feedback</span>
+              </a>
+            </li>
+
           </ul>
         </section>
         <!-- /.sidebar -->
