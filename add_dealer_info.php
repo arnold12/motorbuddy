@@ -353,12 +353,19 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
         }
 
-       $dealer_code = generateDealerCode(); 
+       $dealer_code = generateDealerCode();
+
+       $dealer_pwd = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 6);
 
        // Insert data for delaer 
        $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', now(), now(), '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
        $res_insert = $DBI->query($insert);
        $delaer_id = mysql_insert_id();
+
+       // Insert dealer login details in tbl_mb_user
+       $insert_user_details = "INSERT INTO `tbl_mb_user` (`username`,`password`,`role`, `created_by`, `created_on`) VALUES ('".$dealer_code."','".$dealer_pwd."','dealer', '".$_SESSION['id']."', now() )";
+       $res_insert_user_details = $DBI->query($insert_user_details);
+
 
         // Insert data for shop timing 
         $week_day_count = count($shopes_hours_arry);

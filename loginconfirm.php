@@ -17,7 +17,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['login']) && $_POST['log
 	
 	if(!$error){
 		
-		$sql = "SELECT id, username FROM tbl_mb_user WHERE username = '".$DBI->sql_escape($username)."' AND password = '".$DBI->sql_escape($password)."' LIMIT 1";
+		$sql = "SELECT id, username, role FROM tbl_mb_user WHERE username = '".$DBI->sql_escape($username)."' AND password = '".$DBI->sql_escape($password)."' LIMIT 1";
 		
 		$result = $DBI->query($sql);
 		
@@ -28,6 +28,7 @@ if($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['login']) && $_POST['log
 			
 			$_SESSION['id'] = $row['id'];
 			$_SESSION['username'] = $row['username'];
+			$_SESSION['role'] = $row['role'];
 			
 			if($rememberme){
 				
