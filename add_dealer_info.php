@@ -97,7 +97,7 @@ if(!empty($result_shop_service)){
 if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
     
     // fetch delaer data
-    $select_info = "SELECT `dealer_name`,`dealer_name2`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `address`, `website`, `about_dealer`, `payment_mode`, `lat`, `long`, `gstn`, `dealer_rating`, `img_1`, `img_2`, `img_3`
+    $select_info = "SELECT `dealer_code`,`dealer_name`,`dealer_name2`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `address`, `website`, `about_dealer`, `payment_mode`, `lat`, `long`, `gstn`, `dealer_rating`, `img_1`, `img_2`, `img_3`
     FROM `tbl_mb_delaer_master`
     WHERE `id` = '".$_GET['id']."'
     AND `status` = 'Active'
@@ -352,9 +352,11 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             } 
 
         }
-        
+
+       $dealer_code = generateDealerCode(); 
+
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', now(), now(), '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
+       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', now(), now(), '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
        $res_insert = $DBI->query($insert);
        $delaer_id = mysql_insert_id();
 
@@ -520,6 +522,18 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                             <div class="box-body">
                                 <!-- Inquiry form general info start -->
                                 <label id="succes_msg" class="control-label succes_msg" style="color: green;font-size: 14px;display: none;"></label>
+
+                                <?php
+                                    if(isset($rows_info['dealer_code'])){
+                                ?>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 control-label">Delaer Code</label>
+                                    <div class="col-sm-4 col-md-3">
+                                        <?php echo $rows_info['dealer_code']?>
+                                    </div>
+                                </div>
+                                <?php }?>
+
                                 <div class="form-group">
                                     <label class="col-sm-3 col-md-3 control-label">Delaer Name 1</label>
                                     <div class="col-sm-4 col-md-3">

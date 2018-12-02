@@ -95,4 +95,52 @@ function otp($length = 4) {
 }
 
 
+function generateDealerCode( $attempt = 1 ){
+
+	$DBI = new Db();
+
+	$arr_dealer_codes = array();
+	for ($i=0; $i < 10; $i++) { 
+
+		$temp_dealer_code = 'MB'.rand(1, 99999999);
+
+		if(strlen($temp_dealer_code)<10){
+			$temp_dealer_code = str_pad($temp_dealer_code, 10, "0", STR_PAD_RIGHT);
+		}
+
+		$arr_dealer_codes[] = $temp_dealer_code;
+	}
+
+	$dealer_code_str = "'".implode("','", $arr_dealer_codes)."'";
+	
+	$select = "SELECT distinct dealer_code FROM tbl_mb_delaer_master WHERE dealer_code IN (".$dealer_code_str.") ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+
+	if(count($res_row)>0){
+        $arr_dealer_codes_2 = array();
+        foreach($res_row as $row){
+
+            $arr_dealer_codes_2[] = $row['dealer_code'];
+        }
+        
+        $arr_dealer_codes = array_diff($arr_dealer_codes, $arr_dealer_codes_2);
+    }
+
+    if(count($arr_dealer_codes))
+    {
+        return array_pop($arr_dealer_codes);
+    } else {
+
+    	$attempt++;
+        if($attempt>3)
+        {
+            return false;
+        }
+        generateDealerCode($attempt);
+
+    }
+	
+}
+
 ?>
