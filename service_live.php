@@ -302,6 +302,7 @@ function addNewUser(){
 	$fname		= 		mysql_real_escape_string(trim($body_params['fname']));
 	$lname		= 		mysql_real_escape_string(trim($body_params['lname']));
 	$mobile		= 		mysql_real_escape_string(trim($body_params['mobile']));
+	$chkd_terms_and_condn	= 		'Y';
  
 	/* input data validation */
 	$error = array();
@@ -400,6 +401,7 @@ function addNewUser(){
 	$insert['fname']			=		$fname;
 	$insert['lname']			=		$lname;
 	$insert['mobile']			=		$mobile;
+	$insert['chkd_terms_and_condn']			=		$chkd_terms_and_condn;
 
 
 	$res = $DBI->insert_query($insert, $table);
