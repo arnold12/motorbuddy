@@ -474,3 +474,15 @@ function read_feedback(id){
     }
   });
 }
+
+function read_contact_us(id){
+  var action = "read_contact_us";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, action: action },
+    success: function(result) {
+      location.reload();
+    }
+  });
+}

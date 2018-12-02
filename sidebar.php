@@ -46,6 +46,12 @@
               </a>
             </li>
 
+            <li>
+              <a href="view_contact_us.php">
+                <i class="fa fa-th"></i> <span>Custmore Contact Us</span>
+              </a>
+            </li>
+
           </ul>
         </section>
         <!-- /.sidebar -->

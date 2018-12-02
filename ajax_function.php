@@ -39,6 +39,10 @@ switch ($action){
     case "read_feedback":
         read_feedback();
         break;
+
+    case "read_contact_us":
+        read_contact_us();
+        break;
 }
     
 function delete_brand_model(){
@@ -160,6 +164,20 @@ function read_feedback(){
 	global $DBI;
 
 	$update = "UPDATE `tbl_mb_feedback` SET `is_read` = 'Y' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' ";
+
+	$res_update = $DBI->query($update);
+
+	if($res_update){
+		echo "Record Updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}	
+}
+
+function read_contact_us(){
+	global $DBI;
+
+	$update = "UPDATE `tbl_mb_contact_us` SET `is_read` = 'Y' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' ";
 
 	$res_update = $DBI->query($update);
 
