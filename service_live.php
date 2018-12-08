@@ -75,6 +75,10 @@ switch ($body_params['action']) {
         $result = contactUs();
 		break;
 
+	case 'homepageimg':
+        $result = homepageimg();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -855,6 +859,36 @@ function contactUs(){
 
 	return $final_result;
 
+}
+
+/**
+ * 
+ * @return all home page banner images
+ * 
+ **/
+
+function homepageimg(){
+	GLOBAl $DBI;
+	
+	$select = "SELECT `id`, `img_url`, `order` FROM tbl_mb_home_page_banner ORDER BY `order` ASC";
+	
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $res_row;
+	}
+	
+	return $final_result;
 }
 
 
