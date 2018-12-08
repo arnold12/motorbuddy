@@ -457,7 +457,7 @@ function resendOTP(){
 
 	if( ! $is_empty ){
 		if( $res_row[0]['otp_sent_count'] >= 4 ){
-			$error[] = "Allready 3 attempts you performed for resend otp";
+			$error[] = "Allready 3 attempts you performed for resend otp.Contact to mottorbuddy";
 		}
 		if( $res_row[0]['is_otp_verify'] == 'Y' ){
 			$error[] = "OTP Allready verfied for provide email id";
@@ -644,7 +644,7 @@ function login(){
 	}
 
 	/* check user login */
-	$select = "SELECT id, email, fname, lname, mobile, gender, is_otp_verify, status FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' ";
+	$select = "SELECT id, email, fname, lname, mobile, gender, is_otp_verify, status, address, pin FROM tbl_mb_register_users WHERE email = '".$email."' AND password = '".$password."' ";
 	$select_res = $DBI->query($select);
 	$is_empty = $DBI->is_empty($select);
 	$res_row = $DBI->get_result($select);
