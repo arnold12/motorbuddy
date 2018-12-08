@@ -870,7 +870,7 @@ function contactUs(){
 function homepageimg(){
 	GLOBAl $DBI;
 	
-	$select = "SELECT `id`, `img_url`, `order` FROM tbl_mb_home_page_banner ORDER BY `order` ASC";
+	$select = "SELECT `id`, `description`, `img_url`, `order` FROM tbl_mb_home_page_banner ORDER BY `order` ASC";
 	
 	$select_res = $DBI->query($select);
 	$res_row = $DBI->get_result($select);
