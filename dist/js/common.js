@@ -486,3 +486,27 @@ function read_contact_us(id){
     }
   });
 }
+
+function validate_home_page_images(){
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  for( var i = 1; i<=3; i++){
+    if ($.trim($("#description_"+i).val()) == "") {
+      $("#err_msg_description_"+i).show();
+      $("#err_msg_description_"+i).html("Enter description.");
+      $("#description_"+i).focus();
+      return false;
+    }
+
+    /*if ($.trim($("#img_"+i).val()) == "") {
+      $("#err_msg_img_"+i).show();
+      $("#err_msg_img_"+i).html("Select Image.");
+      $("#img_"+i).focus();
+      return false;
+    }*/  
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}

@@ -52,6 +52,12 @@
               </a>
             </li>
 
+            <li>
+              <a href="view_add_home_page_images.php">
+                <i class="fa fa-th"></i> <span>Home Page Images</span>
+              </a>
+            </li>
+
           </ul>
         </section>
         <!-- /.sidebar -->
