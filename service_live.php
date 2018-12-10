@@ -79,6 +79,18 @@ switch ($body_params['action']) {
         $result = homepageimg();
 		break;
 
+	case 'addbooking':
+        $result = addbooking();
+		break;
+
+	case 'resendtBookingotp':
+        $result = resendtBookingotp();
+		break;
+
+	case 'otpVerificationBooking':
+        $result = otpVerificationBooking();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -412,7 +424,10 @@ function addNewUser(){
 
 	if( $res ){
 
-		sendOtp($insert);
+		$param['email'] = $email;
+		$param['subject'] = "Motorbuddy Registration OTP";
+		$param['message'] = "Your OTP is ".$otp;
+		sendOtp($param);
 
 		$msg = "User registered successfully";
 		$success = true;
@@ -485,7 +500,8 @@ function resendOTP(){
 	if( $update_res ){
 
 		$param['email'] = $email;
-		$param['otp']   = $otp;
+		$param['subject'] = "Motorbuddy Registration OTP";
+		$param['message'] = "Your OTP is ".$otp;
 
 		sendOtp($param);
 
@@ -508,13 +524,14 @@ function resendOTP(){
 /* send otp to user */
 function sendOtp($data){
 	$to = $data['email'];
-	$subject = "Motorbuddy Reg OTP";
-	$message = "Your OTP is ".$data['otp'];
+	$subject = $data['subject'];
+	$message = $data['message'];
 	$headers = 'From: motorbuddy2016@gmail.com' . "\r\n" .
 	'Reply-To: motorbuddy2016@gmail.com';
 
 	mail($to, $subject, $message, $headers);
 }
+
 
 
 /* verify user OTP */
@@ -891,6 +908,390 @@ function homepageimg(){
 	return $final_result;
 }
 
+/**
+ * 
+ * @add new user
+ * 
+ **/
+
+function addbooking(){
+	GLOBAl $DBI , $body_params;
+
+	$dealer_id 				=		mysql_real_escape_string(trim($body_params['dealer_id']));
+	$user_id				= 		mysql_real_escape_string(trim($body_params['user_id']));
+	$brand_id				= 		mysql_real_escape_string(trim($body_params['brand_id']));
+	$model_id				= 		mysql_real_escape_string(trim($body_params['model_id']));
+	$fuel_type				= 		mysql_real_escape_string(trim($body_params['fuel_type']));
+	$appmt_date				= 		mysql_real_escape_string(trim($body_params['appmt_date']));
+	$appmt_time				= 		mysql_real_escape_string(trim($body_params['appmt_time']));
+	$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
+	$appmt_service_type		= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
+	$appmt_repair_type		= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	$pickup_drop			= 		mysql_real_escape_string(trim($body_params['pickup_drop']));
+	$pickup_location		= 		mysql_real_escape_string(trim($body_params['pickup_location']));
+	$description			= 		mysql_real_escape_string(trim($body_params['description']));
+	$access_token 			= 		mysql_real_escape_string(trim($body_params['access_token']));
+	$chkd_terms_and_condn	= 		'Y';
+ 
+	/* input data validation */
+	$error = array();
+
+	$select_dealer_dtls = "SELECT * FROM tbl_mb_delaer_master WHERE id = ".$dealer_id." AND status = 'Active' ";
+	$select_dealer_res = $DBI->query($select_dealer_dtls);
+	$dealer_res_row = $DBI->get_result($select_dealer_dtls);
+	$is_empty_dealer = $DBI->is_empty($select_dealer_dtls);
+
+	if ($is_empty_dealer) {
+
+		$error[] = "Invalid dealer ID"; 
+
+	}
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+	$select_brand_dtls = "SELECT brand_model_name FROM tbl_mb_brand_model_master WHERE id = ".$brand_id."  AND  is_active = 'Y' ";
+	$select_brand_res = $DBI->query($select_brand_dtls);
+	$brand_res_row = $DBI->get_result($select_brand_dtls);
+	$is_empty_brand = $DBI->is_empty($select_brand_dtls);
+
+	if ( $is_empty_brand ) {
+
+		$error[] = "Invalid Brand ID"; 
+
+	}
+
+	$select_model_dtls = "SELECT brand_model_name FROM tbl_mb_brand_model_master WHERE id = ".$model_id."  AND  is_active = 'Y' ";
+	$select_model_res = $DBI->query($select_model_dtls);
+	$model_res_row = $DBI->get_result($select_model_dtls);
+	$is_empty_model = $DBI->is_empty($select_model_dtls);
+
+	if ( $is_empty_model ) {
+
+		$error[] = "Invalid Model ID"; 
+
+	}
+
+	if ( $fuel_type == "" ) {
+
+		$error[] = "Invalid Fuel Type"; 
+
+	}
+
+	if ( $appmt_date == "" ) {
+
+		$error[] = "Invalid Date"; 
+
+	}
+
+	if ( $appmt_time == "" ) {
+
+		$error[] = "Invalid Time"; 
+
+	}
+
+	if ( $appmt_category_type == "" ) {
+
+		$error[] = "Invalid Category Type"; 
+
+	}
+
+	if ( $pickup_drop == "" ) {
+
+		$error[] = "Select Delivery Option"; 
+
+	}
+
+	if ( $pickup_drop == "1" && $pickup_location == "" ) {
+
+		$error[] = "Invalid Pickup Location"; 
+
+	}
+
+	if ( $description == "" ) {
+
+		$error[] = "Invalid Description"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	/* generate booking code */	
+	$appmt_code = generateBookingCode();
+
+	/*generate otp */
+
+	$otp = otp();
+
+	/* insert user */
+
+	$table = "tbl_mb_dealer_appointment";
+
+	$insert['appmt_code']				=		$appmt_code;  
+	$insert['dealer_id']				=		$dealer_id;  
+	$insert['user_id']					=		$user_id;  
+	$insert['brand_id']					=		$brand_id;  
+	$insert['model_id']					=		$model_id;  
+	$insert['fuel_type']				=		$fuel_type;  
+	$insert['appmt_date']				=		$appmt_date;  
+	$insert['appmt_time']				=		$appmt_time;  
+	$insert['appmt_category_type']		=		$appmt_category_type;  
+	$insert['appmt_service_type']		=		$appmt_service_type;  
+	$insert['appmt_repair_type']		=		$appmt_repair_type;  
+	$insert['pickup_drop']				=		$pickup_drop;
+	$insert['pickup_location']			=		$pickup_location;
+	$insert['description']				=		$description;
+	$insert['terms_n_condition']		=		'1';
+	$insert['otp']						=		$otp;  
+	$insert['otp_sent_count']			=		'1';  
+	$insert['otp_sent_date']			=		'now()';
+	$insert['appmt_status']				=		'pending';
+	$insert['appmt_status_change_time']	=		'now()';
+	$insert['appmt_booked_by']			=		$user_id;
+	$insert['appmt_booking_time']		=		'now()';
+	
+
+	$res = $DBI->insert_query($insert, $table);
+
+	$booking_id = $DBI->get_insert_id();
+
+	if( $res ){
+		$param['email'] = $user_res_row[0]['email'];
+		$param['subject'] = "Motorbuddy Appointment Booking OTP";
+		$param['message'] = "Your OTP is ".$otp;
+		sendOtp($param);
+
+		$msg = "Verify OTP for booking confirmation.";
+		$success = true;
+	} else {
+		$msg = "Booking fail!!!";	
+		$success = false;
+	}
+
+	$response = array("booking_id"=>$booking_id);
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+}
+
+/* resend booking otp to user */
+function resendtBookingotp(){
+
+	GLOBAl $DBI , $body_params;
+
+	$booking_id 		=		mysql_real_escape_string(trim($body_params['booking_id']));
+	$user_id 			=		mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 		=		mysql_real_escape_string(trim($body_params['access_token']));
+
+	/* input data validation */
+	$error = array();
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+	$select = "SELECT otp_sent_count, is_otp_verify FROM tbl_mb_dealer_appointment WHERE id = '".$booking_id."' ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+
+	$is_empty = $DBI->is_empty($select);
+	
+	if( $is_empty ){
+		$error[] = "Invalid Booking ID"; 
+	}
+
+	if( ! $is_empty ){
+		if( $res_row[0]['otp_sent_count'] >= 4 ){
+			$error[] = "Allready 3 attempts you performed for resend boking otp.Contact to mottorbuddy";
+		}
+		if( $res_row[0]['is_otp_verify'] == 'Y' ){
+			$error[] = "OTP Allready verfied for your booking";
+		}		
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+
+	/*generate otp */
+	$otp 		= otp();
+
+	$update = "UPDATE tbl_mb_dealer_appointment SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = now() WHERE id = '".$booking_id."'";
+
+	$update_res = $DBI->query($update);
+
+	if( $update_res ){
+
+		$param['email'] = $user_res_row[0]['email'];
+		$param['subject'] = "Motorbuddy Appointment Booking OTP";
+		$param['message'] = "Your OTP is ".$otp;
+
+		sendOtp($param);
+
+		$msg = "Booking OTP resend successfully";
+		$success = true;
+	} else {
+		$msg = "Resend otp fail!!!";	
+		$success = false;
+	}
+
+	$response = array("booking_id"=>$booking_id);
+
+	$final_result['success'] = $success;
+	$final_result['message'] = $msg;
+	$final_result['result'] = $response;
+
+	return $final_result;
+}
+
+/* verify booking OTP */
+function otpVerificationBooking(){
+
+	GLOBAl $DBI , $body_params;
+
+	$user_id 		=	mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	=	mysql_real_escape_string(trim($body_params['access_token']));
+	$otp			=	mysql_real_escape_string(trim($body_params['otp']));
+	$booking_id		=	mysql_real_escape_string(trim($body_params['booking_id']));
+	$dealer_id		=	mysql_real_escape_string(trim($body_params['dealer_id']));
+
+	/* validations */
+	$error = array();
+
+	$select_dealer_dtls = "SELECT * FROM tbl_mb_delaer_master WHERE id = ".$dealer_id." AND status = 'Active' ";
+	$select_dealer_res = $DBI->query($select_dealer_dtls);
+	$dealer_res_row = $DBI->get_result($select_dealer_dtls);
+	$is_empty_dealer = $DBI->is_empty($select_dealer_dtls);
+
+	if ($is_empty_dealer) {
+
+		$error[] = "Invalid dealer ID"; 
+
+	}
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+	$select = "SELECT * FROM tbl_mb_dealer_appointment WHERE id = '".$booking_id."' ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+	
+	if( $is_empty ){
+		$error[] = "Invalid Booking ID"; 
+	}
+
+	if( !$is_empty ){
+		if( $res_row[0]['appmt_status'] == 'confirmed' ){
+			$error[] = "Booking allready confirmed."; 
+		}
+
+		if( $res_row[0]['appmt_status'] == 'cancelled' ){
+			$error[] = "Your booking is cancelled."; 
+		}
+
+		if( $res_row[0]['is_otp_verify'] == 'Y' ){
+			$error[] = "Booking OTP allready verified."; 
+		}
+
+		if( $res_row[0]['otp'] != $otp ){
+			$error[] = "Invalid OTP"; 
+		}
+	}
+
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+	
+	if( ! $is_empty ){
+
+		$update = "UPDATE tbl_mb_dealer_appointment SET is_otp_verify = 'Y', otp_verification_date = now(), appmt_status = 'confirmed', appmt_status_change_time = now() WHERE id = '".$booking_id."'";
+
+		$update_res = $DBI->query($update);
+
+		if( $update_res ){
+
+			/* send mail or sms to user*/
+			$param['email'] = $user_res_row[0]['email'];
+			$param['subject'] = "Motorbuddy Appointment Booking Details";
+			$mailMsg = "Your Booking Reference Number is ".$res_row[0]['appmt_code'];
+			$param['message'] = $mailMsg;
+
+			sendOtp($param);
+
+			/* send mail or sms to dealer*/
+			$param['email'] = $dealer_res_row[0]['mobile_no'];
+			$param['subject'] = "Motorbuddy Appointment Booking Details";
+			$mailMsg = "Appointment Number : ".$res_row[0]['appmt_code'].PHP_EOL."Date & Time : ".$res_row[0]['appmt_date']." :: ".$res_row[0]['appmt_time'].PHP_EOL."User Contact Details : ".$user_res_row[0]['mobile'];
+			$param['message'] = $mailMsg;
+
+			sendOtp($param);
+
+			$msg = "Booking OTP verfied successfully. Booking confirmed";
+			$success = true;
+		} else {
+			$msg = "Booking OTP verification fail!!! Contact Mottorbuddy";	
+			$success = false;
+		}
+
+		$response = array();
+
+		$final_result['success'] = $success;
+		$final_result['message'] = $msg;
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+}
 
 /* invalid action */
 function defaultAction($msg){

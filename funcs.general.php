@@ -143,4 +143,52 @@ function generateDealerCode( $attempt = 1 ){
 	
 }
 
+function generateBookingCode( $attempt = 1 ){
+
+	$DBI = new Db();
+
+	$arr_booking_codes = array();
+	for ($i=0; $i < 10; $i++) { 
+
+		$temp_booking_code = 'BK'.rand(1, 99999999);
+
+		if(strlen($temp_booking_code)<10){
+			$temp_booking_code = str_pad($temp_booking_code, 10, "0", STR_PAD_RIGHT);
+		}
+
+		$arr_booking_codes[] = $temp_booking_code;
+	}
+
+	$booking_code_str = "'".implode("','", $arr_booking_codes)."'";
+	
+	$select = "SELECT distinct appmt_code FROM tbl_mb_dealer_appointment WHERE appmt_code IN (".$booking_code_str.") ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+
+	if(count($res_row)>0){
+        $arr_booking_codes_2 = array();
+        foreach($res_row as $row){
+
+            $arr_booking_codes_2[] = $row['appmt_code'];
+        }
+        
+        $arr_booking_codes = array_diff($arr_booking_codes, $arr_booking_codes_2);
+    }
+
+    if(count($arr_booking_codes))
+    {
+        return array_pop($arr_booking_codes);
+    } else {
+
+    	$attempt++;
+        if($attempt>3)
+        {
+            return false;
+        }
+        generateBookingCode($attempt);
+
+    }
+	
+}
+
 ?>
