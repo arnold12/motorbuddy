@@ -4,6 +4,9 @@
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
+            <?php
+              if($_SESSION['role'] == 'superadmin'){
+            ?>
 			      <li>
               <a href="index.php">
                 <i class="fa fa-th"></i> <span>Dealer</span>
@@ -57,6 +60,18 @@
                 <i class="fa fa-th"></i> <span>Home Page Images</span>
               </a>
             </li>
+            <?php
+              }
+            elseif ($_SESSION['role'] == 'dealer') {
+            ?>
+            <li>
+              <a href="appointments.php">
+                <i class="fa fa-th"></i> <span>Appointment</span>
+              </a>
+            </li>
+            <?php
+            }
+            ?>
 
           </ul>
         </section>

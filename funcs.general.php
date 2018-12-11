@@ -191,4 +191,12 @@ function generateBookingCode( $attempt = 1 ){
 	
 }
 
+function date_wording( $date ){
+	$output_date = '-';
+    if(!empty($date)){
+      $output_date = date('d F, Y', strtotime($date));
+    }
+    return $output_date;
+}
+
 ?>

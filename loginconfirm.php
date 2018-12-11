@@ -33,8 +33,11 @@ if($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['login']) && $_POST['log
 			if($rememberme){
 				
 			}
-			
-			header("Location: index.php");die();
+			if($_SESSION['role'] == 'superadmin'){
+				header("Location: index.php");die();
+			}elseif ($_SESSION['role'] == 'dealer') {
+				header("Location: appointments.php");die();
+			}
 		} 
 	}
 	
