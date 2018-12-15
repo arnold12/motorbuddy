@@ -91,6 +91,10 @@ switch ($body_params['action']) {
         $result = otpVerificationBooking();
 		break;
 
+	case 'sendBookingServiceRepair':
+        $result = sendBookingServiceRepair();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -424,10 +428,12 @@ function addNewUser(){
 
 	if( $res ){
 
-		$param['email'] = $email;
-		$param['subject'] = "Motorbuddy Registration OTP";
-		$param['message'] = "Your OTP is ".$otp;
-		sendOtp($param);
+		$param['email'] 	= $email;
+		$param['subject'] 	= "Motorbuddy Registration OTP";
+		$param['message'] 	= "Your Mottorbuddy Registration OTP is ".$otp;
+		$param['mobile'] 	= $mobile;
+		//sendOtp($param);
+		sendOtpMobile($param);
 
 		$msg = "User registered successfully";
 		$success = true;
@@ -521,7 +527,7 @@ function resendOTP(){
 	return $final_result;
 }
 
-/* send otp to user */
+/* send otp to user on email*/
 function sendOtp($data){
 	$to = $data['email'];
 	$subject = $data['subject'];
@@ -532,6 +538,42 @@ function sendOtp($data){
 	mail($to, $subject, $message, $headers);
 }
 
+/* send otp to user on mobile*/
+function sendOtpMobile($data){
+	
+	$country 	= "91";
+	$sender 	= "MSGIND";
+	$route 		= "4";
+	$mobile 	= $data['mobile'];
+	$message 	= $data['message'];
+	$authkey	= "251171AM91SyD7jQ5c0e1bae";
+
+	$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?country=".$country."&sender=".$sender."&route=".$route."&mobiles=".$mobile."&authkey=".$authkey."&message=".$message."",
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "GET",
+	  CURLOPT_SSL_VERIFYHOST => 0,
+	  CURLOPT_SSL_VERIFYPEER => 0,
+	));
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+
+	curl_close($curl);
+
+	if ($err) {
+	  return "cURL Error #:" . $err;
+	} else {
+	  return $response;
+	}
+
+}
 
 
 /* verify user OTP */
@@ -1072,10 +1114,12 @@ function addbooking(){
 	$booking_id = $DBI->get_insert_id();
 
 	if( $res ){
-		$param['email'] = $user_res_row[0]['email'];
-		$param['subject'] = "Motorbuddy Appointment Booking OTP";
-		$param['message'] = "Your OTP is ".$otp;
-		sendOtp($param);
+		$param['email'] 	= $user_res_row[0]['email'];
+		$param['subject'] 	= "Motorbuddy Appointment Booking OTP";
+		$param['message'] 	= "Your Motorbuddy Appointment Booking OTP is ".$otp;
+		$param['mobile'] 	= $user_res_row[0]['mobile'];
+		//sendOtp($param);
+		sendOtpMobile($param);
 
 		$msg = "Verify OTP for booking confirmation.";
 		$success = true;
@@ -1155,11 +1199,13 @@ function resendtBookingotp(){
 
 	if( $update_res ){
 
-		$param['email'] = $user_res_row[0]['email'];
-		$param['subject'] = "Motorbuddy Appointment Booking OTP";
-		$param['message'] = "Your OTP is ".$otp;
+		$param['email'] 	= $user_res_row[0]['email'];
+		$param['subject'] 	= "Motorbuddy Appointment Booking OTP";
+		$param['message'] 	= "Your Motorbuddy Appointment Booking OTP is ".$otp;
+		$param['mobile'] 	= $user_res_row[0]['mobile'];
 
-		sendOtp($param);
+		//sendOtp($param);
+		sendOtpMobile($param);
 
 		$msg = "Booking OTP resend successfully";
 		$success = true;
@@ -1292,6 +1338,39 @@ function otpVerificationBooking(){
 		return $final_result;
 	}
 }
+
+/**
+ * 
+ * @return all brand or model list
+ * 
+ **/
+
+function sendBookingServiceRepair(){
+	GLOBAl $DBI, $body_params;
+
+	$type = mysql_real_escape_string(trim($body_params['type']));
+	
+	$select = "SELECT `id`, `name` FROM tbl_mb_booking_service_repair_master WHERE is_active = 'Y' AND type = '".$type."' ORDER BY name ASC";
+	
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $res_row;
+	}
+	
+	return $final_result;
+}
+
 
 /* invalid action */
 function defaultAction($msg){
