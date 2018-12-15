@@ -364,6 +364,45 @@ function validate_shop_service() {
   return true;
 }
 
+function validate_service_repair() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#name").val()) == "") {
+    $("#err_msg_name").show();
+    $("#err_msg_name").html("Enter Name.");
+    $("#name").focus();
+    return false;
+  }
+
+  if ($.trim($("#type").val()) == "") {
+    $("#err_msg_type").show();
+    $("#err_msg_type").html("Enter Type.");
+    $("#type").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
+function delete_service_repair(val) {
+  var action = "delete_service_repair";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
 
 function delete_brand_model(val) {
   var action = "delete_brand_model";

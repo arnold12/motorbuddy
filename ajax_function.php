@@ -36,6 +36,10 @@ switch ($action){
         delete_shop_amenities();
         break;
 
+    case "delete_service_repair":
+        delete_service_repair();
+        break;
+
     case "read_feedback":
         read_feedback();
         break;
@@ -105,6 +109,20 @@ function delete_shop_service(){
 	global $DBI;
 
 	$delete_at_row = "UPDATE `tbl_mb_shop_service_master` SET `is_active` = 'N' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete
+
+	$res_at_delete = $DBI->query($delete_at_row);
+
+	if($res_at_delete){
+		echo "Record deleted successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+}
+
+function delete_service_repair(){
+	global $DBI;
+
+	$delete_at_row = "UPDATE `tbl_mb_booking_service_repair_master` SET `is_active` = 'N' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete
 
 	$res_at_delete = $DBI->query($delete_at_row);
 

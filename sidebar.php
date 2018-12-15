@@ -44,6 +44,12 @@
             </li>
 
             <li>
+              <a href="view_services_repair.php">
+                <i class="fa fa-th"></i> <span>Services Repair Master</span>
+              </a>
+            </li>
+
+            <li>
               <a href="view_cust_feedback.php">
                 <i class="fa fa-th"></i> <span>Custmore Feedback</span>
               </a>
