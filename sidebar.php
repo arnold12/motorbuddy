@@ -62,7 +62,7 @@
             </li>
             <?php
               }
-            elseif ($_SESSION['role'] == 'dealer') {
+            if ($_SESSION['role'] == 'dealer' || $_SESSION['role'] == 'superadmin') {
             ?>
             <li>
               <a href="appointments.php">

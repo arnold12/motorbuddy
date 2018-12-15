@@ -1,28 +1,39 @@
 <?php
 require_once 'config.php';
-if (!isUserLoggedIn() || $_SESSION['role'] != 'dealer') {
+if (!isUserLoggedIn() || ($_SESSION['role'] != 'dealer' && $_SESSION['role'] != 'superadmin')) {
     header("Location: logout.php");
 }
 $DBI = new Db();
 
 $DBI->query("SET NAMES 'utf8'");
 
-$delaer_sql = "SELECT id FROM tbl_mb_delaer_master WHERE dealer_code = '".$_SESSION['username']."' LIMIT 1";	
-$delaer_result = $DBI->query($delaer_sql);
-$delaer_id = '';
-if(mysql_num_rows($delaer_result) > 0){
-	$delaer_row = $DBI->get_result($delaer_sql);
-	$delaer_id = $delaer_row[0]['id'];
+$where_condition = '';
+
+if($_SESSION['role'] == 'dealer'){
+	$delaer_sql = "SELECT id FROM tbl_mb_delaer_master WHERE dealer_code = '".$_SESSION['username']."' LIMIT 1";	
+	$delaer_result = $DBI->query($delaer_sql);
+	$delaer_id = 0;
+	if(mysql_num_rows($delaer_result) > 0){
+		$delaer_row = $DBI->get_result($delaer_sql);
+		$delaer_id = $delaer_row[0]['id'];
+	}
+	$where_condition .= "WHERE `dealer_id` = ".$delaer_id;
 }
 
 
 $select_condition = '';
 
 if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
-	$select_condition .= " AND `appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%'";
+	if($_SESSION['role'] == 'dealer'){
+		$select_condition .= " AND";
+	}
+	if($_SESSION['role'] == 'superadmin'){
+		$select_condition .= " Where";
+	}
+	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
 }
 
-$select_dealer_appointment = "SELECT `id` , `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` WHERE `dealer_id` = ".$delaer_id." ".$select_condition." ";
+$select_dealer_appointment = "SELECT `id` , `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 ?>
 <!DOCTYPE html>
