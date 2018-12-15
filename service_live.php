@@ -971,6 +971,7 @@ function addbooking(){
 	$appmt_repair_type		= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
 	$pickup_drop			= 		mysql_real_escape_string(trim($body_params['pickup_drop']));
 	$pickup_location		= 		mysql_real_escape_string(trim($body_params['pickup_location']));
+	$pickup_pincode			= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
 	$description			= 		mysql_real_escape_string(trim($body_params['description']));
 	$access_token 			= 		mysql_real_escape_string(trim($body_params['access_token']));
 	$chkd_terms_and_condn	= 		'Y';
@@ -1098,6 +1099,7 @@ function addbooking(){
 	$insert['appmt_repair_type']		=		$appmt_repair_type;  
 	$insert['pickup_drop']				=		$pickup_drop;
 	$insert['pickup_location']			=		$pickup_location;
+	$insert['pickup_pincode']			=		$pickup_pincode;
 	$insert['description']				=		$description;
 	$insert['terms_n_condition']		=		'1';
 	$insert['otp']						=		$otp;  
