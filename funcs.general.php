@@ -199,4 +199,41 @@ function date_wording( $date ){
     return $output_date;
 }
 
+/* send otp to user on mobile*/
+function sendOtpMobile($data){
+	
+	$country 	= "91";
+	$sender 	= "MSGIND";
+	$route 		= "4";
+	$mobile 	= $data['mobile'];
+	$message 	= $data['message'];
+	$authkey	= "251171AM91SyD7jQ5c0e1bae";
+
+	$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => "http://api.msg91.com/api/sendhttp.php?country=".$country."&sender=".$sender."&route=".$route."&mobiles=".$mobile."&authkey=".$authkey."&message=".$message."",
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "GET",
+	  CURLOPT_SSL_VERIFYHOST => 0,
+	  CURLOPT_SSL_VERIFYPEER => 0,
+	));
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+
+	curl_close($curl);
+
+	if ($err) {
+	  return "cURL Error #:" . $err;
+	} else {
+	  return $response;
+	}
+
+}
+
 ?>

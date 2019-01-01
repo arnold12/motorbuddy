@@ -549,3 +549,16 @@ function validate_home_page_images(){
   $(".succes_msg").html("Please Wait...");
   return true;
 }
+
+function appointment_action( id, user_id, booking_status ){
+  var action = "appointment_action";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, booking_status: booking_status, user_id: user_id, action: action },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  }); 
+}

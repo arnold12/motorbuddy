@@ -33,7 +33,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
 }
 
-$select_dealer_appointment = "SELECT `id` , `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
+$select_dealer_appointment = "SELECT `id` , `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 ?>
 <!DOCTYPE html>
@@ -114,6 +114,7 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								  <th>Date</th>
 								  <th>Time</th>
 								  <th>Status</th>
+								  <th>Action</th>
 								</tr>
 								<?php
 								$i = 1;
@@ -128,6 +129,14 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								  <td><?=date_wording($value['appmt_date'])?></td>
 								  <td><?=$value['appmt_time']?></td>
 								  <td><?=ucfirst($value['appmt_status'])?></td>
+								  <td>
+								  <?php if( $value['appmt_status'] == 'verified') {?>
+									  <a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'confirmed');">Confirm</a>
+									  	&nbsp;|&nbsp;
+									  <a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'rejected');">Reject</a>
+								  <?php }?>
+								  </td>
+								  
 								</tr>
 								</tr>
 								<?php

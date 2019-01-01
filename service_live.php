@@ -1280,6 +1280,15 @@ function otpVerificationBooking(){
 			$error[] = "Your booking is cancelled."; 
 		}
 
+		if( $res_row[0]['appmt_status'] == 'verified' ){
+			$error[] = "Your booking is allready verified."; 
+		}
+
+		if( $res_row[0]['appmt_status'] == 'rejected' ){
+			$error[] = "Your booking is allready rejected."; 
+		}
+
+
 		if( $res_row[0]['is_otp_verify'] == 'Y' ){
 			$error[] = "Booking OTP allready verified."; 
 		}
@@ -1302,7 +1311,7 @@ function otpVerificationBooking(){
 	
 	if( ! $is_empty ){
 
-		$update = "UPDATE tbl_mb_dealer_appointment SET is_otp_verify = 'Y', otp_verification_date = now(), appmt_status = 'confirmed', appmt_status_change_time = now() WHERE id = '".$booking_id."'";
+		$update = "UPDATE tbl_mb_dealer_appointment SET is_otp_verify = 'Y', otp_verification_date = now(), appmt_status = 'verified', appmt_status_change_time = now() WHERE id = '".$booking_id."'";
 
 		$update_res = $DBI->query($update);
 
@@ -1324,7 +1333,7 @@ function otpVerificationBooking(){
 
 			sendOtp($param);
 
-			$msg = "Booking OTP verfied successfully. Booking confirmed";
+			$msg = "Your Booking is verified successfully. Motorbuddy will confirm your booking.";
 			$success = true;
 		} else {
 			$msg = "Booking OTP verification fail!!! Contact Mottorbuddy";	

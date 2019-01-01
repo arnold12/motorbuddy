@@ -47,6 +47,10 @@ switch ($action){
     case "read_contact_us":
         read_contact_us();
         break;
+
+    case "appointment_action":
+        appointment_action();
+        break;    
 }
     
 function delete_brand_model(){
@@ -204,6 +208,37 @@ function read_contact_us(){
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}	
+}
+
+function appointment_action(){
+
+	global $DBI;
+
+	$update = "UPDATE tbl_mb_dealer_appointment SET appmt_status = '".mysql_real_escape_string($_POST['booking_status'])."', appmt_status_change_time = now() WHERE id = '".mysql_real_escape_string($_POST['id'])."'";
+
+	$res_update = $DBI->query($update);
+
+	$booking_sql = "SELECT appmt_code, appmt_date, appmt_time, dealer_id FROM tbl_mb_dealer_appointment WHERE id = '".mysql_real_escape_string($_POST['id'])."' ";
+	$booking_result = $DBI->query($booking_sql);
+	$booking_row = $DBI->get_result($booking_sql);
+
+	$dealer_sql = "SELECT dealer_name, dealer_name2 FROM tbl_mb_delaer_master WHERE id = '".mysql_real_escape_string($booking_row[0]['dealer_id'])."' ";
+	$dealer_result = $DBI->query($dealer_sql);
+	$dealer_row = $DBI->get_result($dealer_sql);
+
+	$user_sql = "SELECT mobile FROM tbl_mb_register_users WHERE id = '".mysql_real_escape_string($_POST['user_id'])."' ";
+	$user_result = $DBI->query($user_sql);
+	$user_row = $DBI->get_result($user_sql);
+	
+	$data['mobile'] 	= $user_row[0]['mobile'];
+	$data['message'] 	= "Your Booking Number ".$booking_row[0]['appmt_code']." is ".$_POST['booking_status']." with ".$dealer_row[0]['dealer_name']." ".$dealer_row[0]['dealer_name2']." on date ".$booking_row[0]['appmt_date']." ".$booking_row[0]['appmt_time'];
+
+	$resp = sendOtpMobile($data);
+
+	echo "Record Updated successfully";
+	//echo $data['message'];
+	exit;
+
 }
 
 ?>
