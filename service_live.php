@@ -539,7 +539,7 @@ function sendOtp($data){
 }
 
 /* send otp to user on mobile*/
-function sendOtpMobile($data){
+/*function sendOtpMobile($data){
 	
 	$country 	= "91";
 	$sender 	= "MSGIND";
@@ -573,7 +573,7 @@ function sendOtpMobile($data){
 	  return $response;
 	}
 
-}
+}*/
 
 
 /* verify user OTP */
