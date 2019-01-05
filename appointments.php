@@ -130,8 +130,9 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								  <td><?=$value['appmt_time']?></td>
 								  <td><?=ucfirst($value['appmt_status'])?></td>
 								  <td>
+								  <a href="appointment_detail.php?id=<?=$value['id']?>">View</a>
 								  <?php if( $value['appmt_status'] == 'verified') {?>
-									  <a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'confirmed');">Confirm</a>
+									  &nbsp;|&nbsp;<a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'confirmed');">Confirm</a>
 									  	&nbsp;|&nbsp;
 									  <a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'rejected');">Reject</a>
 								  <?php }?>
