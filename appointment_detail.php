@@ -11,7 +11,6 @@ $DBI->query("SET NAMES 'utf8'");
 $dealer_name = '';
 $user_name = '';
 $brand_name = '';
-$brand_model_name = '';
 
 if(isset($_GET['id']) && $_GET['id'] != ""){
 
@@ -42,13 +41,6 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 	    $brand_name = $rows_brand[0]['brand_model_name'];
 	}
 
-	if(!empty($rows_appointment[0]['model_id'])){
-		$select_model_brand = "SELECT `brand_model_name`
-	    FROM `tbl_mb_brand_model_master`
-	    WHERE (`id` = '".$rows_appointment[0]['model_id']."')";
-	    $rows_model_brand = $DBI->get_result($select_model_brand);
-	    $brand_model_name = $rows_model_brand[0]['brand_model_name'];
-	}
 }
 
 ?>
@@ -129,7 +121,7 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 			                  	<li>
 			                    	<i class="fa fa-cube bg-orange"></i>
 									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Model Name:</b> <?= $brand_model_name?></h3>
+			                      		<h3 class="timeline-header no-border"><b>Model Name:</b> <?= $brand_name?></h3>
 			                    	</div>
 			                  	</li>
 			                  	<li>
@@ -247,7 +239,7 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 			                  	<li>
 			                    	<i class="fa fa-user bg-orange"></i>
 									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Booked By:</b> <?= $rows_appointment[0]['appmt_booked_by']?></h3>
+			                      		<h3 class="timeline-header no-border"><b>Booked By:</b> <?= $user_name?></h3>
 			                    	</div>
 			                  	</li>
 			                  	<?php
