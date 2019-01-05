@@ -15,47 +15,42 @@ $brand_model_name = '';
 
 if(isset($_GET['id']) && $_GET['id'] != ""){
 
-$select_appointment = "SELECT * FROM `tbl_mb_dealer_appointment` WHERE (`id` = '".$_GET['id']."')";
-$rows_appointment = $DBI->get_result($select_appointment);
+	$select_appointment = "SELECT * FROM `tbl_mb_dealer_appointment` WHERE (`id` = '".$_GET['id']."')";
+	$rows_appointment = $DBI->get_result($select_appointment);
 
-if(!empty($rows_appointment[0]['dealer_id'])){
-	$select_dealer = "SELECT `dealer_name`
-    FROM `tbl_mb_delaer_master`
-    WHERE (`id` = '".$rows_appointment[0]['dealer_id']."')";
-    $rows_dealer = $DBI->get_result($select_dealer);
-    $dealer_name = $rows_dealer[0]['dealer_name'];
+	if(!empty($rows_appointment[0]['dealer_id'])){
+		$select_dealer = "SELECT `dealer_name`
+	    FROM `tbl_mb_delaer_master`
+	    WHERE (`id` = '".$rows_appointment[0]['dealer_id']."')";
+	    $rows_dealer = $DBI->get_result($select_dealer);
+	    $dealer_name = $rows_dealer[0]['dealer_name'];
+	}
+
+	if(!empty($rows_appointment[0]['user_id'])){
+		$select_user = "SELECT `username`
+	    FROM `tbl_mb_user`
+	    WHERE (`id` = '".$rows_appointment[0]['user_id']."')";
+	    $rows_user = $DBI->get_result($select_user);
+	    $user_name = $rows_user[0]['username'];
+	}
+
+	if(!empty($rows_appointment[0]['brand_id'])){
+		$select_brand = "SELECT `brand_model_name`
+	    FROM `tbl_mb_brand_model_master`
+	    WHERE (`id` = '".$rows_appointment[0]['brand_id']."')";
+	    $rows_brand = $DBI->get_result($select_brand);
+	    $brand_name = $rows_brand[0]['brand_model_name'];
+	}
+
+	if(!empty($rows_appointment[0]['model_id'])){
+		$select_model_brand = "SELECT `brand_model_name`
+	    FROM `tbl_mb_brand_model_master`
+	    WHERE (`id` = '".$rows_appointment[0]['model_id']."')";
+	    $rows_model_brand = $DBI->get_result($select_model_brand);
+	    $brand_model_name = $rows_model_brand[0]['brand_model_name'];
+	}
 }
 
-if(!empty($rows_appointment[0]['user_id'])){
-	$select_user = "SELECT `username`
-    FROM `tbl_mb_user`
-    WHERE (`id` = '".$rows_appointment[0]['user_id']."')";
-    $rows_user = $DBI->get_result($select_user);
-    $user_name = $rows_user[0]['username'];
-}
-
-if(!empty($rows_appointment[0]['brand_id'])){
-	$select_brand = "SELECT `brand_model_name`
-    FROM `tbl_mb_brand_model_master`
-    WHERE (`id` = '".$rows_appointment[0]['brand_id']."')";
-    $rows_brand = $DBI->get_result($select_brand);
-    $brand_name = $rows_brand[0]['brand_model_name'];
-}
-
-if(!empty($rows_appointment[0]['model_id'])){
-	$select_model_brand = "SELECT `brand_model_name`
-    FROM `tbl_mb_brand_model_master`
-    WHERE (`id` = '".$rows_appointment[0]['model_id']."')";
-    $rows_model_brand = $DBI->get_result($select_model_brand);
-    $brand_model_name = $rows_model_brand[0]['brand_model_name'];
-}
-
-
-}
-
-
-
- 
 ?>
 
 <!DOCTYPE html>
