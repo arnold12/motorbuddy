@@ -33,7 +33,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
 }
 
-$select_dealer_appointment = "SELECT `id` , `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
+$select_dealer_appointment = "SELECT `id` , `dealer_id`, `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 ?>
 <!DOCTYPE html>
@@ -108,6 +108,11 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								<tr>
 								  <th>Id</th>
 								  <th>Code</th>
+								  <?php
+								  	if($_SESSION['role'] == 'superadmin'){
+								  ?>
+								  <th>Delaer Name</th>
+								  <?php }?>
 								  <th>Fuel Type</th>
 								  <th>Category Type</th>
 								  <th>Service Type</th>
@@ -123,6 +128,12 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								<tr id="row_<?=$value['id']?>">
 								  <td><?=$i?></td>
 								  <td><?=$value['appmt_code']?></td>
+								  <?php
+								  	if($_SESSION['role'] == 'superadmin'){
+								  		$dealerDtls = getDealerDtls($value['dealer_id']);
+								  ?>
+								  <td><?=$dealerDtls[0]['dealer_name']." ".$dealerDtls[0]['dealer_name2']?></td>
+								  <?php }?>
 								  <td><?=$value['fuel_type']?></td>
 								  <td><?=$value['appmt_category_type']?></td>
 								  <td><?=$value['appmt_service_type']?></td>

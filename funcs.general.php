@@ -236,4 +236,15 @@ function sendOtpMobile($data){
 
 }
 
+function getDealerDtls($dealer_id){
+	$DBI = new Db();
+
+	$select = "SELECT dealer_name, dealer_name2, mobile_no FROM tbl_mb_delaer_master WHERE id = ".$dealer_id." ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	return $res_row;
+
+}
+
 ?>
