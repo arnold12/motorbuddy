@@ -377,14 +377,20 @@ function addNewUser(){
 
 	}
 
-	/* check email id already exist or not */
+	/* check email id and mobile no already exist or not */
 
-	$select = "SELECT email FROM tbl_mb_register_users WHERE email = '".$email."' ";
+	$select = "SELECT email, mobile FROM tbl_mb_register_users WHERE email = '".$email."' OR mobile = '".$mobile."' ";
 	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
 	$is_empty = $DBI->is_empty($select);
 	
 	if( ! $is_empty ){
-		$error[] = "email id already exist"; 
+		if( $res_row[0]['email'] == $email ){
+			$error[] = "email id already exist"; 
+		}
+		if( $res_row[0]['mobile'] == $mobile ){
+			$error[] = "mobile no already exist"; 
+		}
 	}
 
 	if( count($error) ){
