@@ -199,6 +199,14 @@ function date_wording( $date ){
     return $output_date;
 }
 
+function date_time_wording( $date ){
+	$output_date = '-';
+    if(!empty($date)){
+      $output_date = date('d F, Y H:i:s', strtotime($date));
+    }
+    return $output_date;
+}
+
 /* send otp to user on mobile*/
 function sendOtpMobile($data){
 	
