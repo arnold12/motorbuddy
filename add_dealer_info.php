@@ -157,6 +157,13 @@ if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
     WHERE `dealer_id` = '".$_GET['id']."'";
     $result_time = $DBI->get_result($select_time);
 
+    // fetch pickup person
+    $select_pickup_person = "SELECT `id`,`person_full_name`,`mobile_no`,`is_active`
+    FROM `tbl_mb_pickup_persons`
+    WHERE `dealer_id` = '".$_GET['id']."'";
+    $result_pickup_person = $DBI->get_result($select_pickup_person);
+    
+
     // Check all button should be checked when all filed are check
 
     // Payment method checked
@@ -328,7 +335,24 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $res_brand = $DBI->query($brand_insurance);
             }
         }
+
+        // update data fo pickup person
+        $delete_pickup_person = "DELETE FROM tbl_mb_pickup_persons WHERE dealer_id = '".$delaer_id."' ";
+        $res_delete_pickup_person = $DBI->query($delete_pickup_person);
+        $pickup_person_count = count($_POST['pickup_person_name']);
         
+        for($pp = 0; $pp < $pickup_person_count; $pp++){
+            if(isset($_POST['pickup_person_name'][$pp]) && trim($_POST['pickup_person_name'][$pp]) != "" ){
+
+                $pp_name    = mysql_real_escape_string($_POST['pickup_person_name'][$pp]);
+                $pp_mobile  = mysql_real_escape_string($_POST['pickup_person_mobile'][$pp]);
+                $pp_status  = mysql_real_escape_string($_POST['pickup_person_status'][$pp]);
+                
+                $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
+                $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
+            }
+        }
+
         
     } else { // Add mode
 
@@ -421,6 +445,21 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $brand_name = $_POST['brand_'.$q];
                 $brand_insurance = "INSERT INTO `tbl_mb_delaer_brand_service` (`dealer_id`, `brand_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$brand_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
                 $res_brand = $DBI->query($brand_insurance);
+            }
+        }
+
+
+        // insert data fo pickup person
+        $pickup_person_count = count($_POST['pickup_person_name']);
+        for($pp = 0; $pp < $pickup_person_count; $pp++){
+            if(isset($_POST['pickup_person_name'][$pp]) && trim($_POST['pickup_person_name'][$pp]) != "" ){
+
+                $pp_name    = mysql_real_escape_string($_POST['pickup_person_name'][$pp]);
+                $pp_mobile  = mysql_real_escape_string($_POST['pickup_person_mobile'][$pp]);
+                $pp_status  = mysql_real_escape_string($_POST['pickup_person_status'][$pp]);
+                
+                $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
+                $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
             }
         }
        
@@ -698,7 +737,36 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 										<img src="<?=$rows_info['img_3']?>" alt="" height="42" width="42"> &nbsp;<a href="#" onclick="delete_dealer_img(<?=$_GET['id']?>, 'img_3');">Delete</a>
 									</div>
 									<?php }?>
-                                </div>  
+                                </div>
+
+                                <?php
+                                    for( $pp = 1; $pp <=3; $pp++ ){
+                                ?>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 control-label">Pickup Person <?=$pp?></label>
+                                    <div class="col-sm-3 col-md-2">
+                                        <input type="text" placeholder="Full Name" class="form-control input-sm" id="pickup_person_name<?=$pp?>" name="pickup_person_name[]" value="<?=isset($result_pickup_person[$pp - 1]['person_full_name']) ? $result_pickup_person[$pp - 1]['person_full_name'] : '';?>">
+                                        <label id="err_msg_pickup_person_name<?=$pp?>" for="pickup_person_name<?=$pp?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                    </div>
+
+                                    <div class="col-sm-3 col-md-2">
+                                        <input type="text" placeholder="Mobile" class="form-control input-sm" id="pickup_person_mobile<?=$pp?>" name="pickup_person_mobile[]" value="<?=isset($result_pickup_person[$pp - 1]['mobile_no']) ? $result_pickup_person[$pp - 1]['mobile_no'] : '';?>">
+                                        <label id="err_msg_pickup_person_mobile<?=$pp?>" for="pickup_person_mobile<?=$pp?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                    </div>
+
+                                    <div class="col-sm-3 col-md-2">
+                                        <select class="form-control input-sm" id="pickup_person_status<?=$pp?>" name="pickup_person_status[]">
+                                            <option value="">Select Status</option>
+                                            <option value="1" <?php if(isset($result_pickup_person[$pp - 1]['is_active']) && $result_pickup_person[$pp - 1]['is_active'] == 1 ){ ?>selected<?php }?>>Active</option>
+                                            <option value="0" <?php if(isset($result_pickup_person[$pp - 1]['is_active']) && $result_pickup_person[$pp - 1]['is_active'] == 0 ){ ?>selected<?php }?>>Inactive</option>
+                                        </select>
+                                        <label id="err_msg_pickup_person_status<?=$pp?>" for="pickup_person_status<?=$pp?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                    </div>
+                                </div>
+
+                                <?php }?>
+
+
                                 <br><br>
                                 <hr>
                                 <hr>
