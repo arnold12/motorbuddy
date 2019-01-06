@@ -78,7 +78,11 @@
             <?php
             }
             ?>
-
+            <li>
+              <a href="change_password.php">
+                <i class="fa fa-th"></i> <span>Changed Password</span>
+              </a>
+            </li>
           </ul>
         </section>
         <!-- /.sidebar -->
