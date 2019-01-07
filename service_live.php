@@ -980,6 +980,7 @@ function addbooking(){
 	$pickup_pincode			= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
 	$description			= 		mysql_real_escape_string(trim($body_params['description']));
 	$access_token 			= 		mysql_real_escape_string(trim($body_params['access_token']));
+	$pickup_pincode 		= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
 	$chkd_terms_and_condn	= 		'Y';
  
 	/* input data validation */
@@ -994,6 +995,12 @@ function addbooking(){
 
 		$error[] = "Invalid dealer ID"; 
 
+	} else {
+		$service_location_arr = explode(',', $dealer_res_row[0]['service_location']);
+		if(!in_array($pickup_pincode, $service_location_arr)){
+			
+			$error[] = "Pickup and drop service not provided for your pincode";
+		}
 	}
 
 	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
