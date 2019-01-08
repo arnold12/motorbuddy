@@ -349,6 +349,28 @@ function validate_shop_amenities() {
   return true;
 }
 
+function validate_review_rating() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#rating").val()) == "") {
+    $("#err_msg_rating").show();
+    $("#err_msg_rating").html("Enter Rating.");
+    $("#rating").focus();
+    return false;
+  }
+
+  if ($.trim($("#review").val()) == "") {
+    $("#err_msg_review").show();
+    $("#err_msg_review").html("Enter Review.");
+    $("#review").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
 function validate_shop_service() {
   $(".err_msg").html("");
   $(".err_msg").hide();
@@ -474,6 +496,23 @@ function delete_shop_amenities(val) {
 
 function delete_shop_service(val) {
   var action = "delete_shop_service";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
+function delete_review_rating(val) {
+  var action = "delete_review_rating";
   if (confirm("Are you sure want to delete this record")) {
     $.ajax({
       url: "ajax_function.php",
