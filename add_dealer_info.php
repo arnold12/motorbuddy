@@ -337,8 +337,6 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         }
 
         // update data fo pickup person
-        $delete_pickup_person = "DELETE FROM tbl_mb_pickup_persons WHERE dealer_id = '".$delaer_id."' ";
-        $res_delete_pickup_person = $DBI->query($delete_pickup_person);
         $pickup_person_count = count($_POST['pickup_person_name']);
         
         for($pp = 0; $pp < $pickup_person_count; $pp++){
@@ -347,9 +345,19 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $pp_name    = mysql_real_escape_string($_POST['pickup_person_name'][$pp]);
                 $pp_mobile  = mysql_real_escape_string($_POST['pickup_person_mobile'][$pp]);
                 $pp_status  = mysql_real_escape_string($_POST['pickup_person_status'][$pp]);
+                $pp_id      = mysql_real_escape_string($_POST['pickup_person_id'][$pp]);
+
+                if( isset($pp_id) &&  $pp_id != "" ){
+
+                    $update_pickup_person = "UPDATE `tbl_mb_pickup_persons` SET person_full_name = '".$pp_name."', mobile_no = '".$pp_mobile."', is_active = '".$pp_status."', updated_by = '".$_SESSION['id']."', updated_at = now() WHERE id = '".$pp_id."' ";
+                    $update_res_pickup_persons = $DBI->query($update_pickup_person);
+
+                } else {
+                    $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
+                    $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
+                }
                 
-                $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
-                $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
+                
             }
         }
 
@@ -747,6 +755,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                     <div class="col-sm-3 col-md-2">
                                         <input type="text" placeholder="Full Name" class="form-control input-sm" id="pickup_person_name<?=$pp?>" name="pickup_person_name[]" value="<?=isset($result_pickup_person[$pp - 1]['person_full_name']) ? $result_pickup_person[$pp - 1]['person_full_name'] : '';?>">
                                         <label id="err_msg_pickup_person_name<?=$pp?>" for="pickup_person_name<?=$pp?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                        <input type="hidden" name="pickup_person_id[]" value="<?=isset($result_pickup_person[$pp - 1]['id']) ? $result_pickup_person[$pp - 1]['id'] : '';?>">
                                     </div>
 
                                     <div class="col-sm-3 col-md-2">
