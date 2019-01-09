@@ -95,6 +95,10 @@ switch ($body_params['action']) {
         $result = sendBookingServiceRepair();
 		break;
 
+	case 'bookingList':
+        $result = bookingList();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -1393,6 +1397,78 @@ function sendBookingServiceRepair(){
 	}
 	
 	return $final_result;
+}
+
+
+/**
+ * 
+ * @return all user bookings
+ * 
+ **/
+function bookingList(){
+
+	GLOBAl $DBI, $body_params;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	$error = array();
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	$select = "SELECT 
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,da.pickup_drop,da.pickup_location,da.pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
+	    dm.dealer_code,dm.dealer_name,dm.dealer_name2 
+	FROM
+	    tbl_mb_dealer_appointment AS da
+	        LEFT JOIN
+	    tbl_mb_delaer_master AS dm ON da.dealer_id = dm.id
+	        LEFT JOIN
+	    tbl_mb_register_users AS ru ON da.user_id = ru.id
+	where da.user_id = '".$user_id."' ";
+
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+
+		$booking_data = array();
+		foreach ($res_row as $key => $value) {
+			$booking_data[$value['appmt_status']][] = $value;
+		}
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $booking_data;
+	}
+	
+	return $final_result;
+
 }
 
 
