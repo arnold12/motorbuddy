@@ -562,3 +562,23 @@ function appointment_action( id, user_id, booking_status ){
     }
   }); 
 }
+
+function send_pickeup_otp(booking_id, user_id){
+  var pickeup_person = $("#pickeup_person").val();
+
+  if( pickeup_person == "" ){
+    alert("Please select pickup person name");
+    return false;
+  }
+
+  var action = "send_pickeup_otp";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { booking_id: booking_id, user_id: user_id, pickeup_person: pickeup_person, action: action },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  }); 
+}

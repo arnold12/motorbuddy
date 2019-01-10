@@ -33,7 +33,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
 }
 
-$select_dealer_appointment = "SELECT `id` , `dealer_id`, `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
+$select_dealer_appointment = "SELECT `id` , `dealer_id`, `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`, `pickup_otp_sent_count`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 ?>
 <!DOCTYPE html>
@@ -143,9 +143,47 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								  <td>
 								  <a href="appointment_detail.php?id=<?=$value['id']?>">View</a>
 								  <?php if( $value['appmt_status'] == 'verified') {?>
-									  &nbsp;|&nbsp;<a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'confirmed');">Confirm</a>
-									  	&nbsp;|&nbsp;
+									  &nbsp; || &nbsp;<a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'confirmed');">Confirm</a>
+									  	&nbsp; || &nbsp;
 									  <a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'rejected');">Reject</a>
+								  <?php }?>
+
+								  <?php if( $value['appmt_status'] == 'confirmed') {
+
+								  	$pickeup_persons = get_pickup_persons($value['dealer_id']);
+
+								  ?>
+								  		&nbsp; || &nbsp;
+								  		<?php
+								  			if( empty($pickeup_persons)){
+								  		?>
+
+								  			You dont have pickup persons, please contact to seraj lopese.
+
+								  		<?php } else {?>
+
+								  			<?php 
+								  				if( $value['pickup_otp_sent_count'] < 3 ){
+								  			?>
+								  			<select id="pickeup_person">
+								  				<option value="">Select Pickup Person</option>
+								  				<?php
+								  					foreach ($pickeup_persons as $pp_id => $pp_value) {
+								  						echo "<option value='".$pp_value['id']."'>".$pp_value['person_full_name']."</option>";
+								  					}
+								  				?>
+								  			</select>
+
+								  			<a href="#" onclick="send_pickeup_otp(<?=$value['id']?>, <?=$value['user_id']?>);">Send Pickup OTP</a>
+
+								  			&nbsp; || &nbsp;
+								  			<?php } ?>
+
+								  			
+
+								  			<a href="#" onclick="appointment_action(<?=$value['id']?>, <?=$value['user_id']?>, 'closed');">Closed</a>
+
+								  		<?php }?>
 								  <?php }?>
 								  </td>
 								  

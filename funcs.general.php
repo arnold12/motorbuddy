@@ -255,4 +255,14 @@ function getDealerDtls($dealer_id){
 
 }
 
+function get_pickup_persons($dealer_id){
+	$DBI = new Db();
+
+	$select = "SELECT id, person_full_name, mobile_no FROM tbl_mb_pickup_persons WHERE dealer_id = ".$dealer_id." AND is_active = 1";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	return $res_row;
+
+}
+
 ?>
