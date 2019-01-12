@@ -1436,8 +1436,8 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,da.pickup_drop,da.pickup_location,da.pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
-	    dm.dealer_code,dm.dealer_name,dm.dealer_name2 
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
+	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no 
 	FROM
 	    tbl_mb_dealer_appointment AS da
 	        LEFT JOIN
@@ -1458,13 +1458,13 @@ function bookingList(){
 		$final_result['result'] = $response;
 	} else {
 
-		$booking_data = array();
+		/*$booking_data = array();
 		foreach ($res_row as $key => $value) {
 			$booking_data[$value['appmt_status']][] = $value;
-		}
+		}*/
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
-		$final_result['result'] = $booking_data;
+		$final_result['result'] = $res_row;
 	}
 	
 	return $final_result;
