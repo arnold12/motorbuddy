@@ -399,6 +399,12 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
        $insert_user_details = "INSERT INTO `tbl_mb_user` (`username`,`password`,`role`, `created_by`, `created_on`) VALUES ('".$dealer_code."','".$dealer_pwd."','dealer', '".$_SESSION['id']."', now() )";
        $res_insert_user_details = $DBI->query($insert_user_details);
 
+       /* send dealer user name and pwd to dealer*/
+        $param['message']   = "Your Mottorbuddy Username is ".$dealer_code." and password is ".$dealer_pwd." Use this link for login ".SITE_URL;
+        $param['mobile']    = $mobile_no;
+        
+        sendOtpMobile($param);
+
 
         // Insert data for shop timing 
         $week_day_count = count($shopes_hours_arry);
