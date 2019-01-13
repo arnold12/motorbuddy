@@ -258,7 +258,7 @@ function appointment_action(){
 		$data['mobile'] 	= $user_row[0]['mobile'];
 		$data['message'] 	= "Your Booking Number ".$booking_row[0]['appmt_code']." is ".$booking_status." with ".$dealer_row[0]['dealer_name']." ".$dealer_row[0]['dealer_name2']." on date ".$booking_row[0]['appmt_date']." ".$booking_row[0]['appmt_time'];
 
-		//$resp = sendOtpMobile($data);
+		$resp = sendOtpMobile($data);
 	}
 
 	echo "Record Updated successfully";
@@ -292,12 +292,12 @@ function send_pickeup_otp(){
 	//send pickup otp to user
 	$data['mobile'] 	= $user_row[0]['mobile'];
 	$data['message'] 	= "Your Pickup OTP for mottorbuddy ". $pickup_otp." Pickup person ".$pp_row[0]['person_full_name']." confirm this OTP with you";
-	//$resp = sendOtpMobile($data);
+	$resp = sendOtpMobile($data);
 
 	//send pickup otp to pickup person
 	$data['mobile'] 	= $pp_row[0]['mobile_no'];
 	$data['message'] 	= "Your Pickup OTP for mottorbuddy ". $pickup_otp. "You need to confirm this OTP with user";
-	//$resp = sendOtpMobile($data);
+	$resp = sendOtpMobile($data);
 
 	echo "Pickup OTP send Successfully";
 
