@@ -1000,10 +1000,12 @@ function addbooking(){
 		$error[] = "Invalid dealer ID"; 
 
 	} else {
-		$service_location_arr = explode(',', $dealer_res_row[0]['service_location']);
-		if(!in_array($pickup_pincode, $service_location_arr)){
-			
-			$error[] = "Pickup and drop service not provided for your pincode";
+		if( $pickup_drop == 1 ){
+			$service_location_arr = explode(',', $dealer_res_row[0]['service_location']);
+			if(!in_array($pickup_pincode, $service_location_arr)){
+				
+				$error[] = "Pickup and drop service not provided for your pincode";
+			}
 		}
 	}
 
