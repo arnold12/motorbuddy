@@ -271,16 +271,16 @@ function validate_dealer_info() {
 
 // Delete dealer
 
-function delete_dealer_info(val) {
+function delete_dealer_info(val, status) {
   var action = "delete_dealer_info";
-  if (confirm("Are you sure want to delete this record")) {
+  if (confirm("Are you sure want to update this record")) {
     $.ajax({
       url: "ajax_function.php",
       type: "POST",
-      data: { id: val, action: action },
+      data: { id: val, status:status, action: action },
       success: function(result) {
-        $("#row_" + val + "").remove();
         alert(result);
+        location.reload();
       }
     });
   } else {

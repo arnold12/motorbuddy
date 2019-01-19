@@ -162,7 +162,7 @@ function delete_service_repair(){
 function delete_dealer_info(){
 	global $DBI;
 
-	$delete_at_row_first = "DELETE FROM tbl_mb_delaer_shop_timing WHERE dealer_id = '".$_POST['id']."' ";
+	/*$delete_at_row_first = "DELETE FROM tbl_mb_delaer_shop_timing WHERE dealer_id = '".$_POST['id']."' ";
 	$res_at_delete_first = $DBI->query($delete_at_row_first);
 
 	$delete_at_row_secand = "DELETE FROM tbl_mb_delaer_shop_service WHERE dealer_id = '".$_POST['id']."' ";
@@ -175,14 +175,14 @@ function delete_dealer_info(){
 	$res_at_delete_fourth = $DBI->query($delete_at_row_fourth);
 
 	$delete_at_row_fifth = "DELETE FROM tbl_mb_delaer_brand_service WHERE dealer_id = '".$_POST['id']."' ";
-	$res_at_delete_fifth = $DBI->query($delete_at_row_fifth);
+	$res_at_delete_fifth = $DBI->query($delete_at_row_fifth);*/
 
-	$delete_at_row = "UPDATE `tbl_mb_delaer_master` SET `status` = 'Inactive' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
+	$delete_at_row = "UPDATE `tbl_mb_delaer_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
 	
 	$res_at_delete = $DBI->query($delete_at_row);
 
 	if($res_at_delete){
-		echo "Record deleted successfully";exit;
+		echo "Record ".mysql_real_escape_string($_POST['status'])." successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}

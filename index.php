@@ -13,7 +13,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " AND `dealer_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `dealer_name` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `dealer_name2` LIKE '%".addslashes($_GET['global_serach'])."%' OR `address` LIKE '%".addslashes($_GET['global_serach'])."%' OR `landmark` LIKE '%".addslashes($_GET['global_serach'])."%' OR `city` LIKE '%".addslashes($_GET['global_serach'])."%' OR `state` LIKE '%".addslashes($_GET['global_serach'])."%' OR `pincode` LIKE '%".addslashes($_GET['global_serach'])."%' OR `mobile_no` LIKE '%".addslashes($_GET['global_serach'])."%' OR `telephone_no` LIKE '%".addslashes($_GET['global_serach'])."%'";
 }
 
-$select_dealer_info = "SELECT `id` , `dealer_code` , `dealer_name` , `dealer_name2`, `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `website` FROM `tbl_mb_delaer_master` WHERE `status` = 'Active' ".$select_condition." ";
+$select_dealer_info = "SELECT `id` , `dealer_code` , `dealer_name` , `dealer_name2`, `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `website`, `status` FROM `tbl_mb_delaer_master` ".$select_condition." ORDER BY status ASC, id desc";
 $result_dealer_info = $DBI->query($select_dealer_info);
 $rows_dealer_info = $DBI->get_result($select_dealer_info);
 
@@ -101,6 +101,7 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								  <th>Telephone Number</th>
 								  <th>Year of establishment</th>
 								  <th>Website</th>
+								  <th>Status</th>
 								  <th>Action</th>
 								</tr>
 								<?php
@@ -109,7 +110,13 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								?>
 								<tr id="row_<?=$value['id']?>">
 								  <td><?=$i?></td>
-								  <td><?=$value['dealer_code']?></td>
+								  <td>
+								  <?php if($value['status'] == "Inactive"){?>
+								  	<font color="red"><?=$value['dealer_code']?></font>
+								  <?php } else {?>
+								  	<?=$value['dealer_code']?>
+								  <?php }?>
+								  </td>
 								  <td><?=$value['dealer_name']?></td>
 								  <td><?=$value['dealer_name2']?></td>
 								  <td><?=$value['landmark']?></td>
@@ -120,7 +127,14 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								  <td><?=$value['telephone_no']?></td>
 								  <td><?=$value['establishment_year']?></td>
 								  <td><?=$value['website']?></td>
-								  <td><a href="add_dealer_info.php?id=<?=$value['id']?>">Edit</a>&nbsp;|&nbsp;<a href="#" onclick="delete_dealer_info(<?=$value['id']?>);">Delete</a></td>
+								  <td><?=$value['status']?></td>
+								  <td>
+								  <?php if($value['status'] == "Inactive"){?>
+								  <a href="#" onclick="delete_dealer_info(<?=$value['id']?>, 'Active');"><font color="red">Enable</font></a>
+								  <?php } else {?>
+								  <a href="add_dealer_info.php?id=<?=$value['id']?>">Edit</a>&nbsp;|&nbsp;<a href="#" onclick="delete_dealer_info(<?=$value['id']?>, 'Inactive');">Disable</a>
+								  <?php }?>
+								  </td>
 								</tr>
 								</tr>
 								<?php
