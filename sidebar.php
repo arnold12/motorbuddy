@@ -66,6 +66,11 @@
                 <i class="fa fa-th"></i> <span>Home Page Images</span>
               </a>
             </li>
+            <li>
+              <a href="reviews-ratings.php">
+                <i class="fa fa-th"></i> <span>Reviews & Ratings</span>
+              </a>
+            </li>
             <?php
               }
             if ($_SESSION['role'] == 'dealer' || $_SESSION['role'] == 'superadmin') {
@@ -81,11 +86,6 @@
             <li>
               <a href="change_password.php">
                 <i class="fa fa-th"></i> <span>Changed Password</span>
-              </a>
-            </li>
-            <li>
-              <a href="reviews-ratings.php">
-                <i class="fa fa-th"></i> <span>Reviews & Ratings</span>
               </a>
             </li>
           </ul>
