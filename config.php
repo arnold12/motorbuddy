@@ -62,4 +62,6 @@ $shopes_amenities_arry = array('Owner Lounge','Wi-Fi','Courtesy Shuttle','Rental
 
 $brand_arry = array('Maruti','Mahindra','Tata','Hyundai','Volkwagen','Skoda','Nissan','Renault','Fiat','Chevrolet','Ford','Ashok Leyland','Honda','Toyota','Isuzu','Mitsubishi','Volvo','BMW','Mercedes Benz','Audi','Jaguar','Land Rover','Mini','Rolls Royce');
 
+$pkg_type_arry = array(1=>'BASIC', 2=>'STANDARD', 3=>'COMPREHENSIVE');
+
 ?>

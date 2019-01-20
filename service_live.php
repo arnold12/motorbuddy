@@ -99,6 +99,10 @@ switch ($body_params['action']) {
         $result = bookingList();
 		break;
 
+	case 'sendBookingPkg':
+        $result = sendBookingPkg();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -1471,6 +1475,82 @@ function bookingList(){
 	
 	return $final_result;
 
+}
+
+function sendBookingPkg(){
+	GLOBAl $DBI, $body_params, $pkg_type_arry;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
+	$brand_id 		= mysql_real_escape_string(trim($body_params['brand_id']));
+	$model_id 		= mysql_real_escape_string(trim($body_params['model_id']));
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	$error = array();
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+
+	$select_brand_mapping = "SELECT pkg_group_name FROM tbl_mb_pkg_brand_mapping WHERE brand_model_id IN (".$brand_id.",".$model_id.") LIMIT 1";
+	$select_mapping_res = $DBI->query($select_brand_mapping);
+	$mapping_res_row = $DBI->get_result($select_brand_mapping);
+	$is_empty_mapping = $DBI->is_empty($select_brand_mapping);
+
+	if( $is_empty_mapping ){
+		$error[] = "No Service pakages found for selected brand and model. please contact to mottorbuddy team"; 
+	}
+
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
+	$select_pkg_res = $DBI->query($select_pkg_details);
+	$pkg_res_row = $DBI->get_result($select_pkg_details);
+
+	$pkg_details_array = array();
+	foreach ($pkg_res_row as $key => $value) {
+		
+		$value['pkg_type_id'] = $pkg_type_arry[$value['pkg_type_id']];
+
+		$select_pkg_service_details = "SELECT id, service_name, service_action FROM tbl_mb_pkg_service_details WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND pkg_master_id = '".$value['id']."' AND status = 'Active' ORDER BY id ASC";
+		$select_pkg_service_res = $DBI->query($select_pkg_service_details);
+		$pkg_service_res_row = $DBI->get_result($select_pkg_service_details);
+		$pkg_details_array[$key]['pkg_details'] = $value;
+		$pkg_details_array[$key]['pkg_services'] = $pkg_service_res_row;
+
+	}
+
+	if( !empty($pkg_details_array) ){
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $pkg_details_array;
+	} else {
+
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Package Details Found.";
+		$final_result['result'] = $response;
+
+	}
+
+	return $final_result;
+	
 }
 
 
