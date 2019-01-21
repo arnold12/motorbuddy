@@ -11,6 +11,8 @@ $DBI->query("SET NAMES 'utf8'");
 $dealer_name = '';
 $user_name = '';
 $brand_name = '';
+$user_mobile = '';
+$user_address = '';
 
 if(isset($_GET['id']) && $_GET['id'] != ""){
 
@@ -26,11 +28,13 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 	}
 
 	if(!empty($rows_appointment[0]['user_id'])){
-		$select_user = "SELECT `username`
-	    FROM `tbl_mb_user`
+		$select_user = "SELECT `fname`, `lname`, `mobile`, `address`
+	    FROM `tbl_mb_register_users`
 	    WHERE (`id` = '".$rows_appointment[0]['user_id']."')";
 	    $rows_user = $DBI->get_result($select_user);
-	    $user_name = $rows_user[0]['username'];
+	    $user_name = $rows_user[0]['fname'] ." ". $rows_user[0]['lname'];
+	    $user_mobile = $rows_user[0]['mobile'];
+	    $user_address = $rows_user[0]['address'];
 	}
 
 	if(!empty($rows_appointment[0]['brand_id'])){
@@ -113,6 +117,18 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 			                    	</div>
 			                  	</li>
 			                  	<li>
+			                    	<i class="fa fa-mobile bg-red"></i>
+									<div class="timeline-item">
+			                      		<h3 class="timeline-header no-border"><b>User Mobile:</b> <?= $user_mobile?></h3>
+			                    	</div>
+			                  	</li>
+			                  	<li>
+			                    	<i class="fa fa-list-alt bg-green"></i>
+									<div class="timeline-item">
+			                      		<h3 class="timeline-header no-border"><b>User Address:</b> <?= $user_address?></h3>
+			                    	</div>
+			                  	</li>
+			                  	<li>
 			                    	<i class="fa fa-btc bg-blue"></i>
 									<div class="timeline-item">
 			                      		<h3 class="timeline-header no-border"><b>Brand Name:</b> <?= $brand_name?></h3>
@@ -184,10 +200,6 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 			                      		<h3 class="timeline-header no-border"><b>Pickup Location:</b> <?= $rows_appointment[0]['pickup_location']?></h3>
 			                    	</div>
 			                  	</li>	
-			                </ul>
-						</div>
-						<div class="col-xs-6">
-							<ul class="timeline timeline-inverse">
 								<li>
 			                    	<i class="fa fa-map-pin bg-blue"></i>
 									<div class="timeline-item">
