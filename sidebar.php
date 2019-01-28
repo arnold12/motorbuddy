@@ -88,6 +88,11 @@
                 <i class="fa fa-th"></i> <span>Changed Password</span>
               </a>
             </li>
+            <li>
+              <a href="add_package.php">
+                <i class="fa fa-th"></i> <span>Package</span>
+              </a>
+            </li>
           </ul>
         </section>
         <!-- /.sidebar -->
