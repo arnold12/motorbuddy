@@ -59,6 +59,10 @@ switch ($action){
     case "send_pickeup_otp":
         send_pickeup_otp();
         break;    
+
+    case "delete_pkg":
+        delete_pkg();
+        break;    
 }
     
 function delete_brand_model(){
@@ -303,6 +307,26 @@ function send_pickeup_otp(){
 
 	exit;
 	
+}
+
+function delete_pkg(){
+
+	global $DBI;
+
+	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = 'Inactive', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
+
+	$res_pkg_delete = $DBI->query($delete_pkg);
+
+	$delete_pkg_services = "UPDATE `tbl_mb_pkg_service_details` SET `status` = 'Inactive' WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete
+
+	$res_pkg_services_delete = $DBI->query($delete_pkg_services);
+
+	if($res_pkg_services_delete){
+		echo "Record deleted successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+
 }
 
 ?>

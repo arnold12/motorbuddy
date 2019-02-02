@@ -541,6 +541,19 @@ function delete_dealer_img(id, col_name) {
   });
 }
 
+function delete_pkg(pkg_group_name) {
+  var action = "delete_pkg";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { pkg_group_name: pkg_group_name, action: action },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  });
+}
+
 function read_feedback(id){
   var action = "read_feedback";
   $.ajax({
