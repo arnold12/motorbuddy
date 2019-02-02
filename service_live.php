@@ -1458,7 +1458,7 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,TIME_FORMAT(da.appmt_time, '%h:%i %p') as appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
 	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no 
 	FROM
 	    tbl_mb_dealer_appointment AS da
