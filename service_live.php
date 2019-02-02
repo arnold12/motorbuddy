@@ -980,9 +980,11 @@ function addbooking(){
 	$fuel_type				= 		mysql_real_escape_string(trim($body_params['fuel_type']));
 	$appmt_date				= 		mysql_real_escape_string(trim($body_params['appmt_date']));
 	$appmt_time				= 		mysql_real_escape_string(trim($body_params['appmt_time']));
-	$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
-	$appmt_service_type		= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
-	$appmt_repair_type		= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	//$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
+	//$appmt_service_type	= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
+	//$appmt_repair_type	= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	$appmt_service_pkg		= 		mysql_real_escape_string(trim($body_params['appmt_service_pkg']));
+	$appmt_repair_concern	= 		$body_params['appmt_repair_concern'];
 	$pickup_drop			= 		mysql_real_escape_string(trim($body_params['pickup_drop']));
 	$pickup_location		= 		mysql_real_escape_string(trim($body_params['pickup_location']));
 	$pickup_pincode			= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
@@ -1064,9 +1066,21 @@ function addbooking(){
 
 	}
 
-	if ( $appmt_category_type == "" ) {
+	/*if ( $appmt_category_type == "" ) {
 
 		$error[] = "Invalid Category Type"; 
+
+	}*/
+
+	if ( $appmt_service_pkg == "" ) {
+
+		$error[] = "Invalid Service Package"; 
+
+	}
+
+	if ( !is_array($appmt_repair_concern) ) {
+
+		$error[] = "Invalid Repair Concern"; 
 
 	}
 
@@ -1117,9 +1131,11 @@ function addbooking(){
 	$insert['fuel_type']				=		$fuel_type;  
 	$insert['appmt_date']				=		$appmt_date;  
 	$insert['appmt_time']				=		$appmt_time;  
-	$insert['appmt_category_type']		=		$appmt_category_type;  
+	/*$insert['appmt_category_type']		=		$appmt_category_type;  
 	$insert['appmt_service_type']		=		$appmt_service_type;  
-	$insert['appmt_repair_type']		=		$appmt_repair_type;  
+	$insert['appmt_repair_type']		=		$appmt_repair_type;  */
+	$insert['appmt_service_pkg']		=		$appmt_service_pkg; 
+	$insert['appmt_repair_concern']		=		implode(",", $appmt_repair_concern);
 	$insert['pickup_drop']				=		$pickup_drop;
 	$insert['pickup_location']			=		$pickup_location;
 	$insert['pickup_pincode']			=		$pickup_pincode;
