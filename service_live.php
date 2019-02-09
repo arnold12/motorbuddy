@@ -1535,7 +1535,7 @@ function sendBookingPkg(){
 		return $final_result;
 	}
 
-	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
+	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip, IFNULL(includes, '') as includes FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
 	$select_pkg_res = $DBI->query($select_pkg_details);
 	$pkg_res_row = $DBI->get_result($select_pkg_details);
 
