@@ -65,8 +65,9 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $pkg_price = mysql_real_escape_string($_POST['pkg_price'][$key]);
             $pkg_description = mysql_real_escape_string($_POST['pkg_description'][$key]);
             $mb_tip = mysql_real_escape_string($_POST['mb_tip'][$key]);
+            $includes = mysql_real_escape_string($_POST['pkg_includes'][$key]);
 
-            $update = "UPDATE `tbl_mb_pkg_master` SET `pkg_price` = '".$pkg_price."', `pkg_description` = '".$pkg_description."', `mb_tip` = '".$mb_tip."', `updated_by` = '".$_SESSION['id']."', `updated_on` = now() WHERE `pkg_group_name` = '".$pkg_group_code."' AND  `pkg_type_id` = '".$pkg_type_id."'";
+            $update = "UPDATE `tbl_mb_pkg_master` SET `pkg_price` = '".$pkg_price."', `pkg_description` = '".$pkg_description."', `mb_tip` = '".$mb_tip."', `includes` = '".$includes."', `updated_by` = '".$_SESSION['id']."', `updated_on` = now() WHERE `pkg_group_name` = '".$pkg_group_code."' AND  `pkg_type_id` = '".$pkg_type_id."'";
             $res_update = $DBI->query($update);
             
 
@@ -103,8 +104,9 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $pkg_price = mysql_real_escape_string($_POST['pkg_price'][$key]);
             $pkg_description = mysql_real_escape_string($_POST['pkg_description'][$key]);
             $mb_tip = mysql_real_escape_string($_POST['mb_tip'][$key]);
+            $includes = mysql_real_escape_string($_POST['pkg_includes'][$key]);
 
-            $insert = "INSERT INTO `tbl_mb_pkg_master` (`pkg_group_name`, `pkg_type_id`, `pkg_price`, `pkg_description`, `mb_tip`, `status`, `created_by`, `created_on`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".$pkg_price."', '".$pkg_description."', '".$mb_tip."', 'Active', '".$_SESSION['id']."', now())";
+            $insert = "INSERT INTO `tbl_mb_pkg_master` (`pkg_group_name`, `pkg_type_id`, `pkg_price`, `pkg_description`, `mb_tip`, `includes`, `status`, `created_by`, `created_on`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".$pkg_price."', '".$pkg_description."', '".$mb_tip."', '".$includes."', 'Active', '".$_SESSION['id']."', now())";
             $res_insert = $DBI->query($insert);
 
             $pkg_master_id = $DBI->get_insert_id();
@@ -260,6 +262,13 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                         <label id="err_msg_mb_tip_<?=$pkg_type_id?>" for="mb_tip_<?=$pkg_type_id?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 control-label">Includes</label>
+                                    <div class="col-sm-4 col-md-4">
+                                         <textarea rows="4" cols="50" class="form-control input-sm" id="pkg_includes_<?=$pkg_type_id?>" name="pkg_includes[]"><?php if( isset($result_pkg_master_new[$pkg_type_id]['includes']) ) echo $result_pkg_master_new[$pkg_type_id]['includes']; ?></textarea> 
+                                        <label id="err_msg_pkg_includes_<?=$pkg_type_id?>" for="pkg_includes_<?=$pkg_type_id?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                    </div>
+                                </div>
                                 <?php
                                     $pkg_master_id = "";
                                     if( isset($result_pkg_master_new[$pkg_type_id]['id']) ){
@@ -332,7 +341,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                                 echo "&nbsp;=>&nbsp;";    
                                                 foreach ($result_brand_master_arry[$brand_id] as $model_id => $model_name) {
                                                     $checked = '';
-                                                    if(array_key_exists($model_id, $result_pkg_brand_mapping_new)){
+                                                    if( isset($result_pkg_brand_mapping_new) && array_key_exists($model_id, $result_pkg_brand_mapping_new)){
                                                         $checked = 'checked';
                                                     }
                                                 ?>
