@@ -55,7 +55,7 @@ if(isset($_GET['pkg_group_name']) && !empty($_GET['pkg_group_name']) ){
 }
 
 if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
-
+    
     if($_POST['mode'] == 'edit'){ // Edit mode
 
         $pkg_group_code = $_POST['pkg_group_name'];

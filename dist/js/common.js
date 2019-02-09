@@ -636,5 +636,55 @@ function send_pickeup_otp(booking_id, user_id){
 }
 
 function validate_pkg_group(){
+
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  for( var i = 1; i<=3; i++){
+
+    if ($.trim($("#pkg_price_"+i).val()) == "" || isNaN($.trim($("#pkg_price_"+i).val()))) {
+      $("#err_msg_pkg_price_"+i).show();
+      $("#err_msg_pkg_price_"+i).html("Invalid Package Price.");
+      $("#pkg_price_"+i).focus();
+      return false;
+    }
+
+    if ($.trim($("#pkg_description_"+i).val()) == "") {
+      $("#err_msg_pkg_description_"+i).show();
+      $("#err_msg_pkg_description_"+i).html("Please Enter Package description.");
+      $("#pkg_description_"+i).focus();
+      return false;
+    }
+
+    if ($.trim($("#mb_tip_"+i).val()) == "") {
+      $("#err_msg_mb_tip_"+i).show();
+      $("#err_msg_mb_tip_"+i).html("Please Enter Motorbuddy Tip.");
+      $("#mb_tip_"+i).focus();
+      return false;
+    }
+
+    for(var j=1; j<=5; j++){
+
+      if ($.trim($("#service_name_"+i+"_"+j).val()) == "") {
+        $("#err_msg_service_name_"+i+"_"+j).show();
+        $("#err_msg_service_name_"+i+"_"+j).html("Please Enter Service Name.");
+        $("#service_name_"+i+"_"+j).focus();
+        return false;
+      }
+
+      if ($.trim($("#service_action_"+i+"_"+j).val()) == "") {
+        $("#err_msg_service_action_"+i+"_"+j).show();
+        $("#err_msg_service_action_"+i+"_"+j).html("Please Select Service Action.");
+        $("#service_action_"+i+"_"+j).focus();
+        return false;
+      }
+
+    }
+
+  }
+  
+
+  $(".succes_msg").html("Please Wait...");
   return true;
+
 }
