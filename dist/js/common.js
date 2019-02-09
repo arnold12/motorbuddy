@@ -634,3 +634,7 @@ function send_pickeup_otp(booking_id, user_id){
     }
   }); 
 }
+
+function validate_pkg_group(){
+  return true;
+}
