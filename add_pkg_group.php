@@ -261,6 +261,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                     </div>
                                 </div>
                                 <?php
+                                    $pkg_master_id = "";
                                     if( isset($result_pkg_master_new[$pkg_type_id]['id']) ){
                                         $pkg_master_id = $result_pkg_master_new[$pkg_type_id]['id'];
                                     }
@@ -273,7 +274,9 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                         <label id="err_msg_service_name_<?=$pkg_type_id?>_<?=$pp?>" for="service_name_<?=$pkg_type_id?>_<?=$pp?>" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
 
+                                    
                                     <input type="hidden" name="service_id_<?=$pkg_type_id?>[]" value="<?php if(isset($result_pkg_service_details_new[$pkg_master_id][$pp-1]['id'])) echo $result_pkg_service_details_new[$pkg_master_id][$pp-1]['id']; ?>">
+
 
                                     <div class="col-sm-3 col-md-2">
                                         <select class="form-control input-sm" id="service_action_<?=$pkg_type_id?>_<?=$pp?>" name="service_action_<?=$pkg_type_id?>[]">
