@@ -191,6 +191,54 @@ function generateBookingCode( $attempt = 1 ){
 	
 }
 
+function generatePkgGroupCode( $attempt = 1 ){
+
+	$DBI = new Db();
+
+	$arr_pkg_codes = array();
+	for ($i=0; $i < 10; $i++) { 
+
+		$temp_pkg_code = 'PKG_MB_'.rand(1, 99999999);
+		
+		if(strlen($temp_pkg_code)<15){
+			$temp_pkg_code = str_pad($temp_pkg_code, 10, "0", STR_PAD_RIGHT);
+		}
+
+		$arr_pkg_codes[] = $temp_pkg_code;
+	}
+
+	$pkg_code_str = "'".implode("','", $arr_pkg_codes)."'";
+	
+	$select = "SELECT distinct pkg_group_name FROM tbl_mb_pkg_master WHERE pkg_group_name IN (".$pkg_code_str.") ";
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+
+	if(count($res_row)>0){
+        $arr_pkg_codes_2 = array();
+        foreach($res_row as $row){
+
+            $arr_pkg_codes_2[] = $row['pkg_group_name'];
+        }
+        
+        $arr_pkg_codes = array_diff($arr_pkg_codes, $arr_pkg_codes_2);
+    }
+
+    if(count($arr_pkg_codes))
+    {
+        return array_pop($arr_pkg_codes);
+    } else {
+
+    	$attempt++;
+        if($attempt>3)
+        {
+            return false;
+        }
+        generatePkgGroupCode($attempt);
+
+    }
+	
+}
+
 function date_wording( $date ){
 	$output_date = '-';
     if(!empty($date)){

@@ -980,9 +980,11 @@ function addbooking(){
 	$fuel_type				= 		mysql_real_escape_string(trim($body_params['fuel_type']));
 	$appmt_date				= 		mysql_real_escape_string(trim($body_params['appmt_date']));
 	$appmt_time				= 		mysql_real_escape_string(trim($body_params['appmt_time']));
-	$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
-	$appmt_service_type		= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
-	$appmt_repair_type		= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	//$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
+	//$appmt_service_type	= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
+	//$appmt_repair_type	= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	$appmt_service_pkg		= 		mysql_real_escape_string(trim($body_params['appmt_service_pkg']));
+	$appmt_repair_concern	= 		$body_params['appmt_repair_concern'];
 	$pickup_drop			= 		mysql_real_escape_string(trim($body_params['pickup_drop']));
 	$pickup_location		= 		mysql_real_escape_string(trim($body_params['pickup_location']));
 	$pickup_pincode			= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
@@ -1064,9 +1066,21 @@ function addbooking(){
 
 	}
 
-	if ( $appmt_category_type == "" ) {
+	/*if ( $appmt_category_type == "" ) {
 
 		$error[] = "Invalid Category Type"; 
+
+	}*/
+
+	if ( $appmt_service_pkg == "" ) {
+
+		$error[] = "Invalid Service Package"; 
+
+	}
+
+	if ( !is_array($appmt_repair_concern) ) {
+
+		$error[] = "Invalid Repair Concern"; 
 
 	}
 
@@ -1117,9 +1131,11 @@ function addbooking(){
 	$insert['fuel_type']				=		$fuel_type;  
 	$insert['appmt_date']				=		$appmt_date;  
 	$insert['appmt_time']				=		$appmt_time;  
-	$insert['appmt_category_type']		=		$appmt_category_type;  
+	/*$insert['appmt_category_type']		=		$appmt_category_type;  
 	$insert['appmt_service_type']		=		$appmt_service_type;  
-	$insert['appmt_repair_type']		=		$appmt_repair_type;  
+	$insert['appmt_repair_type']		=		$appmt_repair_type;  */
+	$insert['appmt_service_pkg']		=		$appmt_service_pkg; 
+	$insert['appmt_repair_concern']		=		implode(",", $appmt_repair_concern);
 	$insert['pickup_drop']				=		$pickup_drop;
 	$insert['pickup_location']			=		$pickup_location;
 	$insert['pickup_pincode']			=		$pickup_pincode;
@@ -1442,7 +1458,7 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,TIME_FORMAT(da.appmt_time, '%h:%i %p') as appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
 	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no 
 	FROM
 	    tbl_mb_dealer_appointment AS da
@@ -1519,7 +1535,7 @@ function sendBookingPkg(){
 		return $final_result;
 	}
 
-	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
+	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip, IFNULL(includes, '') as includes FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
 	$select_pkg_res = $DBI->query($select_pkg_details);
 	$pkg_res_row = $DBI->get_result($select_pkg_details);
 
