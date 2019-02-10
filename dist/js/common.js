@@ -541,12 +541,12 @@ function delete_dealer_img(id, col_name) {
   });
 }
 
-function delete_pkg(pkg_group_name) {
+function delete_pkg(pkg_group_name, status) {
   var action = "delete_pkg";
   $.ajax({
     url: "ajax_function.php",
     type: "POST",
-    data: { pkg_group_name: pkg_group_name, action: action },
+    data: { pkg_group_name: pkg_group_name, action: action, status: status },
     success: function(result) {
       alert(result);
       location.reload();

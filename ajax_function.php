@@ -313,7 +313,7 @@ function delete_pkg(){
 
 	global $DBI;
 
-	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = 'Inactive', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
+	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
 
 	$res_pkg_delete = $DBI->query($delete_pkg);
 
@@ -322,7 +322,7 @@ function delete_pkg(){
 	$res_pkg_services_delete = $DBI->query($delete_pkg_services);
 
 	if($res_pkg_services_delete){
-		echo "Record deleted successfully";exit;
+		echo "Record updated successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}

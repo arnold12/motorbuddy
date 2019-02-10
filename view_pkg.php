@@ -14,7 +14,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " AND `pkg_group_name` LIKE '%".addslashes($_GET['global_serach'])."%' ";
 }
 
-$select_pkges = "SELECT `id` , `pkg_group_name` , `pkg_type_id` , `pkg_price`  FROM `tbl_mb_pkg_master` WHERE `status` = 'Active' ".$select_condition." ";
+$select_pkges = "SELECT `id` , `pkg_group_name` , `pkg_type_id` , `pkg_price`, `status`  FROM `tbl_mb_pkg_master` WHERE 1 ".$select_condition." ";
 $result_pkges = $DBI->query($select_pkges);
 $rows_pkges = $DBI->get_result($select_pkges);
 
@@ -134,7 +134,14 @@ foreach ($rows_pkges as $key => $value) {
 								  		?>
 								  	</table>
 								  </td>
-								  <td style="text-align: center;vertical-align: middle;"><a href="add_pkg_group.php?pkg_group_name=<?=$key?>">Edit</a>&nbsp;|&nbsp;<a href="#" onclick="delete_pkg('<?=$key?>');">Delete</a></td>
+								  <td style="text-align: center;vertical-align: middle;">
+								  	  <?php if($value[0]['status'] == 'Active') {?>
+									  <a href="add_pkg_group.php?pkg_group_name=<?=$key?>">Edit</a>&nbsp;|&nbsp;
+									  <a href="#" onclick="delete_pkg('<?=$key?>','Inactive');">Disable</a>
+									  <?php } else {?>
+									  <a style="color: red" href="#" onclick="delete_pkg('<?=$key?>','Active');">Enable</a>
+									  <?php }?>
+								  </td>
 								</tr>
 								</tr>
 								<?php
