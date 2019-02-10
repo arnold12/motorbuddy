@@ -426,13 +426,13 @@ function delete_service_repair(val) {
 }
 
 
-function delete_brand_model(val) {
+function delete_brand_model(val, status) {
   var action = "delete_brand_model";
   if (confirm("Are you sure want to delete this record")) {
     $.ajax({
       url: "ajax_function.php",
       type: "POST",
-      data: { id: val, action: action },
+      data: { id: val, action: action , status: status },
       success: function(result) {
         location.reload();
         alert(result);

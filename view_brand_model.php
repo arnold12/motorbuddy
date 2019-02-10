@@ -14,17 +14,16 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " AND `brand_model_name` LIKE '%".addslashes($_GET['global_serach'])."%' ";
 }
 
-$select_brand_model = "SELECT `id` , `brand_model_name`, `brand_id` FROM `tbl_mb_brand_model_master` WHERE `is_active` = 'Y' ".$select_condition." ";
+$select_brand_model = "SELECT `id` , `brand_model_name`, `brand_id`, `is_active` FROM `tbl_mb_brand_model_master` WHERE 1 ".$select_condition." ";
 $result_brand_model = $DBI->query($select_brand_model);
 $rows_brand_model = $DBI->get_result($select_brand_model);
 
 $result_brand_master_arry = [];
 if(!empty($rows_brand_model)){
     foreach ($rows_brand_model as $key => $value) {
-        $result_brand_master_arry[$value['brand_id']][$value['id']] =  $value['brand_model_name'];
+        $result_brand_master_arry[$value['brand_id']][$value['id']] =  $value;
     }
 }
-
  
 ?>
 
@@ -108,22 +107,33 @@ if(!empty($rows_brand_model)){
 								$i = 1;
 								
 								foreach($result_brand_master_arry[0] as $key => $value){
+									$color = "";
+									if($value['is_active'] == 'N'){
+										$color = "red";
+									}
 								?>
 								<tr id="row_<?=$key?>">
 								  <td><?=$i?></td>
-								  <td><?=$value?></td>
+								  <td><?=$value['brand_model_name']?></td>
 								  <td>
 								  	<?php
 								  		if(array_key_exists($key, $result_brand_master_arry)){
 								  			foreach ($result_brand_master_arry[$key] as $model_key => $model_name) {
 								  				
-								  				echo $model_name." || ";
+								  				echo $model_name['brand_model_name']." || ";
 								  			} 
 								  		}
 								  			
 								  	?>
 								  </td>
-								  <td><a href="add_brand_model.php?id=<?=$key?>">Edit</a>&nbsp;|&nbsp;<a href="#" onclick="delete_brand_model(<?=$key?>);">Delete</a></td>
+								  <td>
+								  <?php if($value['is_active'] == 'N'){ ?>
+								  <a style="color: red" href="#" onclick="delete_brand_model(<?=$key?>, 'Y');">Enable</a>
+								  <?php } else {?>
+								  <a href="add_brand_model.php?id=<?=$key?>">Edit</a>&nbsp;|&nbsp;
+								  <a href="#" onclick="delete_brand_model(<?=$key?>, 'N');">Disable</a>
+								  <?php }?>
+								  </td>
 								</tr>
 								</tr>
 								<?php

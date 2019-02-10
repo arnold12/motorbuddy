@@ -68,12 +68,12 @@ switch ($action){
 function delete_brand_model(){
 	global $DBI;
 
-	$delete_at_row = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' OR brand_id = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
+	$delete_at_row = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = '".mysql_real_escape_string($_POST['status'])."' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' OR brand_id = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
 
 	$res_at_delete = $DBI->query($delete_at_row);
 
 	if($res_at_delete){
-		echo "Record deleted successfully";exit;
+		echo "Record Updated successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}
