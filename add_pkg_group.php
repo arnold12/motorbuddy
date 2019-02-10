@@ -209,7 +209,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                         <!--<small>Preview</small>-->
                     </h1>
                 </section>
-
+                <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="add_pkg_group.php">Add New Package Group</a></div><br>
                 <!-- Main content -->
                 <section class="content">
 
@@ -313,6 +313,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                                     $service_status = $result_pkg_service_details_new[$pkg_master_id][$pp-1]['status'];  
                                                 } 
                                             ?>
+                                            <option value="">Select Status</option>
                                             <option value="Active" <?php if($service_status == 'Active') echo 'selected'?>>Active</option>
                                             <option value="Inactive" <?php if($service_status == 'Inactive') echo 'selected'?>>Inactive</option>
                                         </select>

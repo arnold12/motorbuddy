@@ -663,7 +663,7 @@ function validate_pkg_group(){
       return false;
     }
 
-    for(var j=1; j<=5; j++){
+    /*for(var j=1; j<=5; j++){
 
       if ($.trim($("#service_name_"+i+"_"+j).val()) == "") {
         $("#err_msg_service_name_"+i+"_"+j).show();
@@ -679,7 +679,7 @@ function validate_pkg_group(){
         return false;
       }
 
-    }
+    }*/
 
   }
   
