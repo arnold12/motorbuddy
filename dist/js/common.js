@@ -426,13 +426,13 @@ function delete_service_repair(val) {
 }
 
 
-function delete_brand_model(val) {
+function delete_brand_model(val, status) {
   var action = "delete_brand_model";
   if (confirm("Are you sure want to delete this record")) {
     $.ajax({
       url: "ajax_function.php",
       type: "POST",
-      data: { id: val, action: action },
+      data: { id: val, action: action , status: status },
       success: function(result) {
         location.reload();
         alert(result);
@@ -541,12 +541,12 @@ function delete_dealer_img(id, col_name) {
   });
 }
 
-function delete_pkg(pkg_group_name) {
+function delete_pkg(pkg_group_name, status) {
   var action = "delete_pkg";
   $.ajax({
     url: "ajax_function.php",
     type: "POST",
-    data: { pkg_group_name: pkg_group_name, action: action },
+    data: { pkg_group_name: pkg_group_name, action: action, status: status },
     success: function(result) {
       alert(result);
       location.reload();
@@ -663,7 +663,7 @@ function validate_pkg_group(){
       return false;
     }
 
-    for(var j=1; j<=5; j++){
+    /*for(var j=1; j<=5; j++){
 
       if ($.trim($("#service_name_"+i+"_"+j).val()) == "") {
         $("#err_msg_service_name_"+i+"_"+j).show();
@@ -679,7 +679,7 @@ function validate_pkg_group(){
         return false;
       }
 
-    }
+    }*/
 
   }
   
