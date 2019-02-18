@@ -102,6 +102,10 @@ switch ($body_params['action']) {
 	case 'sendBookingPkg':
         $result = sendBookingPkg();
 		break;
+		
+	case 'sendRecommedationPDF':
+        $result = sendRecommedationPDF();
+		break;
 
     default:
         $result = defaultAction("Invalid Action");
@@ -1071,18 +1075,20 @@ function addbooking(){
 		$error[] = "Invalid Category Type"; 
 
 	}*/
+    
+    if( $pickup_drop == 1 ){
+    	if ( $appmt_service_pkg == "" || !is_array($appmt_repair_concern) ) {
+    
+    		$error[] = "Please select either service package or repair concern."; 
+    
+    	}
+    }
 
-	if ( $appmt_service_pkg == "" ) {
-
-		$error[] = "Invalid Service Package"; 
-
-	}
-
-	if ( !is_array($appmt_repair_concern) ) {
+	/*if ( !is_array($appmt_repair_concern) ) {
 
 		$error[] = "Invalid Repair Concern"; 
 
-	}
+	}*/
 
 	if ( $pickup_drop == "" ) {
 
@@ -1458,7 +1464,7 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,TIME_FORMAT(da.appmt_time, '%h:%i %p') as appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
 	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no 
 	FROM
 	    tbl_mb_dealer_appointment AS da
@@ -1567,6 +1573,63 @@ function sendBookingPkg(){
 
 	return $final_result;
 	
+}
+
+function sendRecommedationPDF(){
+    
+    GLOBAl $DBI, $body_params;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
+	$model_id       = mysql_real_escape_string(trim($body_params['model_id']));
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	$error = array();
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+	
+	if( $model_id == "" ){
+	    $error[] = "Invalid Model ID";
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	$select = "SELECT id, file_url FROM tbl_mb_recomendation_pdf WHERE model_id = '".$model_id."' AND status = 'Active' ";
+
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+		
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $res_row;
+	}
+	
+	return $final_result;
 }
 
 

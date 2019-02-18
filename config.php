@@ -31,7 +31,7 @@ if( $_SERVER['HTTP_HOST'] == "dev.motorbuddy.com" ){
 } else {
 	define("ROOT_DIR",'/motorbuddy');
 
-	define("SITE_URL",'http://www.vasaibirds.com/motorbuddy');
+	define("SITE_URL",'https://www.vasaibirds.com/motorbuddy');
 
 	define("DB_HOST",'localhost');
 
