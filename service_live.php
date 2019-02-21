@@ -1558,9 +1558,22 @@ function sendBookingPkg(){
 
 	}
 
+	$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+	on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";
+
+	$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
+	$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
+
+
 	if( !empty($pkg_details_array) ){
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
+		if( empty($recommedation_pdf_res_row)){
+			$final_result['recommedation_pdf'] = '';
+		} else {
+			$final_result['recommedation_pdf'] = $recommedation_pdf_res_row[0];	
+		}
+		
 		$final_result['result'] = $pkg_details_array;
 	} else {
 
