@@ -1476,7 +1476,6 @@ function bookingList(){
 
 	$select_res = $DBI->query($select);
 	$res_row = $DBI->get_result($select);
-	
 	$is_empty = $DBI->is_empty($select);
 		
 	if($is_empty){
@@ -1490,9 +1489,24 @@ function bookingList(){
 		foreach ($res_row as $key => $value) {
 			$booking_data[$value['appmt_status']][] = $value;
 		}*/
+
+		$temp_res_row = array();
+		foreach ($res_row as $key => $value) {
+			
+			/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+			on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";*/
+			$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+			on m.recomedation_pdf_id = p.id LIMIT 1 ";
+
+			$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
+			$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
+			$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
+			$temp_res_row[] = $value;
+		}
+	
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
-		$final_result['result'] = $res_row;
+		$final_result['result'] = $temp_res_row;
 	}
 	
 	return $final_result;
@@ -1558,8 +1572,10 @@ function sendBookingPkg(){
 
 	}
 
+	/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+	on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";*/
 	$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
-	on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";
+	on m.recomedation_pdf_id = p.id LIMIT 1 ";
 
 	$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
 	$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
