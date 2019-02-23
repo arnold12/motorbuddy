@@ -63,6 +63,10 @@ switch ($action){
     case "delete_pkg":
         delete_pkg();
         break;    
+
+    case "delete_recom_pdf":
+        delete_recom_pdf();
+        break;    
 }
     
 function delete_brand_model(){
@@ -322,6 +326,23 @@ function delete_pkg(){
 	$res_pkg_services_delete = $DBI->query($delete_pkg_services);
 
 	if($res_pkg_services_delete){
+		echo "Record updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+
+}
+
+function delete_recom_pdf(){
+
+	global $DBI;
+
+	$delete_recom_pdf = "UPDATE `tbl_mb_recomendation_pdf` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete;
+
+	$res_recom_pdf = $DBI->query($delete_recom_pdf);
+	
+
+	if($res_recom_pdf){
 		echo "Record updated successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;

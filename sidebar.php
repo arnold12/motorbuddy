@@ -76,6 +76,11 @@
                 <i class="fa fa-th"></i> <span>Package Master</span>
               </a>
             </li>
+            <li>
+              <a href="view_recommedation_pdf.php">
+                <i class="fa fa-th"></i> <span>Recommedation PDF</span>
+              </a>
+            </li>
             <?php
               }
             if ($_SESSION['role'] == 'dealer' || $_SESSION['role'] == 'superadmin') {

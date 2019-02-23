@@ -554,6 +554,19 @@ function delete_pkg(pkg_group_name, status) {
   });
 }
 
+function delete_recom_pdf(id, status) {
+  var action = "delete_recom_pdf";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, action: action, status: status },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  });
+}
+
 function read_feedback(id){
   var action = "read_feedback";
   $.ajax({
@@ -687,4 +700,29 @@ function validate_pkg_group(){
   $(".succes_msg").html("Please Wait...");
   return true;
 
+}
+
+function validate_recom_pdf(){
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+  
+  if ( $("#mode").val() == 'add' && $.trim($("#recom_pdf").val()) == "") {
+    $("#err_msg_recom_pdf").show();
+    $("#err_msg_recom_pdf").html("Select PDF.");
+    $("#recom_pdf").focus();
+    return false;
+  }
+
+  if ($.trim($("#recom_pdf").val()) != "") {
+    var ext = $('#recom_pdf').val().split('.').pop().toLowerCase();
+    if( ext != 'pdf' ) {
+      $("#err_msg_recom_pdf").show();
+      $("#err_msg_recom_pdf").html("Invalid file type");
+      $("#recom_pdf").focus();
+      return false;
+    }
+  } 
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
 }
