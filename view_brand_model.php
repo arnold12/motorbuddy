@@ -21,9 +21,13 @@ $rows_brand_model = $DBI->get_result($select_brand_model);
 $result_brand_master_arry = [];
 if(!empty($rows_brand_model)){
     foreach ($rows_brand_model as $key => $value) {
-        $result_brand_master_arry[$value['brand_id']][$value['id']] =  $value;
+    	if($value['brand_id'] == 0 || ($value['brand_id'] != 0 && $value['is_active'] == 'Y') ){
+        	$result_brand_master_arry[$value['brand_id']][$value['id']] =  $value;
+    	}
     }
 }
+
+
  
 ?>
 

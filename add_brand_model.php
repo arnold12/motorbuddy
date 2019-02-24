@@ -44,16 +44,20 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
 
 
-        $delete = "DELETE FROM `tbl_mb_brand_model_master` WHERE `brand_id` = '".$_POST['id']."' ";
-        $res_delete = $DBI->query($delete);
+        //$delete = "DELETE FROM `tbl_mb_brand_model_master` WHERE `brand_id` = '".$_POST['id']."' ";
+        //$res_delete = $DBI->query($delete);
 
         foreach ($_POST['edit_brand_name'] as $key => $value) {
 
             if( trim($value) != "" ){
 
-                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$_POST['id']."', '".trim($value)."', 'Y', now(), '".$_SESSION['id']."')";
-                $res_insert = $DBI->query($insert);
+                $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name` = '".trim($value)."', updated_at = now(), updated_by = '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
+                $res_update = $DBI->query($update);
 
+            } else {
+
+                $update = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N', updated_at = now(), updated_by =  '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
+                $res_update = $DBI->query($update);
             }
            
        }
@@ -205,6 +209,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                                         <label class="col-sm-3 col-md-3 control-label">Brand Model <?=$cnt?></label>
                                                         <div class="col-sm-4 col-md-3">
                                                             <input type="text" class="form-control input-sm" id="edit_brand_model_<?=$cnt?>" name="edit_brand_name[]" value="<?=$value['brand_model_name']?>">
+                                                            <input type="hidden" name="edit_model_id[]" value="<?=$value['id']?>">
                                                         </div>
                                                     </div>
                                 <?php   
