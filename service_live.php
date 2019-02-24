@@ -107,6 +107,10 @@ switch ($body_params['action']) {
         $result = sendRecommedationPDF();
 		break;
 
+	case 'trkUserCallAction':
+        $result = trkUserCallAction();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -1503,7 +1507,7 @@ function bookingList(){
 			$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
 			$temp_res_row[] = $value;
 		}
-	
+
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
 		$final_result['result'] = $temp_res_row;
@@ -1659,6 +1663,47 @@ function sendRecommedationPDF(){
 	}
 	
 	return $final_result;
+}
+
+function trkUserCallAction(){
+
+	GLOBAl $DBI, $body_params;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$dealer_id 		= mysql_real_escape_string(trim($body_params['dealer_id']));
+	$brand_id       = mysql_real_escape_string(trim($body_params['brand_id']));
+	$model_id       = mysql_real_escape_string(trim($body_params['model_id']));
+	$fuel_type      = mysql_real_escape_string(trim($body_params['fuel_type']));
+
+	if( !empty($user_id) && !empty($dealer_id) ){
+
+		$table = "tbl_mb_track_call";
+
+		$insert['user_id']		=		$user_id; 
+		$insert['dealer_id']	=		$dealer_id;
+		$insert['brand_id']		=		$brand_id;
+		$insert['model_id']		=		$model_id;
+		$insert['fuel_type']	=		$fuel_type;
+		$insert['created_at']	=		'now()';
+
+		$res = $DBI->insert_query($insert, $table);
+
+		$response = array();
+		$final_result['success'] = true;
+		$final_result['message'] = "Track data successfully";
+		$final_result['result'] = $response;
+
+	} else {
+
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "Invalid user id or dealer id";
+		$final_result['result'] = $response;
+
+	}
+
+	return $final_result;
+
 }
 
 
