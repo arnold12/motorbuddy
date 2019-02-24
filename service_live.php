@@ -1497,14 +1497,18 @@ function bookingList(){
 		$temp_res_row = array();
 		foreach ($res_row as $key => $value) {
 			
-			/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
-			on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";*/
 			$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
-			on m.recomedation_pdf_id = p.id LIMIT 1 ";
+			on m.recomedation_pdf_id = p.id WHERE m.model_id = '".$value['model_id']."' AND p.status = 'Active' ";
+			/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+			on m.recomedation_pdf_id = p.id LIMIT 1 ";*/
 
 			$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
 			$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
-			$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
+			if( empty($recommedation_pdf_res_row)){
+				$value['file_url'] = '';
+			} else {
+				$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
+			}
 			$temp_res_row[] = $value;
 		}
 
@@ -1576,14 +1580,13 @@ function sendBookingPkg(){
 
 	}
 
-	/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
-	on m.recomedation_pdf_id = p.id where m.model_id = '".$model_id."' ";*/
 	$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
-	on m.recomedation_pdf_id = p.id LIMIT 1 ";
+	on m.recomedation_pdf_id = p.id WHERE m.model_id = '".$model_id."' AND p.status = 'Active' ";
+	/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+	on m.recomedation_pdf_id = p.id LIMIT 1 ";*/
 
 	$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
 	$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
-
 
 	if( !empty($pkg_details_array) ){
 		$final_result['success'] = true;
