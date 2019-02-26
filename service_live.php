@@ -1439,7 +1439,7 @@ function sendBookingServiceRepair(){
  **/
 function bookingList(){
 
-	GLOBAl $DBI, $body_params;
+	GLOBAl $DBI, $body_params, $pkg_type_arry;
 
 	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
 	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
@@ -1468,14 +1468,18 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
-	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no 
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,da.appmt_service_pkg,da.appmt_repair_concern,
+	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name 
 	FROM
 	    tbl_mb_dealer_appointment AS da
 	        LEFT JOIN
 	    tbl_mb_delaer_master AS dm ON da.dealer_id = dm.id
 	        LEFT JOIN
 	    tbl_mb_register_users AS ru ON da.user_id = ru.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm ON da.brand_id = bmm.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm1 ON da.model_id = bmm1.id
 	where da.user_id = '".$user_id."' ORDER BY da.id DESC";
 
 	$select_res = $DBI->query($select);
@@ -1488,11 +1492,6 @@ function bookingList(){
 		$final_result['message'] = "No Record found";
 		$final_result['result'] = $response;
 	} else {
-
-		/*$booking_data = array();
-		foreach ($res_row as $key => $value) {
-			$booking_data[$value['appmt_status']][] = $value;
-		}*/
 
 		$temp_res_row = array();
 		foreach ($res_row as $key => $value) {
@@ -1509,6 +1508,44 @@ function bookingList(){
 			} else {
 				$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
 			}
+
+			if( $value['appmt_service_pkg'] != "" ){
+				$select_pkg_info = "SELECT pkg_type_id as pkg_type , pkg_price FROM tbl_mb_pkg_master WHERE id = '".$value['appmt_service_pkg']."'";
+				$pkg_info_res = $DBI->query($select_pkg_info);
+				$pkg_info_row = $DBI->get_result($select_pkg_info);
+
+				if(!empty($pkg_info_row)){
+					$pkg_info_row[0]['pkg_type'] = $pkg_type_arry[$pkg_info_row[0]['pkg_type']];
+					$value['pkg_info'] = $pkg_info_row[0];
+				} else {
+					$value['pkg_info'] = array();
+				}
+
+			} else {
+				$value['pkg_info'] = array();
+			}
+			
+			
+
+			if( $value['appmt_repair_concern'] != "" ){
+
+				$select_service_repair = "SELECT name FROM tbl_mb_booking_service_repair_master WHERE id IN (".$value['appmt_repair_concern'].")";
+				$service_repair_res = $DBI->query($select_service_repair);
+				$service_repair_row = $DBI->get_result($select_service_repair);
+
+				if(!empty($service_repair_row)){
+					$value['pkg_service_repair'] = $service_repair_row;
+					/*foreach ($service_repair_row as $key1 => $value1) {
+						$value['pkg_service_repair'][] = $value1['name'];	
+					}*/
+				} else {
+					$value['pkg_service_repair'] = array();
+				}
+			} else {
+				$value['pkg_service_repair'] = array();
+			}
+
+
 			$temp_res_row[] = $value;
 		}
 
