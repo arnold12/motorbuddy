@@ -1468,7 +1468,7 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,da.appmt_service_pkg,da.appmt_repair_concern,
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,da.appmt_service_pkg,da.appmt_repair_concern,da.dealer_id,
 	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name 
 	FROM
 	    tbl_mb_dealer_appointment AS da
@@ -1518,11 +1518,11 @@ function bookingList(){
 					$pkg_info_row[0]['pkg_type'] = $pkg_type_arry[$pkg_info_row[0]['pkg_type']];
 					$value['pkg_info'] = $pkg_info_row[0];
 				} else {
-					$value['pkg_info'] = array();
+					$value['pkg_info'] =  json_encode (json_decode ("{}"));
 				}
 
 			} else {
-				$value['pkg_info'] = array();
+				$value['pkg_info'] = json_encode (json_decode ("{}"));
 			}
 			
 			

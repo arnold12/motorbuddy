@@ -20,29 +20,24 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 	$rows_appointment = $DBI->get_result($select_appointment);
 
 	if(!empty($rows_appointment[0]['dealer_id'])){
-		$select_dealer = "SELECT `dealer_name`
+		$select_dealer = "SELECT `dealer_name`, `dealer_code`, `dealer_name2`
 	    FROM `tbl_mb_delaer_master`
 	    WHERE (`id` = '".$rows_appointment[0]['dealer_id']."')";
 	    $rows_dealer = $DBI->get_result($select_dealer);
-	    $dealer_name = $rows_dealer[0]['dealer_name'];
 	}
 
 	if(!empty($rows_appointment[0]['user_id'])){
-		$select_user = "SELECT `fname`, `lname`, `mobile`, `address`
+		$select_user = "SELECT `fname`, `lname`, `mobile`, `address`, `email`
 	    FROM `tbl_mb_register_users`
 	    WHERE (`id` = '".$rows_appointment[0]['user_id']."')";
 	    $rows_user = $DBI->get_result($select_user);
-	    $user_name = $rows_user[0]['fname'] ." ". $rows_user[0]['lname'];
-	    $user_mobile = $rows_user[0]['mobile'];
-	    $user_address = $rows_user[0]['address'];
 	}
 
 	if(!empty($rows_appointment[0]['brand_id'])){
 		$select_brand = "SELECT `brand_model_name`
 	    FROM `tbl_mb_brand_model_master`
-	    WHERE (`id` = '".$rows_appointment[0]['brand_id']."')";
+	    WHERE `id` IN ('".$rows_appointment[0]['brand_id']."', '".$rows_appointment[0]['model_id']."') ";
 	    $rows_brand = $DBI->get_result($select_brand);
-	    $brand_name = $rows_brand[0]['brand_model_name'];
 	}
 
 }
@@ -57,29 +52,60 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
         <title><?=SITE_TITLE?></title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!-- Bootstrap 3.3.5 -->
+         <!-- Bootstrap 3.3.5 -->
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-		  <!-- Ionicons -->
-		  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
         <!-- Theme style -->
+        <link rel="stylesheet" href="plugins/timepicker/bootstrap-timepicker.min.css">
         <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
         <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->
-        <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">	
-	    <!-- DataTables -->
-		<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-        <!-- jQuery 2.1.4 -->
+        <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+        <!-- Date Picker -->
+        <link rel="stylesheet" href="plugins/datepicker/datepicker3.css">
+        <!-- bootstrap wysihtml5 - text editor -->
+        <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+        <!-- datepicker -->
+        <link rel="stylesheet" href="dist/css/jquery-ui.css">
+        <style>
+                table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 73%;
+                }
+
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #dddddd;
+                }
+        </style>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        
+         <!-- jQuery 2.1.4 -->
         <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
-		 <!-- jQuery UI 1.11.4 -->
-		<script src="dist/js/jquery-ui.min.js"></script>
         <!-- Bootstrap 3.3.5 -->
         <script src="bootstrap/js/bootstrap.min.js"></script>
-		<!-- AdminLTE App -->
-		<script src="dist/js/app.min.js"></script>
-		<script src="plugins/datatables/jquery.dataTables.min.js"></script>		
-		<script src="dist/js/common.js"></script>
+        <!-- Select2 -->
+        <script src="plugins/select2/select2.full.min.js"></script>
+        <!-- AdminLTE App -->
+        <script src="dist/js/app.min.js"></script>
+        <script src="dist/js/jquery-ui.js"></script>
+        <script src="dist/js/common.js"></script>
     </head>
+
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
 
@@ -95,226 +121,50 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
                     </h1>
                 </section>
 				<section class="content">
-					<div class="row">
-						<div class="col-xs-6">
-							<ul class="timeline timeline-inverse">
-			                  	<li>
-			                    	<i class="fa fa-code bg-red"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Appointment Code:</b> <?= $rows_appointment[0]['appmt_code']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-user bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Dealer Name:</b> <?= $dealer_name?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-user bg-green"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>User Name:</b> <?= $user_name?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-mobile bg-red"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>User Mobile:</b> <?= $user_mobile?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-list-alt bg-green"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>User Address:</b> <?= $user_address?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-btc bg-blue"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Brand Name:</b> <?= $brand_name?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-cube bg-orange"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Model Name:</b> <?= $brand_name?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-user bg-gray"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Fuel Type:</b> <?= $rows_appointment[0]['fuel_type']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['appmt_booking_time'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-calendar bg-blue"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Date:</b> <?= date_wording($rows_appointment[0]['appmt_date'])?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-clock-o bg-pink"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Time:</b> <?= $rows_appointment[0]['appmt_time']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-adjust bg-red"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Category Type:</b> <?= $rows_appointment[0]['appmt_category_type']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-bullhorn bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Service Type:</b> <?= $rows_appointment[0]['appmt_service_type']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-wrench bg-green"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Repair Type:</b> <?= $rows_appointment[0]['appmt_repair_type']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-car bg-orange"></i>
-									<div class="timeline-item">
-										<?php
-										$pickup_drop = 'Self Delivered';
-										if($rows_appointment[0]['pickup_drop'] == 1){
-											$pickup_drop = 'Pickup and Drop';
-										}
-										?>
-			                      		<h3 class="timeline-header no-border"><b>Pickup Drop:</b> <?= $pickup_drop?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-map-marker bg-gray"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Pickup Location:</b> <?= $rows_appointment[0]['pickup_location']?></h3>
-			                    	</div>
-			                  	</li>	
-								<li>
-			                    	<i class="fa fa-map-pin bg-blue"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Pickup Pincode:</b> <?= $rows_appointment[0]['pickup_pincode']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-list-alt bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Description:</b> <?= $rows_appointment[0]['description']?></h3>
-			                    	</div>
-			                  	</li> 
-			                  	<li>
-			                    	<i class="fa fa-list-alt bg-red"></i>
-									<div class="timeline-item">
-										<?php
-										$terms_n_condition = 'Not Accepted';
-										if($rows_appointment[0]['terms_n_condition'] == 1){
-											$terms_n_condition = 'Accepted';
-										}
-										?>
-			                      		<h3 class="timeline-header no-border"><b>Terms And Condition:</b> <?= $terms_n_condition?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['appmt_status'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-info-circle bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Appointment Status:</b> <?= ucfirst($rows_appointment[0]['appmt_status'])?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['appmt_status_change_time'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-clock-o bg-green"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Appointment Status Changed Time:</b> <?= date_time_wording($rows_appointment[0]['appmt_status_change_time'])?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-user bg-orange"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Booked By:</b> <?= $user_name?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['appmt_booking_time'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-clock-o bg-gray"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>Booking Time:</b> <?= date_time_wording($rows_appointment[0]['appmt_booking_time'])?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-key bg-pink"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>OTP:</b> <?= $rows_appointment[0]['otp']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<li>
-			                    	<i class="fa fa-adjust bg-red"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>OTP Send Count:</b> <?= $rows_appointment[0]['otp_sent_count']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['otp_sent_date'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-calendar bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>OTP Send Date:</b> <?= $rows_appointment[0]['otp_sent_date']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                  	<li>
-			                  		<?php
-										$is_otp_verify = 'No';
-										if($rows_appointment[0]['is_otp_verify'] == 'Y'){
-											$is_otp_verify = 'Yes';
-										}
-									?>
-			                    	<i class="fa fa-bullhorn bg-green"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>OTP Verified?:</b> <?= $is_otp_verify?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	if(!empty($rows_appointment[0]['otp_verification_date'])){
-			                  	?>
-			                  	<li>
-			                    	<i class="fa fa-calendar bg-aqua"></i>
-									<div class="timeline-item">
-			                      		<h3 class="timeline-header no-border"><b>OTP Verification Date:</b> <?= $rows_appointment[0]['otp_verification_date']?></h3>
-			                    	</div>
-			                  	</li>
-			                  	<?php
-			                  	}
-			                  	?>
-			                </ul>
+					<div class="box box-info">
+						<div class="box-body">
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Appointment Code : </label>
+								<?= $rows_appointment[0]['appmt_code']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Dealer Name : </label>
+								<?= $rows_dealer[0]['dealer_name']." - ".$rows_dealer[0]['dealer_name2']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Dealer Code : </label>
+								<?= $rows_dealer[0]['dealer_name']." - ".$rows_dealer[0]['dealer_code']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">User Name : </label>
+								<?= $rows_user[0]['fname']." ".$rows_user[0]['lname']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">User Email : </label>
+								<?= $rows_user[0]['email']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">User Mobile : </label>
+								<?= $rows_user[0]['mobile']?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Brand - Model : </label>
+								<?= $rows_brand[0]['brand_model_name']."-".$rows_brand[1]['brand_model_name']." : ".$rows_appointment[0]['fuel_type'] ?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Appointment Date - Time : </label>
+								<?= $rows_appointment[0]['appmt_date']." : ".$rows_appointment[0]['appmt_time'] ?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Service Package: </label>
+								<?= $rows_appointment[0]['appmt_service_pkg'] ?>
+							</p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">Repair Concern: </label>
+								<?= $rows_appointment[0]['appmt_repair_concern'] ?>
+							</p>
+							
+
 						</div>
 					</div>
 				</section>
