@@ -1081,7 +1081,7 @@ function addbooking(){
 	}*/
     
     if( $pickup_drop == 1 ){
-    	if ( $appmt_service_pkg == "" || !is_array($appmt_repair_concern) ) {
+    	if ( $appmt_service_pkg == "" || empty($appmt_repair_concern)) {
     
     		$error[] = "Please select either service package or repair concern."; 
     
