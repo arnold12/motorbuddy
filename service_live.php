@@ -1518,11 +1518,11 @@ function bookingList(){
 					$pkg_info_row[0]['pkg_type'] = $pkg_type_arry[$pkg_info_row[0]['pkg_type']];
 					$value['pkg_info'] = $pkg_info_row[0];
 				} else {
-					$value['pkg_info'] =  json_encode (json_decode ("{}"));
+					$value['pkg_info'] =  (object)(array());
 				}
 
 			} else {
-				$value['pkg_info'] = json_encode (json_decode ("{}"));
+				$value['pkg_info'] = (object)(array());
 			}
 			
 			
