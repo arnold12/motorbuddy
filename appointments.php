@@ -17,21 +17,17 @@ if($_SESSION['role'] == 'dealer'){
 		$delaer_row = $DBI->get_result($delaer_sql);
 		$delaer_id = $delaer_row[0]['id'];
 	}
-	$where_condition .= "WHERE `dealer_id` = ".$delaer_id;
+	$where_condition .= " AND da.dealer_id = ".$delaer_id;
 }
 
 
-$select_condition = '';
+if(isset($_GET['booking_status']) && $_GET['booking_status']!== ''){
 
-if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
-	if($_SESSION['role'] == 'dealer'){
-		$select_condition .= " AND";
-	}
-	if($_SESSION['role'] == 'superadmin'){
-		$select_condition .= " Where";
-	}
-
-	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
+	//$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
+	$booking_status = mysql_real_escape_string($_GET['booking_status']);
+	$where_condition .= " AND da.appmt_status = '".$booking_status."' ";
+} else {
+	$where_condition .= " AND da.appmt_status = 'verified' ";
 }
 
 $select_dealer_appointment = "SELECT da.id, da.appmt_code, da.dealer_id, da.user_id, da.fuel_type, da.appmt_date, da.appmt_time, da.appmt_service_pkg, da.appmt_repair_concern, da.pickup_drop, da.pickup_location, da.pickup_pincode, da.appmt_status, da.pickup_otp_sent_count, dm.dealer_code, dm.dealer_name, dm.dealer_name2, dm.mobile_no as dealer_mobile_no, ru.fname, ru.lname, ru.mobile as user_mobile_no, ru.address, ru.pin,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name,pm.pkg_type_id, pm.pkg_price 
@@ -47,7 +43,8 @@ $select_dealer_appointment = "SELECT da.id, da.appmt_code, da.dealer_id, da.user
 	    tbl_mb_brand_model_master AS bmm1 ON da.model_id = bmm1.id
 	    	LEFT JOIN
 	    tbl_mb_pkg_master AS pm ON da.appmt_service_pkg = pm.id
-		".$where_condition." ".$select_condition." ORDER BY da.appmt_booking_time DESC ";
+	    WHERE 1
+		".$where_condition." ORDER BY da.appmt_booking_time DESC ";
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 
 
@@ -107,7 +104,14 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 							 <form class="form-horizontal" method="GET" action="appointments.php">
 															
 								<div class="col-sm-3">
-								 <input type="text" name="global_serach" id="global_serach" value="<?php if(isset($_GET['global_serach'])){ echo $_GET['global_serach'];}?>" class="form-control input-sm" placeholder="Global search">
+									<select name="booking_status" class="form-control input-sm">
+										<option value="verified" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'verified'){ echo "selected";}?> >verified</option>
+										<option value="pending" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'pending'){ echo "selected";}?> >pending</option>
+										<option value="confirmed" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'confirmed'){ echo "selected";}?> >confirmed</option>
+										<option value="cancelled" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'cancelled'){ echo "selected";}?> >cancelled</option>
+										<option value="rejected" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'rejected'){ echo "selected";}?> >rejected</option>
+										<option value="closed" <?php if(isset($_GET['booking_status']) && $_GET['booking_status'] == 'closed'){ echo "selected";}?> >closed</option>
+									</select>
 								</div>
 								
 								<div class="col-sm-3">
