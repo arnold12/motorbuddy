@@ -16,29 +16,32 @@ $user_address = '';
 
 if(isset($_GET['id']) && $_GET['id'] != ""){
 
-	$select_appointment = "SELECT * FROM `tbl_mb_dealer_appointment` WHERE (`id` = '".$_GET['id']."')";
+    $select_appointment = "SELECT 
+        da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,da.appmt_service_pkg,da.appmt_repair_concern,da.dealer_id,
+        dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name,ru.fname, ru.lname, ru.mobile as user_mobile_no, ru.address, ru.pin, ru.email, pm.pkg_type_id, pm.pkg_price 
+    FROM
+        tbl_mb_dealer_appointment AS da
+            LEFT JOIN
+        tbl_mb_delaer_master AS dm ON da.dealer_id = dm.id
+            LEFT JOIN
+        tbl_mb_register_users AS ru ON da.user_id = ru.id
+            LEFT JOIN
+        tbl_mb_brand_model_master AS bmm ON da.brand_id = bmm.id
+            LEFT JOIN
+        tbl_mb_brand_model_master AS bmm1 ON da.model_id = bmm1.id
+            LEFT JOIN
+        tbl_mb_pkg_master AS pm ON da.appmt_service_pkg = pm.id
+    where da.id = '".$_GET['id']."'";
+	
 	$rows_appointment = $DBI->get_result($select_appointment);
 
-	if(!empty($rows_appointment[0]['dealer_id'])){
-		$select_dealer = "SELECT `dealer_name`, `dealer_code`, `dealer_name2`
-	    FROM `tbl_mb_delaer_master`
-	    WHERE (`id` = '".$rows_appointment[0]['dealer_id']."')";
-	    $rows_dealer = $DBI->get_result($select_dealer);
-	}
+    if($rows_appointment[0]['appmt_repair_concern'] != ""){
+        $select_repair_concern = "SELECT name FROM tbl_mb_booking_service_repair_master WHERE id IN (".$rows_appointment[0]['appmt_repair_concern'].")";;
+        $rows_repair_concern = $DBI->get_result($select_repair_concern);
 
-	if(!empty($rows_appointment[0]['user_id'])){
-		$select_user = "SELECT `fname`, `lname`, `mobile`, `address`, `email`
-	    FROM `tbl_mb_register_users`
-	    WHERE (`id` = '".$rows_appointment[0]['user_id']."')";
-	    $rows_user = $DBI->get_result($select_user);
-	}
+    }
 
-	if(!empty($rows_appointment[0]['brand_id'])){
-		$select_brand = "SELECT `brand_model_name`
-	    FROM `tbl_mb_brand_model_master`
-	    WHERE `id` IN ('".$rows_appointment[0]['brand_id']."', '".$rows_appointment[0]['model_id']."') ";
-	    $rows_brand = $DBI->get_result($select_brand);
-	}
+    //echo "<pre>";print_r($rows_appointment);exit;
 
 }
 
@@ -128,42 +131,71 @@ if(isset($_GET['id']) && $_GET['id'] != ""){
 								<?= $rows_appointment[0]['appmt_code']?>
 							</p>
 							<p>
-								<label class="col-sm-2 col-md-2 control-label">Dealer Name : </label>
-								<?= $rows_dealer[0]['dealer_name']." - ".$rows_dealer[0]['dealer_name2']?>
-							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">Dealer Code : </label>
-								<?= $rows_dealer[0]['dealer_name']." - ".$rows_dealer[0]['dealer_code']?>
-							</p>
-							<p>
 								<label class="col-sm-2 col-md-2 control-label">User Name : </label>
-								<?= $rows_user[0]['fname']." ".$rows_user[0]['lname']?>
+								<?= $rows_appointment[0]['fname']." - ".$rows_appointment[0]['lname']?>
+							</p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">User Mobile : </label>
+                                <?= $rows_appointment[0]['user_mobile_no']?>
+                            </p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">User Email : </label>
+                                <?= $rows_appointment[0]['email']?>
+                            </p>
+							<p>
+								<label class="col-sm-2 col-md-2 control-label">User Address : </label>
+								<?= $rows_appointment[0]['address']." - ".$rows_appointment[0]['pin']?>
 							</p>
 							<p>
-								<label class="col-sm-2 col-md-2 control-label">User Email : </label>
-								<?= $rows_user[0]['email']?>
+								<label class="col-sm-2 col-md-2 control-label">Brand/Model - Fuel Type : </label>
+								<?= $rows_appointment[0]['brand_name']."-".$rows_appointment[0]['model_name']." / ".$rows_appointment[0]['fuel_type']?>
 							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">User Mobile : </label>
-								<?= $rows_user[0]['mobile']?>
-							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">Brand - Model : </label>
-								<?= $rows_brand[0]['brand_model_name']."-".$rows_brand[1]['brand_model_name']." : ".$rows_appointment[0]['fuel_type'] ?>
-							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">Appointment Date - Time : </label>
-								<?= $rows_appointment[0]['appmt_date']." : ".$rows_appointment[0]['appmt_time'] ?>
-							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">Service Package: </label>
-								<?= $rows_appointment[0]['appmt_service_pkg'] ?>
-							</p>
-							<p>
-								<label class="col-sm-2 col-md-2 control-label">Repair Concern: </label>
-								<?= $rows_appointment[0]['appmt_repair_concern'] ?>
-							</p>
-							
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Dealer Code : </label>
+                                <?= $rows_appointment[0]['dealer_code']?>
+                            </p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Dealer Name : </label>
+                                <?= $rows_appointment[0]['dealer_name']." ".$rows_appointment[0]['dealer_name2']?>
+                            </p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Dealer Mobile : </label>
+                                <?= $rows_appointment[0]['dealer_name']." ".$rows_appointment[0]['mobile_no']?>
+                            </p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Pickup & Drop : </label>
+                                <?= $rows_appointment[0]['pickup_drop']?>
+                            </p>
+                            <?php if($rows_appointment[0]['pickup_drop'] == 'Pickup and Drop' ){?>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Pickup Address : </label>
+                                <?= $rows_appointment[0]['pickup_location']." , ".$rows_appointment[0]['pickup_pincode']?>
+                            </p>
+                            <?php }?>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Service Package : </label>
+                                <?= $pkg_type_arry[$rows_appointment[0]['pkg_type_id']]?>
+                            </p>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Package Price: </label>
+                                <?= $rows_appointment[0]['pkg_price']?>
+                            </p>
+
+                            <?php if($rows_appointment[0]['appmt_repair_concern'] != ""){ ?>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Repair Concern : </label>
+                                <?php 
+                                    foreach ($rows_repair_concern as $concern_key => $concern_value) {
+                                        echo $concern_value['name']." , ";
+                                    }
+                                ?>
+                            </p>
+                            <?php }?>
+                            <p>
+                                <label class="col-sm-2 col-md-2 control-label">Appointment Status : </label>
+                                <?= $rows_appointment[0]['appmt_status']?>
+                            </p>
+
 
 						</div>
 					</div>
