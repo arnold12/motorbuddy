@@ -30,11 +30,27 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	if($_SESSION['role'] == 'superadmin'){
 		$select_condition .= " Where";
 	}
+
 	$select_condition .= " (`appmt_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `fuel_type` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `appmt_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_time` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_category_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_service_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_repair_type` LIKE '%".addslashes($_GET['global_serach'])."%' OR `appmt_status` LIKE '%".addslashes($_GET['global_serach'])."%')";
 }
 
-$select_dealer_appointment = "SELECT `id` , `dealer_id`, `user_id`, `appmt_code` , `fuel_type` , `appmt_category_type`, `appmt_service_type`, `appmt_date`, `appmt_time`, `appmt_status`, `pickup_otp_sent_count`  FROM `tbl_mb_dealer_appointment` ".$where_condition." ".$select_condition;
+$select_dealer_appointment = "SELECT da.id, da.appmt_code, da.dealer_id, da.user_id, da.fuel_type, da.appmt_date, da.appmt_time, da.appmt_service_pkg, da.appmt_repair_concern, da.pickup_drop, da.pickup_location, da.pickup_pincode, da.appmt_status, da.pickup_otp_sent_count, dm.dealer_code, dm.dealer_name, dm.dealer_name2, dm.mobile_no as dealer_mobile_no, ru.fname, ru.lname, ru.mobile as user_mobile_no, ru.address, ru.pin,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name,pm.pkg_type_id, pm.pkg_price 
+	FROM 
+		tbl_mb_dealer_appointment as da 
+			LEFT JOIN 
+		tbl_mb_delaer_master AS dm ON da.dealer_id = dm.id
+			LEFT JOIN
+		tbl_mb_register_users AS ru ON da.user_id = ru.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm ON da.brand_id = bmm.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm1 ON da.model_id = bmm1.id
+	    	LEFT JOIN
+	    tbl_mb_pkg_master AS pm ON da.appmt_service_pkg = pm.id
+		".$where_condition." ".$select_condition." ORDER BY da.appmt_booking_time DESC ";
 $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -107,38 +123,56 @@ $rows_dealer_appointment = $DBI->get_result($select_dealer_appointment);
 								<?php if(!empty($rows_dealer_appointment )){?>
 								<tr>
 								  <th>Id</th>
-								  <th>Code</th>
+								  <th>Booking Code</th>
+								  <th>User Name/Mobile</th>
+								  <th>User Address</th>
 								  <?php
 								  	if($_SESSION['role'] == 'superadmin'){
 								  ?>
-								  <th>Delaer Name</th>
+								  <th>Delaer Name/Mobile</th>
 								  <?php }?>
-								  <th>Fuel Type</th>
-								  <th>Category Type</th>
-								  <th>Service Type</th>
-								  <th>Date</th>
-								  <th>Time</th>
+								  <th>Brand/Model/Fuel Type</th>
+								  <th>Pickup & Drop</th>
+								  <th>Pickup Location</th>
+								  <th>Service Package</th>
+								  <th>Repair Concern</th>
+								  <th>Appmt Date/Time</th>
 								  <th>Status</th>
 								  <th>Action</th>
 								</tr>
 								<?php
 								$i = 1;
 								foreach($rows_dealer_appointment as $key => $value){
+
+									if($value['appmt_repair_concern'] != ""){
+										$select_repair_concern = "SELECT name FROM tbl_mb_booking_service_repair_master WHERE id IN (".$value['appmt_repair_concern'].")";;
+										$rows_repair_concern = $DBI->get_result($select_repair_concern);
+
+									}
 								?>
 								<tr id="row_<?=$value['id']?>">
 								  <td><?=$i?></td>
 								  <td><?=$value['appmt_code']?></td>
+								  <td><?=$value['fname']." ".$value['lname']." - ".$value['user_mobile_no']?></td>
+								  <td><?=$value['address']." , ".$value['pin']?></td>
 								  <?php
 								  	if($_SESSION['role'] == 'superadmin'){
-								  		$dealerDtls = getDealerDtls($value['dealer_id']);
 								  ?>
-								  <td><?=$dealerDtls[0]['dealer_name']." ".$dealerDtls[0]['dealer_name2']?></td>
+								  <td><?=$value['dealer_code']." : ".$value['dealer_name']." ".$value['dealer_name2']?></td>
 								  <?php }?>
-								  <td><?=$value['fuel_type']?></td>
-								  <td><?=$value['appmt_category_type']?></td>
-								  <td><?=$value['appmt_service_type']?></td>
-								  <td><?=date_wording($value['appmt_date'])?></td>
-								  <td><?=$value['appmt_time']?></td>
+								  <td><?=$value['brand_name']. " - ".$value['model_name']." ".$value['fuel_type']?></td>
+								  <td><?=($value['pickup_drop'] == 1 ? 'pickup and drop' : 'self delivered')?></td>
+								  <td><?=($value['pickup_drop'] == 1 ? $value['pickup_location']." , ".$value['pickup_pincode'] : '-')?></td>
+								  <td><?=(!empty($value['pkg_type_id']) ? $pkg_type_arry[$value['pkg_type_id']]." - ".$value['pkg_price'] : '' ) ?></td>
+								  <td>
+								  <?php if($value['appmt_repair_concern'] != ""){
+								  	foreach ($rows_repair_concern as $concern_key => $concern_value) {
+								  		echo $concern_value['name']." , ";
+								  	}
+								  }
+								  ?>
+								  </td>
+								  <td><?=date_wording($value['appmt_date'])."<br>".$value['appmt_time']?></td>
 								  <td><?=ucfirst($value['appmt_status'])?></td>
 								  <td>
 								  <a href="appointment_detail.php?id=<?=$value['id']?>">View</a>
