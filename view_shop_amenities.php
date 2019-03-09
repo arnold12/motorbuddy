@@ -24,30 +24,7 @@ $rows_shop_amenities = $DBI->get_result($select_shop_amenities);
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><?=SITE_TITLE?></title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!-- Bootstrap 3.3.5 -->
-        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-        <!-- Theme style -->
-        <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-        <!-- AdminLTE Skins. Choose a skin from the css/skins
-             folder instead of downloading all of them to reduce the load. -->
-        <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">	
-	    <!-- DataTables -->
-		<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-        <!-- jQuery 2.1.4 -->
-        <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
-		 <!-- jQuery UI 1.11.4 -->
-		<script src="dist/js/jquery-ui.min.js"></script>
-        <!-- Bootstrap 3.3.5 -->
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-		<!-- AdminLTE App -->
-		<script src="dist/js/app.min.js"></script>
-		<script src="plugins/datatables/jquery.dataTables.min.js"></script>		
-		<script src="dist/js/common.js"></script>
+		<?php include_once('header_script.php'); ?>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
         <div class="wrapper">
