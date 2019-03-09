@@ -10,16 +10,19 @@
 
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-bell-o"></i> <span>Test</span>
+                    <i class="fa fa-bell-o"></i> <span>Masters</span>
                     <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Test 1</a></li>
-                    <li class="">
-                        <a href="{!! route('reminder-settings', ['id'=> Auth::user()->id]) !!}"><i class='fa fa-cogs'></i> <span>Test 2</span></a>
-                    </li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Dealer Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Brand Model Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Insurance Company Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Shaop Amenities Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Shop Service Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Service Repair Master</a></li>
+                    <li class=""><a href="{{ url('my-reminders') }}"><i class="fa fa-bell-o"></i>Package Master</a></li>
                 </ul>
             </li>
 
