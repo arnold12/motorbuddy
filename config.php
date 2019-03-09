@@ -24,7 +24,7 @@ if( $_SERVER['HTTP_HOST'] == "dev.motorbuddy.com" ){
 
 	define("DB_PASSWD",'root');
 
-	define("DB_NAME",'db_motorbuddy');
+	define("DB_NAME",'db_motorbuddy_new');
 
 	define("USE_PCONNECT",'false');
 
