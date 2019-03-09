@@ -1369,7 +1369,7 @@ function otpVerificationBooking(){
 			/* send mail or sms to user*/
 			$param['email'] = $user_res_row[0]['email'];
 			$param['subject'] = "Motorbuddy Appointment Booking Details";
-			$mailMsg = "Your Booking Reference Number is ".$res_row[0]['appmt_code'];
+			$mailMsg = "Your booking is verified. Your Booking Reference Number is ".$res_row[0]['appmt_code'];
 			$param['message'] = $mailMsg;
 
 			sendOtp($param);
