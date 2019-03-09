@@ -24,14 +24,14 @@ if( $_SERVER['HTTP_HOST'] == "dev.motorbuddy.com" ){
 
 	define("DB_PASSWD",'root');
 
-	define("DB_NAME",'db_motorbuddy');
+	define("DB_NAME",'db_motorbuddy_new');
 
 	define("USE_PCONNECT",'false');
 
 } else {
 	define("ROOT_DIR",'/motorbuddy');
 
-	define("SITE_URL",'http://www.vasaibirds.com/motorbuddy');
+	define("SITE_URL",'https://www.vasaibirds.com/motorbuddy');
 
 	define("DB_HOST",'localhost');
 
@@ -61,5 +61,7 @@ $shopes_services_arry = array('Brake','Drivetrain','Engine','Electrical','Air co
 $shopes_amenities_arry = array('Owner Lounge','Wi-Fi','Courtesy Shuttle','Rental / Loaner Car','Towing Services','Loyalty Program','Pick up and drop','Coffee / Tea','Driver lounge','Waiting Room','Walk In Welcome','Discounts available','Early drop off ( key drop / mail box)');
 
 $brand_arry = array('Maruti','Mahindra','Tata','Hyundai','Volkwagen','Skoda','Nissan','Renault','Fiat','Chevrolet','Ford','Ashok Leyland','Honda','Toyota','Isuzu','Mitsubishi','Volvo','BMW','Mercedes Benz','Audi','Jaguar','Land Rover','Mini','Rolls Royce');
+
+$pkg_type_arry = array(1=>'BASIC', 2=>'STANDARD', 3=>'COMPREHENSIVE');
 
 ?>

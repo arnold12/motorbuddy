@@ -271,16 +271,16 @@ function validate_dealer_info() {
 
 // Delete dealer
 
-function delete_dealer_info(val) {
+function delete_dealer_info(val, status) {
   var action = "delete_dealer_info";
-  if (confirm("Are you sure want to delete this record")) {
+  if (confirm("Are you sure want to update this record")) {
     $.ajax({
       url: "ajax_function.php",
       type: "POST",
-      data: { id: val, action: action },
+      data: { id: val, status:status, action: action },
       success: function(result) {
-        $("#row_" + val + "").remove();
         alert(result);
+        location.reload();
       }
     });
   } else {
@@ -349,6 +349,28 @@ function validate_shop_amenities() {
   return true;
 }
 
+function validate_review_rating() {
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  if ($.trim($("#rating").val()) == "") {
+    $("#err_msg_rating").show();
+    $("#err_msg_rating").html("Enter Rating.");
+    $("#rating").focus();
+    return false;
+  }
+
+  if ($.trim($("#review").val()) == "") {
+    $("#err_msg_review").show();
+    $("#err_msg_review").html("Enter Review.");
+    $("#review").focus();
+    return false;
+  }
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+}
+
 function validate_shop_service() {
   $(".err_msg").html("");
   $(".err_msg").hide();
@@ -404,13 +426,13 @@ function delete_service_repair(val) {
 }
 
 
-function delete_brand_model(val) {
+function delete_brand_model(val, status) {
   var action = "delete_brand_model";
   if (confirm("Are you sure want to delete this record")) {
     $.ajax({
       url: "ajax_function.php",
       type: "POST",
-      data: { id: val, action: action },
+      data: { id: val, action: action , status: status },
       success: function(result) {
         location.reload();
         alert(result);
@@ -489,6 +511,23 @@ function delete_shop_service(val) {
   }
 }
 
+function delete_review_rating(val) {
+  var action = "delete_review_rating";
+  if (confirm("Are you sure want to delete this record")) {
+    $.ajax({
+      url: "ajax_function.php",
+      type: "POST",
+      data: { id: val, action: action },
+      success: function(result) {
+        location.reload();
+        alert(result);
+      }
+    });
+  } else {
+    return false;
+  }
+}
+
 
 function delete_dealer_img(id, col_name) {
   var action = "delete_dealer_img";
@@ -497,6 +536,32 @@ function delete_dealer_img(id, col_name) {
     type: "POST",
     data: { id: id, col_name: col_name, action: action },
     success: function(result) {
+      location.reload();
+    }
+  });
+}
+
+function delete_pkg(pkg_group_name, status) {
+  var action = "delete_pkg";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { pkg_group_name: pkg_group_name, action: action, status: status },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  });
+}
+
+function delete_recom_pdf(id, status) {
+  var action = "delete_recom_pdf";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, action: action, status: status },
+    success: function(result) {
+      alert(result);
       location.reload();
     }
   });
@@ -581,4 +646,83 @@ function send_pickeup_otp(booking_id, user_id){
       location.reload();
     }
   }); 
+}
+
+function validate_pkg_group(){
+
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+
+  for( var i = 1; i<=3; i++){
+
+    if ($.trim($("#pkg_price_"+i).val()) == "" || isNaN($.trim($("#pkg_price_"+i).val()))) {
+      $("#err_msg_pkg_price_"+i).show();
+      $("#err_msg_pkg_price_"+i).html("Invalid Package Price.");
+      $("#pkg_price_"+i).focus();
+      return false;
+    }
+
+    if ($.trim($("#pkg_description_"+i).val()) == "") {
+      $("#err_msg_pkg_description_"+i).show();
+      $("#err_msg_pkg_description_"+i).html("Please Enter Package description.");
+      $("#pkg_description_"+i).focus();
+      return false;
+    }
+
+    if ($.trim($("#mb_tip_"+i).val()) == "") {
+      $("#err_msg_mb_tip_"+i).show();
+      $("#err_msg_mb_tip_"+i).html("Please Enter Motorbuddy Tip.");
+      $("#mb_tip_"+i).focus();
+      return false;
+    }
+
+    /*for(var j=1; j<=5; j++){
+
+      if ($.trim($("#service_name_"+i+"_"+j).val()) == "") {
+        $("#err_msg_service_name_"+i+"_"+j).show();
+        $("#err_msg_service_name_"+i+"_"+j).html("Please Enter Service Name.");
+        $("#service_name_"+i+"_"+j).focus();
+        return false;
+      }
+
+      if ($.trim($("#service_action_"+i+"_"+j).val()) == "") {
+        $("#err_msg_service_action_"+i+"_"+j).show();
+        $("#err_msg_service_action_"+i+"_"+j).html("Please Select Service Action.");
+        $("#service_action_"+i+"_"+j).focus();
+        return false;
+      }
+
+    }*/
+
+  }
+  
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
+
+}
+
+function validate_recom_pdf(){
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+  
+  if ( $("#mode").val() == 'add' && $.trim($("#recom_pdf").val()) == "") {
+    $("#err_msg_recom_pdf").show();
+    $("#err_msg_recom_pdf").html("Select PDF.");
+    $("#recom_pdf").focus();
+    return false;
+  }
+
+  if ($.trim($("#recom_pdf").val()) != "") {
+    var ext = $('#recom_pdf').val().split('.').pop().toLowerCase();
+    if( ext != 'pdf' ) {
+      $("#err_msg_recom_pdf").show();
+      $("#err_msg_recom_pdf").html("Invalid file type");
+      $("#recom_pdf").focus();
+      return false;
+    }
+  } 
+
+  $(".succes_msg").html("Please Wait...");
+  return true;
 }

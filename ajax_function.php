@@ -40,6 +40,10 @@ switch ($action){
         delete_service_repair();
         break;
 
+    case "delete_review_rating":
+        delete_review_rating();
+        break;
+
     case "read_feedback":
         read_feedback();
         break;
@@ -55,17 +59,25 @@ switch ($action){
     case "send_pickeup_otp":
         send_pickeup_otp();
         break;    
+
+    case "delete_pkg":
+        delete_pkg();
+        break;    
+
+    case "delete_recom_pdf":
+        delete_recom_pdf();
+        break;    
 }
     
 function delete_brand_model(){
 	global $DBI;
 
-	$delete_at_row = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' OR brand_id = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
+	$delete_at_row = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = '".mysql_real_escape_string($_POST['status'])."' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' OR brand_id = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
 
 	$res_at_delete = $DBI->query($delete_at_row);
 
 	if($res_at_delete){
-		echo "Record deleted successfully";exit;
+		echo "Record Updated successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}
@@ -127,6 +139,20 @@ function delete_shop_service(){
 	}
 }
 
+function delete_review_rating(){
+	global $DBI;
+
+	$delete_at_row = "UPDATE `tbl_mb_review_rating` SET `is_active` = 'N' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete
+
+	$res_at_delete = $DBI->query($delete_at_row);
+
+	if($res_at_delete){
+		echo "Record deleted successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+}
+
 function delete_service_repair(){
 	global $DBI;
 
@@ -144,7 +170,7 @@ function delete_service_repair(){
 function delete_dealer_info(){
 	global $DBI;
 
-	$delete_at_row_first = "DELETE FROM tbl_mb_delaer_shop_timing WHERE dealer_id = '".$_POST['id']."' ";
+	/*$delete_at_row_first = "DELETE FROM tbl_mb_delaer_shop_timing WHERE dealer_id = '".$_POST['id']."' ";
 	$res_at_delete_first = $DBI->query($delete_at_row_first);
 
 	$delete_at_row_secand = "DELETE FROM tbl_mb_delaer_shop_service WHERE dealer_id = '".$_POST['id']."' ";
@@ -157,14 +183,14 @@ function delete_dealer_info(){
 	$res_at_delete_fourth = $DBI->query($delete_at_row_fourth);
 
 	$delete_at_row_fifth = "DELETE FROM tbl_mb_delaer_brand_service WHERE dealer_id = '".$_POST['id']."' ";
-	$res_at_delete_fifth = $DBI->query($delete_at_row_fifth);
+	$res_at_delete_fifth = $DBI->query($delete_at_row_fifth);*/
 
-	$delete_at_row = "UPDATE `tbl_mb_delaer_master` SET `status` = 'Inactive' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
+	$delete_at_row = "UPDATE `tbl_mb_delaer_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."'"; //Soft Delete
 	
 	$res_at_delete = $DBI->query($delete_at_row);
 
 	if($res_at_delete){
-		echo "Record deleted successfully";exit;
+		echo "Record ".mysql_real_escape_string($_POST['status'])." successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}
@@ -240,7 +266,7 @@ function appointment_action(){
 		$data['mobile'] 	= $user_row[0]['mobile'];
 		$data['message'] 	= "Your Booking Number ".$booking_row[0]['appmt_code']." is ".$booking_status." with ".$dealer_row[0]['dealer_name']." ".$dealer_row[0]['dealer_name2']." on date ".$booking_row[0]['appmt_date']." ".$booking_row[0]['appmt_time'];
 
-		//$resp = sendOtpMobile($data);
+		$resp = sendOtpMobile($data);
 	}
 
 	echo "Record Updated successfully";
@@ -274,17 +300,54 @@ function send_pickeup_otp(){
 	//send pickup otp to user
 	$data['mobile'] 	= $user_row[0]['mobile'];
 	$data['message'] 	= "Your Pickup OTP for mottorbuddy ". $pickup_otp." Pickup person ".$pp_row[0]['person_full_name']." confirm this OTP with you";
-	//$resp = sendOtpMobile($data);
+	$resp = sendOtpMobile($data);
 
 	//send pickup otp to pickup person
 	$data['mobile'] 	= $pp_row[0]['mobile_no'];
 	$data['message'] 	= "Your Pickup OTP for mottorbuddy ". $pickup_otp. "You need to confirm this OTP with user";
-	//$resp = sendOtpMobile($data);
+	$resp = sendOtpMobile($data);
 
 	echo "Pickup OTP send Successfully";
 
 	exit;
 	
+}
+
+function delete_pkg(){
+
+	global $DBI;
+
+	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
+
+	$res_pkg_delete = $DBI->query($delete_pkg);
+
+	$delete_pkg_services = "UPDATE `tbl_mb_pkg_service_details` SET `status` = 'Inactive' WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete
+
+	$res_pkg_services_delete = $DBI->query($delete_pkg_services);
+
+	if($res_pkg_services_delete){
+		echo "Record updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+
+}
+
+function delete_recom_pdf(){
+
+	global $DBI;
+
+	$delete_recom_pdf = "UPDATE `tbl_mb_recomendation_pdf` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete;
+
+	$res_recom_pdf = $DBI->query($delete_recom_pdf);
+	
+
+	if($res_recom_pdf){
+		echo "Record updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+
 }
 
 ?>

@@ -12,17 +12,15 @@ $DBI->query("SET NAMES 'utf8'");
 
 if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
     
-    // fetch delaer data
-    $select_info = "SELECT `id`, `brand_id`, `brand_model_name`
-    FROM `tbl_mb_brand_model_master`
-    WHERE (`id` = '".$_GET['id']."' OR `brand_id` = '".$_GET['id']."')
-    AND `is_active` = 'Y'
-    ORDER BY brand_id ASC";
+    
+    $select_info = "SELECT `id`, `review`, `rating`
+    FROM `tbl_mb_review_rating`
+    WHERE (`id` = '".$_GET['id']."')";
 
     $result_info = $DBI->query($select_info);
     
     if(mysql_num_rows($result_info) == 0){
-        header('Location: view_brand_model.php');die();
+        header('Location: reviews-ratings.php');die();
     }
     
     $rows_info = $DBI->get_result($select_info);
@@ -32,67 +30,26 @@ if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
 if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     
     
-    $brand_name = mysql_real_escape_string($_POST['brand_name']);
+    $review = mysql_real_escape_string($_POST['review']);
+    $rating = mysql_real_escape_string($_POST['rating']);
     
     if($_POST['mode'] == 'edit'){ // Edit mode
         
-        $brand_model_id = $_POST['id'];
+        $shop_amenities_id = $_POST['id'];
 
-        // Update data for delaer
-        $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name`='".$brand_name."', `updated_by`='".$_SESSION['id']."', `updated_at` = now() WHERE id = '".$_POST['id']."' ";
+        // Update data for review and rating
+        $update = "UPDATE `tbl_mb_review_rating` SET `review`='".$review."', `rating`='".$rating."' WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
-
-
-
-        //$delete = "DELETE FROM `tbl_mb_brand_model_master` WHERE `brand_id` = '".$_POST['id']."' ";
-        //$res_delete = $DBI->query($delete);
-
-        foreach ($_POST['edit_brand_name'] as $key => $value) {
-
-            if( trim($value) != "" ){
-
-                $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name` = '".trim($value)."', updated_at = now(), updated_by = '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
-                $res_update = $DBI->query($update);
-
-            } else {
-
-                $update = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N', updated_at = now(), updated_by =  '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
-                $res_update = $DBI->query($update);
-            }
-           
-       }
-
-       foreach ($_POST['add_brand_name'] as $key => $value) {
-
-            if( trim($value) != "" ){
-
-                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$_POST['id']."', '".trim($value)."', 'Y', now(), '".$_SESSION['id']."')";
-                $res_insert = $DBI->query($insert);
-
-            }
-       }
 
         
     } else { // Add mode
         
-       // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('0', '".$brand_name."', 'Y', now(), '".$_SESSION['id']."')";
+       // Insert data for review and rating 
+       $insert = "INSERT INTO `tbl_mb_review_rating` (`review`, `rating`, `created_on`, `created_by`) VALUES ('".$review."', '".$rating."', now(), '".$_SESSION['id']."')";
        $res_insert = $DBI->query($insert);
-       $brand_id = mysql_insert_id();
-
-       foreach ($_POST['add_brand_name'] as $key => $value) {
-
-            if( trim($value) != "" ){
-
-                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$brand_id."', '".trim($value)."', 'Y', now(), '".$_SESSION['id']."')";
-                $res_insert = $DBI->query($insert);
-
-            }
-           
-       }
        
     }   
-    header('Location: view_brand_model.php');
+    header('Location: reviews-ratings.php');
         
 }
 
@@ -169,11 +126,11 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Add Brand
+                        Add Review & Rating
                         <!--<small>Preview</small>-->
                     </h1>
-                    <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="view_brand_model.php">View Brand</a></div>
-                    <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="add_brand_model.php">Add Brand</a></div>
+                    <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="reviews-ratings.php">View Reviews & Ratings</a></div>
+                    <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="add-review-rating.php">Add Review & Rating</a></div>
                     <br>
                 </section>
 
@@ -184,63 +141,24 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
                     <div class="box box-info">
 
-                        <form class="form-horizontal" id="species_frm" method="POST" action="add_brand_model.php">
+                        <form class="form-horizontal" id="review_rating" method="POST" action="add-review-rating.php">
                             <div class="box-body">
                                 <!-- Inquiry form general info start -->
                                 <label id="succes_msg" class="control-label succes_msg" style="color: green;font-size: 14px;display: none;"></label>
                                 <div class="form-group">
-                                    <label class="col-sm-3 col-md-3 control-label">Brand Name</label>
+                                    <label class="col-sm-3 col-md-3 control-label">Rating</label>
                                     <div class="col-sm-4 col-md-3">
-                                        <input type="text" class="form-control input-sm" id="brand_name" name="brand_name" value="<?=isset($rows_info[0]['brand_model_name']) ? $rows_info[0]['brand_model_name'] : '';?>">
-                                        <label id="err_msg_brand_name" for="brand_name" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                        <input type="number" class="form-control input-sm" id="rating" name="rating" value="<?=isset($rows_info[0]['rating']) ? $rows_info[0]['rating'] : '';?>">
+                                        <label id="err_msg_rating" for="rating" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
-
-                                <?php
-                                    $cnt = 1;
-                                    if(isset($_GET['id'])){
-
-                                        foreach ($rows_info as $key => $value) {
-
-                                            if($value['brand_id'] != 0 ){
-
-                                ?>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-3 col-md-3 control-label">Brand Model <?=$cnt?></label>
-                                                        <div class="col-sm-4 col-md-3">
-                                                            <input type="text" class="form-control input-sm" id="edit_brand_model_<?=$cnt?>" name="edit_brand_name[]" value="<?=$value['brand_model_name']?>">
-                                                            <input type="hidden" name="edit_model_id[]" value="<?=$value['id']?>">
-                                                        </div>
-                                                    </div>
-                                <?php   
-                                            $cnt++;
-
-                                            }
-
-                                        }
-
-                                    }
-
-                                    $cnt = $cnt - 1;
-                                ?>
-
-
-                                <?php 
-                                    for($i = 1; $i <= 5; $i++) {
-
-                                ?>
-
                                 <div class="form-group">
-                                    <label class="col-sm-3 col-md-3 control-label">Brand Model <?=$i+$cnt?></label>
-                                    <div class="col-sm-4 col-md-3">
-                                        <input type="text" class="form-control input-sm" id="add_brand_model_<?=$i+$cnt?>" name="add_brand_name[]" value="">
+                                    <label class="col-sm-3 col-md-3 control-label">Review</label>
+                                    <div class="col-sm-4 col-md-4">
+                                         <textarea rows="4" cols="50" class="form-control input-sm" id="review" name="review"><?=isset($rows_info[0]['review']) ? $rows_info[0]['review'] : '';?></textarea> 
+                                        <label id="err_msg_review" for="review" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
-
-                                <?php                           
-                                    }
-                                ?>
-
 
                             </div><!-- /.box-body -->
                             <div class="box-footer">
@@ -253,8 +171,8 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                 <?php
                                     }
                                 ?>
-                                <button type="submit" class="btn btn-primary" onclick="return validate_brand_model();" id="submit"><?php echo (isset($_GET['id']) ? 'Update' : 'Add' )?></button>
-                                <a href="view_brand_model.php" class="btn bg-maroon margin">cancel</a>
+                                <button type="submit" class="btn btn-primary" onclick="return validate_review_rating();" id="submit"><?php echo (isset($_GET['id']) ? 'Update' : 'Add' )?></button>
+                                <a href="reviews-ratings.php" class="btn bg-maroon margin">cancel</a>
                                 <label id="succes_msg" class="control-label succes_msg" style="color: green;font-size: 14px;"></label>                              
                             </div>
                         </form>

@@ -99,6 +99,18 @@ switch ($body_params['action']) {
         $result = bookingList();
 		break;
 
+	case 'sendBookingPkg':
+        $result = sendBookingPkg();
+		break;
+		
+	case 'sendRecommedationPDF':
+        $result = sendRecommedationPDF();
+		break;
+
+	case 'trkUserCallAction':
+        $result = trkUserCallAction();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -976,9 +988,11 @@ function addbooking(){
 	$fuel_type				= 		mysql_real_escape_string(trim($body_params['fuel_type']));
 	$appmt_date				= 		mysql_real_escape_string(trim($body_params['appmt_date']));
 	$appmt_time				= 		mysql_real_escape_string(trim($body_params['appmt_time']));
-	$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
-	$appmt_service_type		= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
-	$appmt_repair_type		= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	//$appmt_category_type	= 		mysql_real_escape_string(trim($body_params['appmt_category_type']));
+	//$appmt_service_type	= 		mysql_real_escape_string(trim($body_params['appmt_service_type']));
+	//$appmt_repair_type	= 		mysql_real_escape_string(trim($body_params['appmt_repair_type']));
+	$appmt_service_pkg		= 		mysql_real_escape_string(trim($body_params['appmt_service_pkg']));
+	$appmt_repair_concern	= 		$body_params['appmt_repair_concern'];
 	$pickup_drop			= 		mysql_real_escape_string(trim($body_params['pickup_drop']));
 	$pickup_location		= 		mysql_real_escape_string(trim($body_params['pickup_location']));
 	$pickup_pincode			= 		mysql_real_escape_string(trim($body_params['pickup_pincode']));
@@ -1000,10 +1014,12 @@ function addbooking(){
 		$error[] = "Invalid dealer ID"; 
 
 	} else {
-		$service_location_arr = explode(',', $dealer_res_row[0]['service_location']);
-		if(!in_array($pickup_pincode, $service_location_arr)){
-			
-			$error[] = "Pickup and drop service not provided for your pincode";
+		if( $pickup_drop == 1 ){
+			$service_location_arr = explode(',', $dealer_res_row[0]['service_location']);
+			if(!in_array($pickup_pincode, $service_location_arr)){
+				
+				$error[] = "Pickup and drop service not provided for your pincode";
+			}
 		}
 	}
 
@@ -1058,11 +1074,25 @@ function addbooking(){
 
 	}
 
-	if ( $appmt_category_type == "" ) {
+	/*if ( $appmt_category_type == "" ) {
 
 		$error[] = "Invalid Category Type"; 
 
-	}
+	}*/
+    
+    if( $pickup_drop == 1 ){
+    	if ( $appmt_service_pkg == "" || empty($appmt_repair_concern)) {
+    
+    		$error[] = "Please select either service package or repair concern."; 
+    
+    	}
+    }
+
+	/*if ( !is_array($appmt_repair_concern) ) {
+
+		$error[] = "Invalid Repair Concern"; 
+
+	}*/
 
 	if ( $pickup_drop == "" ) {
 
@@ -1111,9 +1141,11 @@ function addbooking(){
 	$insert['fuel_type']				=		$fuel_type;  
 	$insert['appmt_date']				=		$appmt_date;  
 	$insert['appmt_time']				=		$appmt_time;  
-	$insert['appmt_category_type']		=		$appmt_category_type;  
+	/*$insert['appmt_category_type']		=		$appmt_category_type;  
 	$insert['appmt_service_type']		=		$appmt_service_type;  
-	$insert['appmt_repair_type']		=		$appmt_repair_type;  
+	$insert['appmt_repair_type']		=		$appmt_repair_type;  */
+	$insert['appmt_service_pkg']		=		$appmt_service_pkg; 
+	$insert['appmt_repair_concern']		=		implode(",", $appmt_repair_concern);
 	$insert['pickup_drop']				=		$pickup_drop;
 	$insert['pickup_location']			=		$pickup_location;
 	$insert['pickup_pincode']			=		$pickup_pincode;
@@ -1337,7 +1369,7 @@ function otpVerificationBooking(){
 			/* send mail or sms to user*/
 			$param['email'] = $user_res_row[0]['email'];
 			$param['subject'] = "Motorbuddy Appointment Booking Details";
-			$mailMsg = "Your Booking Reference Number is ".$res_row[0]['appmt_code'];
+			$mailMsg = "Your booking is verified. Your Booking Reference Number is ".$res_row[0]['appmt_code'];
 			$param['message'] = $mailMsg;
 
 			sendOtp($param);
@@ -1407,7 +1439,7 @@ function sendBookingServiceRepair(){
  **/
 function bookingList(){
 
-	GLOBAl $DBI, $body_params;
+	GLOBAl $DBI, $body_params, $pkg_type_arry;
 
 	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
 	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
@@ -1436,15 +1468,222 @@ function bookingList(){
 	}
 
 	$select = "SELECT 
-	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,da.appmt_time,da.appmt_category_type, da.appmt_service_type, da.appmt_repair_type,da.pickup_drop,da.pickup_location,da.pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,
-	    dm.dealer_code,dm.dealer_name,dm.dealer_name2 
+	    da.id,da.appmt_code,da.brand_id,da.model_id,da.fuel_type,da.appmt_date,appmt_time,if(da.pickup_drop = 1 , 'Pickup and Drop', 'Self Delivered') as pickup_drop, da.pickup_location,IFNULL(da.pickup_pincode, '') as pickup_pincode,da.description,da.appmt_status,da.appmt_booking_time,da.appmt_service_pkg,da.appmt_repair_concern,da.dealer_id,
+	    dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name 
 	FROM
 	    tbl_mb_dealer_appointment AS da
 	        LEFT JOIN
 	    tbl_mb_delaer_master AS dm ON da.dealer_id = dm.id
 	        LEFT JOIN
 	    tbl_mb_register_users AS ru ON da.user_id = ru.id
-	where da.user_id = '".$user_id."' ";
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm ON da.brand_id = bmm.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm1 ON da.model_id = bmm1.id
+	where da.user_id = '".$user_id."' ORDER BY da.id DESC";
+
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+
+		$temp_res_row = array();
+		foreach ($res_row as $key => $value) {
+			
+			$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+			on m.recomedation_pdf_id = p.id WHERE m.model_id = '".$value['model_id']."' AND p.status = 'Active' ";
+			/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+			on m.recomedation_pdf_id = p.id LIMIT 1 ";*/
+
+			$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
+			$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
+			if( empty($recommedation_pdf_res_row)){
+				$value['file_url'] = '';
+			} else {
+				$value['file_url'] = $recommedation_pdf_res_row[0]['file_url'];
+			}
+
+			if( $value['appmt_service_pkg'] != "" ){
+				$select_pkg_info = "SELECT pkg_type_id as pkg_type , pkg_price FROM tbl_mb_pkg_master WHERE id = '".$value['appmt_service_pkg']."'";
+				$pkg_info_res = $DBI->query($select_pkg_info);
+				$pkg_info_row = $DBI->get_result($select_pkg_info);
+
+				if(!empty($pkg_info_row)){
+					$pkg_info_row[0]['pkg_type'] = $pkg_type_arry[$pkg_info_row[0]['pkg_type']];
+					$value['pkg_info'] = $pkg_info_row[0];
+				} else {
+					$value['pkg_info'] =  (object)(array());
+				}
+
+			} else {
+				$value['pkg_info'] = (object)(array());
+			}
+			
+			
+
+			if( $value['appmt_repair_concern'] != "" ){
+
+				$select_service_repair = "SELECT name FROM tbl_mb_booking_service_repair_master WHERE id IN (".$value['appmt_repair_concern'].")";
+				$service_repair_res = $DBI->query($select_service_repair);
+				$service_repair_row = $DBI->get_result($select_service_repair);
+
+				if(!empty($service_repair_row)){
+					$value['pkg_service_repair'] = $service_repair_row;
+					/*foreach ($service_repair_row as $key1 => $value1) {
+						$value['pkg_service_repair'][] = $value1['name'];	
+					}*/
+				} else {
+					$value['pkg_service_repair'] = array();
+				}
+			} else {
+				$value['pkg_service_repair'] = array();
+			}
+
+
+			$temp_res_row[] = $value;
+		}
+
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $temp_res_row;
+	}
+	
+	return $final_result;
+
+}
+
+function sendBookingPkg(){
+	GLOBAl $DBI, $body_params, $pkg_type_arry;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
+	$brand_id 		= mysql_real_escape_string(trim($body_params['brand_id']));
+	$model_id 		= mysql_real_escape_string(trim($body_params['model_id']));
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	$error = array();
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+
+
+	$select_brand_mapping = "SELECT pkg_group_name FROM tbl_mb_pkg_brand_mapping WHERE brand_model_id IN (".$brand_id.",".$model_id.") LIMIT 1";
+	$select_mapping_res = $DBI->query($select_brand_mapping);
+	$mapping_res_row = $DBI->get_result($select_brand_mapping);
+	$is_empty_mapping = $DBI->is_empty($select_brand_mapping);
+
+	if( $is_empty_mapping ){
+		$error[] = "No Service pakages found for selected brand and model. please contact to mottorbuddy team"; 
+	}
+
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	$select_pkg_details = "SELECT id, pkg_type_id, pkg_price, pkg_description, mb_tip, IFNULL(includes, '') as includes FROM tbl_mb_pkg_master WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND status = 'Active' ORDER BY pkg_type_id ASC";
+	$select_pkg_res = $DBI->query($select_pkg_details);
+	$pkg_res_row = $DBI->get_result($select_pkg_details);
+
+	$pkg_details_array = array();
+	foreach ($pkg_res_row as $key => $value) {
+		
+		$value['pkg_type_id'] = $pkg_type_arry[$value['pkg_type_id']];
+
+		$select_pkg_service_details = "SELECT id, service_name, service_action FROM tbl_mb_pkg_service_details WHERE pkg_group_name = '".$mapping_res_row[0]['pkg_group_name']."' AND pkg_master_id = '".$value['id']."' AND status = 'Active' ORDER BY id ASC";
+		$select_pkg_service_res = $DBI->query($select_pkg_service_details);
+		$pkg_service_res_row = $DBI->get_result($select_pkg_service_details);
+		$pkg_details_array[$key]['pkg_details'] = $value;
+		$pkg_details_array[$key]['pkg_services'] = $pkg_service_res_row;
+
+	}
+
+	$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+	on m.recomedation_pdf_id = p.id WHERE m.model_id = '".$model_id."' AND p.status = 'Active' ";
+	/*$select_recommedation_pdf = "SELECT p.file_url FROM tbl_mb_recomedation_pdf_model_mapping AS m LEFT JOIN tbl_mb_recomendation_pdf AS p
+	on m.recomedation_pdf_id = p.id LIMIT 1 ";*/
+
+	$select_recommedation_pdf_res = $DBI->query($select_recommedation_pdf);
+	$recommedation_pdf_res_row = $DBI->get_result($select_recommedation_pdf);
+
+	if( !empty($pkg_details_array) ){
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		if( empty($recommedation_pdf_res_row)){
+			$final_result['recommedation_pdf'] = '';
+		} else {
+			$final_result['recommedation_pdf'] = $recommedation_pdf_res_row[0];	
+		}
+		
+		$final_result['result'] = $pkg_details_array;
+	} else {
+
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Package Details Found.";
+		$final_result['result'] = $response;
+
+	}
+
+	return $final_result;
+	
+}
+
+function sendRecommedationPDF(){
+    
+    GLOBAl $DBI, $body_params;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$access_token 	= mysql_real_escape_string(trim($body_params['access_token']));
+	$model_id       = mysql_real_escape_string(trim($body_params['model_id']));
+
+	$select_user_dtls = "SELECT * FROM tbl_mb_register_users WHERE id = ".$user_id."  AND  access_token = '".$access_token."' AND status = 'Active'";
+	$select_user_res = $DBI->query($select_user_dtls);
+	$user_res_row = $DBI->get_result($select_user_dtls);
+	$is_empty_user = $DBI->is_empty($select_user_dtls);
+	
+	$error = array();
+
+	if ( $is_empty_user ) {
+
+		$error[] = "Invalid User ID"; 
+
+	}
+	
+	if( $model_id == "" ){
+	    $error[] = "Invalid Model ID";
+	}
+
+	if( count($error) ){
+		$response = array();
+
+		$final_result['success'] = false;
+		$final_result['message'] = implode("||", $error);
+		$final_result['result'] = $response;
+
+		return $final_result;
+	}
+
+	$select = "SELECT id, file_url FROM tbl_mb_recomendation_pdf WHERE model_id = '".$model_id."' AND status = 'Active' ";
 
 	$select_res = $DBI->query($select);
 	$res_row = $DBI->get_result($select);
@@ -1457,16 +1696,52 @@ function bookingList(){
 		$final_result['message'] = "No Record found";
 		$final_result['result'] = $response;
 	} else {
-
-		$booking_data = array();
-		foreach ($res_row as $key => $value) {
-			$booking_data[$value['appmt_status']][] = $value;
-		}
+		
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
-		$final_result['result'] = $booking_data;
+		$final_result['result'] = $res_row;
 	}
 	
+	return $final_result;
+}
+
+function trkUserCallAction(){
+
+	GLOBAl $DBI, $body_params;
+
+	$user_id 		= mysql_real_escape_string(trim($body_params['user_id']));
+	$dealer_id 		= mysql_real_escape_string(trim($body_params['dealer_id']));
+	$brand_id       = mysql_real_escape_string(trim($body_params['brand_id']));
+	$model_id       = mysql_real_escape_string(trim($body_params['model_id']));
+	$fuel_type      = mysql_real_escape_string(trim($body_params['fuel_type']));
+
+	if( !empty($user_id) && !empty($dealer_id) ){
+
+		$table = "tbl_mb_track_call";
+
+		$insert['user_id']		=		$user_id; 
+		$insert['dealer_id']	=		$dealer_id;
+		$insert['brand_id']		=		$brand_id;
+		$insert['model_id']		=		$model_id;
+		$insert['fuel_type']	=		$fuel_type;
+		$insert['created_at']	=		'now()';
+
+		$res = $DBI->insert_query($insert, $table);
+
+		$response = array();
+		$final_result['success'] = true;
+		$final_result['message'] = "Track data successfully";
+		$final_result['result'] = $response;
+
+	} else {
+
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "Invalid user id or dealer id";
+		$final_result['result'] = $response;
+
+	}
+
 	return $final_result;
 
 }

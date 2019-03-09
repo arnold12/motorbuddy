@@ -82,6 +82,21 @@
                 <i class="fa fa-file-image-o"></i> <span>Home Page Images</span>
               </a>
             </li>
+            <li>
+              <a href="reviews-ratings.php">
+                <i class="fa fa-th"></i> <span>Reviews & Ratings</span>
+              </a>
+            </li>
+            <li>
+              <a href="view_pkg.php">
+                <i class="fa fa-th"></i> <span>Package Master</span>
+              </a>
+            </li>
+            <li>
+              <a href="view_recommedation_pdf.php">
+                <i class="fa fa-th"></i> <span>Recommedation PDF</span>
+              </a>
+            </li>
             <?php
               }
             if ($_SESSION['role'] == 'dealer' || $_SESSION['role'] == 'superadmin') {
