@@ -37,8 +37,8 @@
                     <li class=""><a href="<?=SITE_URL?>/view_cust_feedback.php"><i class=""></i>Customer Feedback</a></li>
                     <li class=""><a href="<?=SITE_URL?>/view_contact_us.php"><i class=""></i>Customer Contact Us</a></li>
                     <li class=""><a href="<?=SITE_URL?>/reviews-ratings.php"><i class=""></i>Customer Reviews & Ratings</a></li>
-                    <li class=""><a href="#"><i class=""></i>Registered Users</a></li>
-                    <li class=""><a href="#"><i class=""></i>Customer Call Tracking</a></li>
+                    <li class=""><a href="<?=SITE_URL?>/registered-users.php"><i class=""></i>Registered Users</a></li>
+                    <li class=""><a href="<?=SITE_URL?>/call-tracking.php"><i class=""></i>Customer Call Tracking</a></li>
                 </ul>
             </li>
 
