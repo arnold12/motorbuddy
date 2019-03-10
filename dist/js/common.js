@@ -726,3 +726,31 @@ function validate_recom_pdf(){
   $(".succes_msg").html("Please Wait...");
   return true;
 }
+
+function validate_dealer_rating(){
+  $(".err_msg").html("");
+  $(".err_msg").hide();
+  
+  if ( $.trim($("#user_id").val()) == "") {
+    $("#err_msg_user_id").show();
+    $("#err_msg_user_id").html("Select User.");
+    $("#user_id").focus();
+    return false;
+  }
+
+  if ( $.trim($("#ratings").val()) == "") {
+    $("#err_msg_ratings").show();
+    $("#err_msg_ratings").html("Select Ratings.");
+    $("#ratings").focus();
+    return false;
+  }
+
+  if ( $.trim($("#comments").val()) == "") {
+    $("#err_msg_comments").show();
+    $("#err_msg_comments").html("Enter Comments.");
+    $("#comments").focus();
+    return false;
+  }
+
+  return true;
+}

@@ -80,6 +80,7 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								  <th>Password</th>
 								  <th>Status</th>
 								  <th>Action</th>
+								  <th>Dealer Ratings</th>
 								</tr>
 								<?php
 								$i = 1;
@@ -110,6 +111,11 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								  <a href="#" onclick="delete_dealer_info(<?=$value['id']?>, 'Active');"><font color="red">Enable</font></a>
 								  <?php } else {?>
 								  <a href="add_dealer_info.php?id=<?=$value['id']?>">Edit</a>&nbsp;|&nbsp;<a href="#" onclick="delete_dealer_info(<?=$value['id']?>, 'Inactive');">Disable</a>
+								  <?php }?>
+								  </td>
+								  <td>
+								  <?php if($value['status'] == "Active"){?>	  
+								  <a href="add_dealer_ratings.php?dealer_id=<?=$value['id']?>">Add Ratings</a>
 								  <?php }?>
 								  </td>
 								</tr>
