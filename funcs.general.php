@@ -313,4 +313,36 @@ function get_pickup_persons($dealer_id){
 
 }
 
+function calculate_avg_dealer_ratings($params){
+	$DBI = new Db();
+
+	$select_ratings = "SELECT  `total_ratings`, `total_user`
+    FROM `tbl_mb_dealer_ratings`
+    WHERE `dealer_id` = '".$params['dealer_id']."' AND status = 'Active' ORDER BY id DESC LIMIT 1";
+
+    $result_ratings = $DBI->query($select_ratings);
+
+    if(mysql_num_rows($result_ratings) == 0){
+    	$return_data['total_ratings'] 	= $params['ratings'];
+    	$return_data['total_user'] 		= 1;
+    	$return_data['avg_ratings'] 	= $params['ratings'];
+    } else {
+    	$rows_ratings = $DBI->get_result($select_ratings);
+
+    	$new_total_ratings  = $rows_ratings[0]['total_ratings'] + $params['ratings'];
+    	$new_total_users    = $rows_ratings[0]['total_user'] + 1;
+
+    	$return_data['total_ratings'] 	= $new_total_ratings;
+    	$return_data['total_user'] 		= $new_total_users;
+    	$return_data['avg_ratings'] 	= number_format(($new_total_ratings / $new_total_users), 2);
+
+
+    }
+    
+    return $return_data;
+    
+
+
+}
+
 ?>
