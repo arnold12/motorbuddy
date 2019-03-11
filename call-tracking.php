@@ -10,7 +10,7 @@ $DBI->query("SET NAMES 'utf8'");
 
 
 $select_call_track = "SELECT 
-        tc.id,
+        tc.id, tc.created_at,
         dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name,ru.fname, ru.lname, ru.mobile as user_mobile_no, ru.address, ru.pin, ru.email
     FROM
         tbl_mb_track_call AS tc
@@ -72,6 +72,7 @@ $rows_call_track = $DBI->get_result($select_call_track);
 								  <th>Dealer Code</th>
 								  <th>Dealer Name</th>
 								  <th>Dealer Mobile</th>
+								  <th>Call Date</th>
 								</tr>
 								<?php
 								$i = 1;
@@ -88,6 +89,7 @@ $rows_call_track = $DBI->get_result($select_call_track);
 								  <td><?=$value['dealer_code']?></td>
 								  <td><?=$value['dealer_name']." - ".$value['dealer_name2']?></td>
 								  <td><?=$value['dealer_name']." - ".$value['mobile_no']?></td>
+								  <td><?=$value['created_at']?></td>
 								</tr>
 								</tr>
 								<?php
