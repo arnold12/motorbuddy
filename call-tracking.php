@@ -9,6 +9,12 @@ $DBI = new Db();
 $DBI->query("SET NAMES 'utf8'");
 
 
+$select_condition = 'where 1';
+
+if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
+	$select_condition .= " AND `dealer_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `dealer_name` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `dealer_name2` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`address` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`pin` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`email` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`fname` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`lname` LIKE '%".addslashes($_GET['global_serach'])."%' OR dm.`mobile_no` LIKE '%".addslashes($_GET['global_serach'])."%' OR bmm.`brand_model_name` LIKE '%".addslashes($_GET['global_serach'])."%' OR bmm1.`brand_model_name` LIKE '%".addslashes($_GET['global_serach'])."%' OR ru.`mobile` LIKE '%".addslashes($_GET['global_serach'])."%'";
+}
+
 $select_call_track = "SELECT 
         tc.id, tc.created_at,
         dm.dealer_code,dm.dealer_name,dm.dealer_name2,dm.mobile_no,bmm.brand_model_name as brand_name, bmm1.brand_model_name as model_name,ru.fname, ru.lname, ru.mobile as user_mobile_no, ru.address, ru.pin, ru.email
@@ -22,6 +28,7 @@ $select_call_track = "SELECT
         tbl_mb_brand_model_master AS bmm ON tc.brand_id = bmm.id
             LEFT JOIN
         tbl_mb_brand_model_master AS bmm1 ON tc.model_id = bmm1.id
+        ".$select_condition."
     order by tc.id desc
     ";
 
@@ -58,6 +65,19 @@ $rows_call_track = $DBI->get_result($select_call_track);
 							</div><!-- /.box-header -->
 							
 							<div class="box-body table-responsive no-padding">
+
+							  	<!-- /.Search Form start-->
+								<form class="form-horizontal" method="GET" action="call-tracking.php">
+									<div class="col-sm-3">
+									 <input type="text" name="global_serach" id="global_serach" value="<?php if(isset($_GET['global_serach'])){ echo $_GET['global_serach'];}?>" class="form-control input-sm" placeholder="Global search">
+									</div>
+									<div class="col-sm-3">
+										<input type="submit" name="submit" value="Search" class="btn btn-primary">
+										<a href="call-tracking.php" class="btn btn-default">Reset</a>
+									</div>
+								</form>
+								<!-- /.Search Form end -->
+
 							  <table id="" class="table table-bordered">
 								<tbody>
 								<?php if(!empty($rows_call_track )){?>

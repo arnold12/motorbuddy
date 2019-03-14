@@ -8,9 +8,13 @@ $DBI = new Db();
 
 $DBI->query("SET NAMES 'utf8'");
 
+$select_condition = 'where 1';
 
+if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
+	$select_condition .= " AND `email` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `password` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `address` LIKE '%".addslashes($_GET['global_serach'])."%' OR `pin` LIKE '%".addslashes($_GET['global_serach'])."%' OR `gender` LIKE '%".addslashes($_GET['global_serach'])."%' OR `status` LIKE '%".addslashes($_GET['global_serach'])."%' OR `created_date` LIKE '%".addslashes($_GET['global_serach'])."%' OR `fname` LIKE '%".addslashes($_GET['global_serach'])."%' OR `lname` LIKE '%".addslashes($_GET['global_serach'])."%' OR `mobile` LIKE '%".addslashes($_GET['global_serach'])."%'";
+}
 
-$select_register_users = "SELECT `email`, `password`, `address`, `pin`, `gender`, `status`, `created_date`, `fname`, `lname`, `mobile`, `chkd_terms_and_condn` FROM tbl_mb_register_users ORDER BY id DESC ";
+$select_register_users = "SELECT `email`, `password`, `address`, `pin`, `gender`, `status`, `created_date`, `fname`, `lname`, `mobile`, `chkd_terms_and_condn` FROM tbl_mb_register_users ".$select_condition." ORDER BY id DESC ";
 $rows_register_users = $DBI->get_result($select_register_users);
 
 ?>
@@ -44,6 +48,19 @@ $rows_register_users = $DBI->get_result($select_register_users);
 							</div><!-- /.box-header -->
 							
 							<div class="box-body table-responsive no-padding">
+
+							<!-- /.Search Form start-->
+							<form class="form-horizontal" method="GET" action="registered-users.php">
+								<div class="col-sm-3">
+								 <input type="text" name="global_serach" id="global_serach" value="<?php if(isset($_GET['global_serach'])){ echo $_GET['global_serach'];}?>" class="form-control input-sm" placeholder="Global search">
+								</div>
+								<div class="col-sm-3">
+									<input type="submit" name="submit" value="Search" class="btn btn-primary">
+									<a href="registered-users.php" class="btn btn-default">Reset</a>
+								</div>
+							</form>
+							<!-- /.Search Form end -->
+
 							  <table id="" class="table table-bordered">
 								<tbody>
 								<?php if(!empty($rows_register_users )){?>
