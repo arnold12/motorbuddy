@@ -38,14 +38,14 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         $shop_amenities_id = $_POST['id'];
 
         // Update data for delaer
-        $update = "UPDATE `tbl_mb_shop_amenities_master` SET `shop_amenities`='".$shop_amenities."', `updated_by`='".$_SESSION['id']."', `updated_at` = now() WHERE id = '".$_POST['id']."' ";
+        $update = "UPDATE `tbl_mb_shop_amenities_master` SET `shop_amenities`='".$shop_amenities."', `updated_by`='".$_SESSION['id']."', `updated_at` = '".CURRENT_DATE_TIME."' WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
 
         
     } else { // Add mode
         
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_shop_amenities_master` (`shop_amenities`, `is_active`, `created_at`, `created_by`) VALUES ('".$shop_amenities."', 'Y', now(), '".$_SESSION['id']."')";
+       $insert = "INSERT INTO `tbl_mb_shop_amenities_master` (`shop_amenities`, `is_active`, `created_at`, `created_by`) VALUES ('".$shop_amenities."', 'Y', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
        $res_insert = $DBI->query($insert);
        
     }   

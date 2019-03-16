@@ -67,7 +67,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $mb_tip = mysql_real_escape_string($_POST['mb_tip'][$key]);
             $includes = mysql_real_escape_string($_POST['pkg_includes'][$key]);
 
-            $update = "UPDATE `tbl_mb_pkg_master` SET `pkg_price` = '".$pkg_price."', `pkg_description` = '".$pkg_description."', `mb_tip` = '".$mb_tip."', `includes` = '".$includes."', `updated_by` = '".$_SESSION['id']."', `updated_on` = now() WHERE `pkg_group_name` = '".$pkg_group_code."' AND  `pkg_type_id` = '".$pkg_type_id."'";
+            $update = "UPDATE `tbl_mb_pkg_master` SET `pkg_price` = '".$pkg_price."', `pkg_description` = '".$pkg_description."', `mb_tip` = '".$mb_tip."', `includes` = '".$includes."', `updated_by` = '".$_SESSION['id']."', `updated_on` = '".CURRENT_DATE_TIME."' WHERE `pkg_group_name` = '".$pkg_group_code."' AND  `pkg_type_id` = '".$pkg_type_id."'";
             $res_update = $DBI->query($update);
             
 
@@ -106,7 +106,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $mb_tip = mysql_real_escape_string($_POST['mb_tip'][$key]);
             $includes = mysql_real_escape_string($_POST['pkg_includes'][$key]);
 
-            $insert = "INSERT INTO `tbl_mb_pkg_master` (`pkg_group_name`, `pkg_type_id`, `pkg_price`, `pkg_description`, `mb_tip`, `includes`, `status`, `created_by`, `created_on`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".$pkg_price."', '".$pkg_description."', '".$mb_tip."', '".$includes."', 'Active', '".$_SESSION['id']."', now())";
+            $insert = "INSERT INTO `tbl_mb_pkg_master` (`pkg_group_name`, `pkg_type_id`, `pkg_price`, `pkg_description`, `mb_tip`, `includes`, `status`, `created_by`, `created_on`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".$pkg_price."', '".$pkg_description."', '".$mb_tip."', '".$includes."', 'Active', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
             $res_insert = $DBI->query($insert);
 
             $pkg_master_id = $DBI->get_insert_id();

@@ -50,6 +50,8 @@ define("GUEST_TOKEN",'95d7e28234ce4318ac6a732a38bf659f1f431e865ed7c789d35854b9b2
 
 define("ACCESS_TOKEN_EXPIRY_LIMIT",'4');
 
+define("CURRENT_DATE_TIME",date("Y-m-d H:i:s"));
+
 $payment_method_bitwise = array('Cash'=>1, 'Cheque'=>2, 'Credit Card'=>4, 'Debit Card'=>8);
 
 $shopes_hours_arry = array('Mon','Tue','Wed','Thu','Fri','Sat','Sun');

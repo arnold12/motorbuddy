@@ -45,7 +45,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     } else { // Add mode
         
        // Insert data for review and rating 
-       $insert = "INSERT INTO `tbl_mb_review_rating` (`review`, `rating`, `created_on`, `created_by`) VALUES ('".$review."', '".$rating."', now(), '".$_SESSION['id']."')";
+       $insert = "INSERT INTO `tbl_mb_review_rating` (`review`, `rating`, `created_on`, `created_by`) VALUES ('".$review."', '".$rating."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
        $res_insert = $DBI->query($insert);
        
     }   

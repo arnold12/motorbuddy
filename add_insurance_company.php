@@ -38,14 +38,14 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         $insurance_company_id = $_POST['id'];
 
         // Update data for delaer
-        $update = "UPDATE `tbl_mb_insurance_company_master` SET `insurance_company`='".$insurance_company."', `updated_by`='".$_SESSION['id']."', `updated_at` = now() WHERE id = '".$_POST['id']."' ";
+        $update = "UPDATE `tbl_mb_insurance_company_master` SET `insurance_company`='".$insurance_company."', `updated_by`='".$_SESSION['id']."', `updated_at` = '".CURRENT_DATE_TIME."' WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
 
         
     } else { // Add mode
         
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_insurance_company_master` (`insurance_company`, `is_active`, `created_at`, `created_by`) VALUES ('".$insurance_company."', 'Y', now(), '".$_SESSION['id']."')";
+       $insert = "INSERT INTO `tbl_mb_insurance_company_master` (`insurance_company`, `is_active`, `created_at`, `created_by`) VALUES ('".$insurance_company."', 'Y', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
        $res_insert = $DBI->query($insert);
        
     }   

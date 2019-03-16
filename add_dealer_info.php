@@ -269,7 +269,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 		
 
         // Update data for delaer
-        $update = "UPDATE `tbl_mb_delaer_master` SET `dealer_name`='".$dealer_name."',`dealer_name2`='".$dealer_name2."',`address`='".$address."',`landmark`='".$landmark."', `city`='".$city."', `state`='".$state."', `pincode`='".$pincode."',`mobile_no`='".$mobile_no."',`telephone_no`='".$telephone_no."',`establishment_year`='".$establishment_year."', `payment_mode`='".$payment_bitwise_sum."',`lat`='".$lat."',`long`='".$long."',`gstn`='".$gstn."', `dealer_rating`='".$dealer_rating."', `website`='".$website."', `about_dealer`='".$about_dealer."', `service_location`='".$service_location."', `updated_by`='".$_SESSION['id']."', `updated_on` = now() ".$update_dealer_imges." WHERE id = '".$_POST['id']."' ";
+        $update = "UPDATE `tbl_mb_delaer_master` SET `dealer_name`='".$dealer_name."',`dealer_name2`='".$dealer_name2."',`address`='".$address."',`landmark`='".$landmark."', `city`='".$city."', `state`='".$state."', `pincode`='".$pincode."',`mobile_no`='".$mobile_no."',`telephone_no`='".$telephone_no."',`establishment_year`='".$establishment_year."', `payment_mode`='".$payment_bitwise_sum."',`lat`='".$lat."',`long`='".$long."',`gstn`='".$gstn."', `dealer_rating`='".$dealer_rating."', `website`='".$website."', `about_dealer`='".$about_dealer."', `service_location`='".$service_location."', `updated_by`='".$_SESSION['id']."', `updated_on` = '".CURRENT_DATE_TIME."' ".$update_dealer_imges." WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
 
         // Update data for shop timing 
@@ -279,7 +279,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             if(isset($_POST['is_open_'.$i])){
                 $is_open_value = 'Y';
             }
-            $update_shop_time = "UPDATE `tbl_mb_delaer_shop_timing` SET `open_at`='".$open_time[$i]."',`close_at`='".$close_time[$i]."',`is_open`='".$is_open_value."', `updated_by`='".$_SESSION['id']."', `updated_on` = now() WHERE dealer_id = '".$_POST['id']."' and day = '".$shop_day[$i]."' ";
+            $update_shop_time = "UPDATE `tbl_mb_delaer_shop_timing` SET `open_at`='".$open_time[$i]."',`close_at`='".$close_time[$i]."',`is_open`='".$is_open_value."', `updated_by`='".$_SESSION['id']."', `updated_on` = '".CURRENT_DATE_TIME."' WHERE dealer_id = '".$_POST['id']."' and day = '".$shop_day[$i]."' ";
             $res_shop_time = $DBI->query($update_shop_time);
         }
 
@@ -295,7 +295,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 }else{
                     $final_services_name = $services_name;
                 }
-                $insert_services = "INSERT INTO `tbl_mb_delaer_shop_service` (`dealer_id`, `shop_service_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$final_services_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $insert_services = "INSERT INTO `tbl_mb_delaer_shop_service` (`dealer_id`, `shop_service_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$final_services_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_services = $DBI->query($insert_services);
             }
         }
@@ -307,7 +307,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($z = 0 ; $z < $insurance_count ; $z++){
             if(isset($_POST['insurance_'.$z])){
                 $insurance_name = $_POST['insurance_'.$z];
-                $insert_insurance = "INSERT INTO `tbl_mb_delaer_insurance_tie_ups` (`dealer_id`, `insurance_company`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$insurance_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $insert_insurance = "INSERT INTO `tbl_mb_delaer_insurance_tie_ups` (`dealer_id`, `insurance_company`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$insurance_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_insurance = $DBI->query($insert_insurance);
             }
         }
@@ -319,7 +319,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($t = 0 ; $t < $amenities_count ; $t++){
             if(isset($_POST['amenities_'.$t])){
                 $amenities_name = $_POST['amenities_'.$t];
-                $amenities_insurance = "INSERT INTO `tbl_mb_delaer_amenities` (`dealer_id`, `amenities`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$amenities_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $amenities_insurance = "INSERT INTO `tbl_mb_delaer_amenities` (`dealer_id`, `amenities`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$amenities_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_amenities = $DBI->query($amenities_insurance);
             }
         }
@@ -331,7 +331,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($q = 0 ; $q < $brand_count ; $q++){
             if(isset($_POST['brand_'.$q])){
                 $brand_name = $_POST['brand_'.$q];
-                $brand_insurance = "INSERT INTO `tbl_mb_delaer_brand_service` (`dealer_id`, `brand_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$brand_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $brand_insurance = "INSERT INTO `tbl_mb_delaer_brand_service` (`dealer_id`, `brand_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$brand_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_brand = $DBI->query($brand_insurance);
             }
         }
@@ -349,11 +349,11 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
                 if( isset($pp_id) &&  $pp_id != "" ){
 
-                    $update_pickup_person = "UPDATE `tbl_mb_pickup_persons` SET person_full_name = '".$pp_name."', mobile_no = '".$pp_mobile."', is_active = '".$pp_status."', updated_by = '".$_SESSION['id']."', updated_at = now() WHERE id = '".$pp_id."' ";
+                    $update_pickup_person = "UPDATE `tbl_mb_pickup_persons` SET person_full_name = '".$pp_name."', mobile_no = '".$pp_mobile."', is_active = '".$pp_status."', updated_by = '".$_SESSION['id']."', updated_at = '".CURRENT_DATE_TIME."' WHERE id = '".$pp_id."' ";
                     $update_res_pickup_persons = $DBI->query($update_pickup_person);
 
                 } else {
-                    $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
+                    $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
                     $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
                 }
                 
@@ -391,12 +391,12 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
        $dealer_pwd = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 6);
 
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `service_location`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$service_location."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', now(), now(), '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
+       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `service_location`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$service_location."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
        $res_insert = $DBI->query($insert);
        $delaer_id = mysql_insert_id();
 
        // Insert dealer login details in tbl_mb_user
-       $insert_user_details = "INSERT INTO `tbl_mb_user` (`username`,`password`,`role`, `created_by`, `created_on`) VALUES ('".$dealer_code."','".$dealer_pwd."','dealer', '".$_SESSION['id']."', now() )";
+       $insert_user_details = "INSERT INTO `tbl_mb_user` (`username`,`password`,`role`, `created_by`, `created_on`) VALUES ('".$dealer_code."','".$dealer_pwd."','dealer', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."' )";
        $res_insert_user_details = $DBI->query($insert_user_details);
 
        /* send dealer user name and pwd to dealer*/
@@ -413,7 +413,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             if(isset($_POST['is_open_'.$i])){
                 $is_open_value = 'Y';
             }
-            $insert_shop_time = "INSERT INTO `tbl_mb_delaer_shop_timing` (`dealer_id`, `day`, `open_at`, `close_at`, `is_open`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$shop_day[$i]."', '".$open_time[$i]."', '".$close_time[$i]."', '".$is_open_value."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+            $insert_shop_time = "INSERT INTO `tbl_mb_delaer_shop_timing` (`dealer_id`, `day`, `open_at`, `close_at`, `is_open`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$shop_day[$i]."', '".$open_time[$i]."', '".$close_time[$i]."', '".$is_open_value."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
             $res_shop_time = $DBI->query($insert_shop_time);
         }
 
@@ -427,7 +427,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 }else{
                     $final_services_name = $services_name;
                 }
-                $insert_services = "INSERT INTO `tbl_mb_delaer_shop_service` (`dealer_id`, `shop_service_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$final_services_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $insert_services = "INSERT INTO `tbl_mb_delaer_shop_service` (`dealer_id`, `shop_service_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$final_services_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_services = $DBI->query($insert_services);
             }
         }
@@ -437,7 +437,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($z = 0 ; $z < $insurance_count ; $z++){
             if(isset($_POST['insurance_'.$z])){
                 $insurance_name = $_POST['insurance_'.$z];
-                $insert_insurance = "INSERT INTO `tbl_mb_delaer_insurance_tie_ups` (`dealer_id`, `insurance_company`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$insurance_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $insert_insurance = "INSERT INTO `tbl_mb_delaer_insurance_tie_ups` (`dealer_id`, `insurance_company`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$insurance_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_insurance = $DBI->query($insert_insurance);
             }
         }
@@ -447,7 +447,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($t = 0 ; $t < $amenities_count ; $t++){
             if(isset($_POST['amenities_'.$t])){
                 $amenities_name = $_POST['amenities_'.$t];
-                $amenities_insurance = "INSERT INTO `tbl_mb_delaer_amenities` (`dealer_id`, `amenities`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$amenities_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $amenities_insurance = "INSERT INTO `tbl_mb_delaer_amenities` (`dealer_id`, `amenities`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$amenities_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_amenities = $DBI->query($amenities_insurance);
             }
         }
@@ -457,7 +457,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         for($q = 0 ; $q < $brand_count ; $q++){
             if(isset($_POST['brand_'.$q])){
                 $brand_name = $_POST['brand_'.$q];
-                $brand_insurance = "INSERT INTO `tbl_mb_delaer_brand_service` (`dealer_id`, `brand_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$brand_name."', '".$_SESSION['id']."', now(), now(), '".$_SESSION['id']."')";
+                $brand_insurance = "INSERT INTO `tbl_mb_delaer_brand_service` (`dealer_id`, `brand_name`, `updated_by`, `created_on`, `updated_on`, `created_by`) VALUES ('".$delaer_id."', '".$brand_name."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_brand = $DBI->query($brand_insurance);
             }
         }
@@ -472,7 +472,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $pp_mobile  = mysql_real_escape_string($_POST['pickup_person_mobile'][$pp]);
                 $pp_status  = mysql_real_escape_string($_POST['pickup_person_status'][$pp]);
                 
-                $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', now())";
+                $insert_pickup_person = "INSERT INTO `tbl_mb_pickup_persons` (`dealer_id`, `person_full_name`, `mobile_no`, `is_active`, `created_by`, `created_at`) VALUES ('".$delaer_id."', '".$pp_name."', '".$pp_mobile."', '".$pp_status."', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
                 $insert_res_pickup_persons = $DBI->query($insert_pickup_person);   
             }
         }

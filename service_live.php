@@ -433,13 +433,13 @@ function addNewUser(){
 	$insert['address']			=		$address;  
 	$insert['pin']				=		$pincode;  
 	$insert['gender']			=		$gender;  
-	$insert['last_login_date']	=		'now()';  
-	$insert['created_date']		=		'now()';  
-	$insert['updated_date']		=		'now()';  
+	$insert['last_login_date']	=		CURRENT_DATE_TIME;  
+	$insert['created_date']		=		CURRENT_DATE_TIME;  
+	$insert['updated_date']		=		CURRENT_DATE_TIME;  
 	$insert['status']			=		'Inactive';  
 	$insert['otp']				=		$otp;  
 	$insert['otp_sent_count']	=		'1';  
-	$insert['otp_sent_date']	=		'now()';
+	$insert['otp_sent_date']	=		CURRENT_DATE_TIME;
 	$insert['fname']			=		$fname;
 	$insert['lname']			=		$lname;
 	$insert['mobile']			=		$mobile;
@@ -521,7 +521,7 @@ function resendOTP(){
 	/*generate otp */
 	$otp 		= otp();
 
-	$update = "UPDATE tbl_mb_register_users SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = now() WHERE email = '".$email."'";
+	$update = "UPDATE tbl_mb_register_users SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = '".CURRENT_DATE_TIME."' WHERE email = '".$email."'";
 
 	$update_res = $DBI->query($update);
 
@@ -677,7 +677,7 @@ function otpVerification(){
 			return $final_result;
 		}
 
-		$update = "UPDATE tbl_mb_register_users SET is_otp_verify = 'Y', otp_verification_date = now(), status = 'Active', updated_date = now() WHERE email = '".$email."'";
+		$update = "UPDATE tbl_mb_register_users SET is_otp_verify = 'Y', otp_verification_date = '".CURRENT_DATE_TIME."', status = 'Active', updated_date = '".CURRENT_DATE_TIME."' WHERE email = '".$email."'";
 
 		$update_res = $DBI->query($update);
 
@@ -756,7 +756,7 @@ function login(){
 
 		$access_token_expire_on = date('Y-m-d H:i:s', strtotime('+'.ACCESS_TOKEN_EXPIRY_LIMIT.' months'));
 
-		$update = "UPDATE tbl_mb_register_users SET login_count = login_count + 1, last_login_date = now(), access_token = '".$access_token."', access_token_expire_on = '".$access_token_expire_on."', updated_date = now() WHERE email = '".$email."'";
+		$update = "UPDATE tbl_mb_register_users SET login_count = login_count + 1, last_login_date = '".CURRENT_DATE_TIME."', access_token = '".$access_token."', access_token_expire_on = '".$access_token_expire_on."', updated_date = '".CURRENT_DATE_TIME."' WHERE email = '".$email."'";
 
 		$update_res = $DBI->query($update);
 
@@ -831,7 +831,7 @@ function saveFeedback(){
 
 	$insert['feedback']			=		$feedback;  
 	$insert['userid']			=		$res_row[0]['id'];  
-	$insert['created_date']		=		'now()';  
+	$insert['created_date']		=		CURRENT_DATE_TIME;  
 	
 	$res = $DBI->insert_query($insert, $table);
 
@@ -919,7 +919,7 @@ function contactUs(){
 	$insert['emailid']			=		$email;  
 	$insert['name']				=		$name;  
 	$insert['access_token']		=		$access_token;  
-	$insert['created_date']		=		'now()';  
+	$insert['created_date']		=		CURRENT_DATE_TIME;  
 	
 	$res = $DBI->insert_query($insert, $table);
 
@@ -1153,11 +1153,11 @@ function addbooking(){
 	$insert['terms_n_condition']		=		'1';
 	$insert['otp']						=		$otp;  
 	$insert['otp_sent_count']			=		'1';  
-	$insert['otp_sent_date']			=		'now()';
+	$insert['otp_sent_date']			=		CURRENT_DATE_TIME;
 	$insert['appmt_status']				=		'pending';
-	$insert['appmt_status_change_time']	=		'now()';
+	$insert['appmt_status_change_time']	=		CURRENT_DATE_TIME;
 	$insert['appmt_booked_by']			=		$user_id;
-	$insert['appmt_booking_time']		=		'now()';
+	$insert['appmt_booking_time']		=		CURRENT_DATE_TIME;
 	
 
 	$res = $DBI->insert_query($insert, $table);
@@ -1244,7 +1244,7 @@ function resendtBookingotp(){
 	/*generate otp */
 	$otp 		= otp();
 
-	$update = "UPDATE tbl_mb_dealer_appointment SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = now() WHERE id = '".$booking_id."'";
+	$update = "UPDATE tbl_mb_dealer_appointment SET otp = '".$otp."', otp_sent_count = (otp_sent_count+1), otp_sent_date = '".CURRENT_DATE_TIME."' WHERE id = '".$booking_id."'";
 
 	$update_res = $DBI->query($update);
 
@@ -1360,7 +1360,7 @@ function otpVerificationBooking(){
 	
 	if( ! $is_empty ){
 
-		$update = "UPDATE tbl_mb_dealer_appointment SET is_otp_verify = 'Y', otp_verification_date = now(), appmt_status = 'verified', appmt_status_change_time = now() WHERE id = '".$booking_id."'";
+		$update = "UPDATE tbl_mb_dealer_appointment SET is_otp_verify = 'Y', otp_verification_date = '".CURRENT_DATE_TIME."', appmt_status = 'verified', appmt_status_change_time = '".CURRENT_DATE_TIME."' WHERE id = '".$booking_id."'";
 
 		$update_res = $DBI->query($update);
 
@@ -1724,7 +1724,7 @@ function trkUserCallAction(){
 		$insert['brand_id']		=		$brand_id;
 		$insert['model_id']		=		$model_id;
 		$insert['fuel_type']	=		$fuel_type;
-		$insert['created_at']	=		'now()';
+		$insert['created_at']	=		CURRENT_DATE_TIME;
 
 		$res = $DBI->insert_query($insert, $table);
 

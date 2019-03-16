@@ -55,7 +55,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $img_url = SITE_URL."/".$target_dir_img . $file_name;
             move_uploaded_file($_FILES["recom_pdf"]["tmp_name"], $target_file_img);
 
-            $update = "UPDATE tbl_mb_recomendation_pdf SET file_url = '".$img_url."', update_by = '".$_SESSION['id']."', updated_on = now() WHERE id = '".$_POST['id']."'";
+            $update = "UPDATE tbl_mb_recomendation_pdf SET file_url = '".$img_url."', update_by = '".$_SESSION['id']."', updated_on = '".CURRENT_DATE_TIME."' WHERE id = '".$_POST['id']."'";
             $res_update = $DBI->query($update);
             
         }
@@ -83,7 +83,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             $img_url = SITE_URL."/".$target_dir_img . $file_name;
             move_uploaded_file($_FILES["recom_pdf"]["tmp_name"], $target_file_img);
 
-            $insert = "INSERT INTO tbl_mb_recomendation_pdf (file_url, status, created_by, created_on) VALUES ('".$img_url."', 'Active', '".$_SESSION['id']."', now())";
+            $insert = "INSERT INTO tbl_mb_recomendation_pdf (file_url, status, created_by, created_on) VALUES ('".$img_url."', 'Active', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
             $res_insert = $DBI->query($insert);
 
             $recom_pdf_id = $DBI->get_insert_id();

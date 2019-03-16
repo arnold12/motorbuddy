@@ -39,7 +39,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
         $brand_model_id = $_POST['id'];
 
         // Update data for delaer
-        $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name`='".$brand_name."', `updated_by`='".$_SESSION['id']."', `updated_at` = now() WHERE id = '".$_POST['id']."' ";
+        $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name`='".$brand_name."', `updated_by`='".$_SESSION['id']."', `updated_at` = '".CURRENT_DATE_TIME."' WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
 
 
@@ -51,12 +51,12 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
             if( trim($value) != "" ){
 
-                $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name` = '".trim($value)."', updated_at = now(), updated_by = '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
+                $update = "UPDATE `tbl_mb_brand_model_master` SET `brand_model_name` = '".trim($value)."', updated_at = '".CURRENT_DATE_TIME."', updated_by = '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
                 $res_update = $DBI->query($update);
 
             } else {
 
-                $update = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N', updated_at = now(), updated_by =  '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
+                $update = "UPDATE `tbl_mb_brand_model_master` SET `is_active` = 'N', updated_at = '".CURRENT_DATE_TIME."', updated_by =  '".$_SESSION['id']."' WHERE id = '".$_POST['edit_model_id'][$key]."' ";
                 $res_update = $DBI->query($update);
             }
            
@@ -66,7 +66,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
             if( trim($value) != "" ){
 
-                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$_POST['id']."', '".trim($value)."', 'Y', now(), '".$_SESSION['id']."')";
+                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$_POST['id']."', '".trim($value)."', 'Y', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_insert = $DBI->query($insert);
 
             }
@@ -76,7 +76,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     } else { // Add mode
         
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('0', '".$brand_name."', 'Y', now(), '".$_SESSION['id']."')";
+       $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('0', '".$brand_name."', 'Y', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
        $res_insert = $DBI->query($insert);
        $brand_id = mysql_insert_id();
 
@@ -84,7 +84,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
             if( trim($value) != "" ){
 
-                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$brand_id."', '".trim($value)."', 'Y', now(), '".$_SESSION['id']."')";
+                $insert = "INSERT INTO `tbl_mb_brand_model_master` (`brand_id`, `brand_model_name`, `is_active`, `created_at`, `created_by`) VALUES ('".$brand_id."', '".trim($value)."', 'Y', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."')";
                 $res_insert = $DBI->query($insert);
 
             }

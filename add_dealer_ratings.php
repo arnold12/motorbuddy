@@ -58,7 +58,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     
     $avg_rating_data = calculate_avg_dealer_ratings($params);
    	
-   	$insert = "INSERT INTO `tbl_mb_dealer_ratings` (`user_id`, `dealer_id`, `ratings`, `comment`, `total_ratings`, `total_user`, `status`, `created_by`, `created_on`) VALUES ('".$user_id."', '".$dealer_id."', '".$ratings."', '".$comments."','".$avg_rating_data['total_ratings']."','".$avg_rating_data['total_user']."', 'Active', '".$_SESSION['id']."', now())";
+   	$insert = "INSERT INTO `tbl_mb_dealer_ratings` (`user_id`, `dealer_id`, `ratings`, `comment`, `total_ratings`, `total_user`, `status`, `created_by`, `created_on`) VALUES ('".$user_id."', '".$dealer_id."', '".$ratings."', '".$comments."','".$avg_rating_data['total_ratings']."','".$avg_rating_data['total_user']."', 'Active', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
    	$res_insert = $DBI->query($insert);
 
    	$update = "UPDATE tbl_mb_delaer_master SET dealer_rating = '".$avg_rating_data['avg_ratings']."' WHERE id = '".$dealer_id."' ";

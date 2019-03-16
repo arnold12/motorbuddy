@@ -246,7 +246,7 @@ function appointment_action(){
 
 	$booking_status = mysql_real_escape_string($_POST['booking_status']);
 
-	$update = "UPDATE tbl_mb_dealer_appointment SET appmt_status = '".$booking_status."', appmt_status_change_time = now() WHERE id = '".mysql_real_escape_string($_POST['id'])."'";
+	$update = "UPDATE tbl_mb_dealer_appointment SET appmt_status = '".$booking_status."', appmt_status_change_time = '".CURRENT_DATE_TIME."' WHERE id = '".mysql_real_escape_string($_POST['id'])."'";
 
 	$res_update = $DBI->query($update);
 
@@ -285,7 +285,7 @@ function send_pickeup_otp(){
 	
 	$pickup_otp = otp();
 
-	$update = "UPDATE tbl_mb_dealer_appointment SET pickup_otp = '".$pickup_otp."', pickup_otp_sent_time = now(), pickup_person = '".$pickeup_person."', pickup_otp_sent_count = (pickup_otp_sent_count+1) WHERE id = '".$booking_id."'";
+	$update = "UPDATE tbl_mb_dealer_appointment SET pickup_otp = '".$pickup_otp."', pickup_otp_sent_time = '".CURRENT_DATE_TIME."', pickup_person = '".$pickeup_person."', pickup_otp_sent_count = (pickup_otp_sent_count+1) WHERE id = '".$booking_id."'";
 
 	$res_update = $DBI->query($update);
 
@@ -317,7 +317,7 @@ function delete_pkg(){
 
 	global $DBI;
 
-	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
+	$delete_pkg = "UPDATE `tbl_mb_pkg_master` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = '".CURRENT_DATE_TIME."' WHERE `pkg_group_name` = '".mysql_real_escape_string($_POST['pkg_group_name'])."' "; //Soft Delete;
 
 	$res_pkg_delete = $DBI->query($delete_pkg);
 
@@ -337,7 +337,7 @@ function delete_recom_pdf(){
 
 	global $DBI;
 
-	$delete_recom_pdf = "UPDATE `tbl_mb_recomendation_pdf` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = now() WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete;
+	$delete_recom_pdf = "UPDATE `tbl_mb_recomendation_pdf` SET `status` = '".mysql_real_escape_string($_POST['status'])."', updated_by = '".$_SESSION['id']."', updated_on = '".CURRENT_DATE_TIME."' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete;
 
 	$res_recom_pdf = $DBI->query($delete_recom_pdf);
 	
