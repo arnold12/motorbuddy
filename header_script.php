@@ -39,9 +39,30 @@
 <script src="dist/js/common.js"></script>
 <!-- Timepicker -->
 <script src="plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<input type="hidden" id="site_url_123" value="<?=SITE_URL?>">
 <script>
     $( window ).load(function() {
-        var url = window.location;
+    	var url_mapping = { '/index.php':'/index.php', '/add_dealer_info.php':'/index.php', '/add_dealer_ratings.php':'/index.php',
+    						'/view_brand_model.php': '/view_brand_model.php', '/add_brand_model.php':'/view_brand_model.php',
+    						'/view_insurance_company.php':'/view_insurance_company.php', '/add_insurance_company.php':'/view_insurance_company.php',
+    						'/view_shop_amenities.php':'/view_shop_amenities.php', '/add_shop_amenities.php':'/view_shop_amenities.php',
+    						'/view_shop_service.php':'/view_shop_service.php', '/add_shop_service.php':'/view_shop_service.php',
+    						'/view_services_repair.php':'/view_services_repair.php', '/add_service_repair.php':'/view_services_repair.php',
+    						'/view_pkg.php':'/view_pkg.php','/add_pkg_group.php':'/view_pkg.php',
+    						'/view_cust_feedback.php':'/view_cust_feedback.php',
+    						'/view_contact_us.php':'/view_contact_us.php',
+    						'/reviews-ratings.php':'/reviews-ratings.php','/add-review-rating.php':'/reviews-ratings.php',
+    						'/registered-users.php':'/registered-users.php',
+    						'/call-tracking.php':'/call-tracking.php',
+    						'/view_add_home_page_images.php':'/view_add_home_page_images.php',
+    						'/view_recommedation_pdf.php':'/view_recommedation_pdf.php','/add_recommedation_pdf.php':'/view_recommedation_pdf.php',
+    						'/appointments.php':'/appointments.php','/appointment_detail.php':'/appointments.php',
+    						'/change_password.php':'/change_password.php' };
+        
+        var pathname = window.location.pathname;
+        var match_url = url_mapping[pathname];
+        var url = $("#site_url_123").val()+match_url;
+        
         // for sidebar menu but not for treeview submenu
         $('ul.sidebar-menu a').filter(function() {
         return this.href == url;
