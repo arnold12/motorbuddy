@@ -13,7 +13,7 @@ if(isset($_GET['global_serach']) && $_GET['global_serach']!== ''){
 	$select_condition .= " AND `dealer_code` LIKE '%".addslashes($_GET['global_serach'])."%'  OR  `dealer_name` LIKE '%".addslashes($_GET['global_serach'])."%'  OR `dealer_name2` LIKE '%".addslashes($_GET['global_serach'])."%' OR `address` LIKE '%".addslashes($_GET['global_serach'])."%' OR `landmark` LIKE '%".addslashes($_GET['global_serach'])."%' OR `city` LIKE '%".addslashes($_GET['global_serach'])."%' OR `state` LIKE '%".addslashes($_GET['global_serach'])."%' OR `pincode` LIKE '%".addslashes($_GET['global_serach'])."%' OR `mobile_no` LIKE '%".addslashes($_GET['global_serach'])."%' OR `telephone_no` LIKE '%".addslashes($_GET['global_serach'])."%'";
 }
 
-$select_dealer_info = "SELECT `tbl_mb_delaer_master`.`id` , `dealer_code` , `dealer_name` , `dealer_name2`, `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `status`, `username`, `password` FROM `tbl_mb_delaer_master` LEFT JOIN `tbl_mb_user` ON `tbl_mb_delaer_master`.`dealer_code` = `tbl_mb_user`.`username` ".$select_condition." ORDER BY status ASC, id desc";
+$select_dealer_info = "SELECT `tbl_mb_delaer_master`.`id` , `dealer_code` , `dealer_name` , `dealer_name2`, `landmark` , `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `status`, `username`, `password`, `dealer_rating` FROM `tbl_mb_delaer_master` LEFT JOIN `tbl_mb_user` ON `tbl_mb_delaer_master`.`dealer_code` = `tbl_mb_user`.`username` ".$select_condition." ORDER BY status ASC, id desc";
 $result_dealer_info = $DBI->query($select_dealer_info);
 $rows_dealer_info = $DBI->get_result($select_dealer_info);
 
@@ -114,7 +114,8 @@ $rows_dealer_info = $DBI->get_result($select_dealer_info);
 								  <?php }?>
 								  </td>
 								  <td>
-								  <?php if($value['status'] == "Active"){?>	  
+								  <?php if($value['status'] == "Active"){?>
+								  <?=$value['dealer_rating']?> || 	  
 								  <a href="add_dealer_ratings.php?dealer_id=<?=$value['id']?>">Add Ratings</a>
 								  <?php }?>
 								  </td>

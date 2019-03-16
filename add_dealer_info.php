@@ -97,7 +97,7 @@ if(!empty($result_shop_service)){
 if(isset($_GET['id']) && $_GET['id'] != "" && !isset($_POST['frm'])){
     
     // fetch delaer data
-    $select_info = "SELECT `dealer_code`,`dealer_name`,`dealer_name2`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `address`, `website`, `about_dealer`, `payment_mode`, `lat`, `long`, `gstn`, `dealer_rating`, `img_1`, `img_2`, `img_3`, `service_location`
+    $select_info = "SELECT `dealer_code`,`dealer_name`,`dealer_name2`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `address`, `website`, `about_dealer`, `payment_mode`, `lat`, `long`, `gstn`, `img_1`, `img_2`, `img_3`, `service_location`
     FROM `tbl_mb_delaer_master`
     WHERE `id` = '".$_GET['id']."'
     AND `status` = 'Active'
@@ -234,7 +234,6 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     $lat = mysql_real_escape_string(trim($_POST['lat']));
     $long = mysql_real_escape_string(trim($_POST['long']));
     $gstn = mysql_real_escape_string(trim($_POST['gstn']));
-    $dealer_rating = mysql_real_escape_string(trim($_POST['dealer_rating']));
     $service_location = mysql_real_escape_string(trim($_POST['service_location']));
     $payment_bitwise_sum = bitwisesummation($payment_method_bitwise,$_POST);
     $shop_day = $_POST['shop_day'];
@@ -269,7 +268,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 		
 
         // Update data for delaer
-        $update = "UPDATE `tbl_mb_delaer_master` SET `dealer_name`='".$dealer_name."',`dealer_name2`='".$dealer_name2."',`address`='".$address."',`landmark`='".$landmark."', `city`='".$city."', `state`='".$state."', `pincode`='".$pincode."',`mobile_no`='".$mobile_no."',`telephone_no`='".$telephone_no."',`establishment_year`='".$establishment_year."', `payment_mode`='".$payment_bitwise_sum."',`lat`='".$lat."',`long`='".$long."',`gstn`='".$gstn."', `dealer_rating`='".$dealer_rating."', `website`='".$website."', `about_dealer`='".$about_dealer."', `service_location`='".$service_location."', `updated_by`='".$_SESSION['id']."', `updated_on` = '".CURRENT_DATE_TIME."' ".$update_dealer_imges." WHERE id = '".$_POST['id']."' ";
+        $update = "UPDATE `tbl_mb_delaer_master` SET `dealer_name`='".$dealer_name."',`dealer_name2`='".$dealer_name2."',`address`='".$address."',`landmark`='".$landmark."', `city`='".$city."', `state`='".$state."', `pincode`='".$pincode."',`mobile_no`='".$mobile_no."',`telephone_no`='".$telephone_no."',`establishment_year`='".$establishment_year."', `payment_mode`='".$payment_bitwise_sum."',`lat`='".$lat."',`long`='".$long."',`gstn`='".$gstn."', `website`='".$website."', `about_dealer`='".$about_dealer."', `service_location`='".$service_location."', `updated_by`='".$_SESSION['id']."', `updated_on` = '".CURRENT_DATE_TIME."' ".$update_dealer_imges." WHERE id = '".$_POST['id']."' ";
         $res_update = $DBI->query($update);
 
         // Update data for shop timing 
@@ -391,7 +390,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
        $dealer_pwd = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 6);
 
        // Insert data for delaer 
-       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `service_location`, `payment_mode`, `dealer_rating`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$service_location."', '".$payment_bitwise_sum."', '".$dealer_rating."', 'Active', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
+       $insert = "INSERT INTO `tbl_mb_delaer_master` (`dealer_code`,`dealer_name`,`dealer_name2`, `address`, `landmark`, `city`, `state`, `pincode`, `mobile_no`, `telephone_no`, `establishment_year`, `lat`, `long`, `gstn`, `website`, `about_dealer`, `service_location`, `payment_mode`, `status`, `created_on`, `updated_on`, `created_by` ".$add_dealer_imges_cols.") VALUES ('".$dealer_code."','".$dealer_name."','".$dealer_name2."', '".$address."', '".$landmark."', '".$city."', '".$state."', '".$pincode."', '".$mobile_no."', '".$telephone_no."', '".$establishment_year."', '".$lat."', '".$long."', '".$gstn."', '".$website."', '".$about_dealer."', '".$service_location."', '".$payment_bitwise_sum."', 'Active', '".CURRENT_DATE_TIME."', '".CURRENT_DATE_TIME."', '".$_SESSION['id']."' ".$add_dealer_imges_names.")";
        $res_insert = $DBI->query($insert);
        $delaer_id = mysql_insert_id();
 
@@ -658,13 +657,6 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                     <div class="col-sm-4 col-md-4">
                                          <textarea rows="4" cols="50" class="form-control input-sm" id="about_dealer" name="about_dealer"><?=isset($rows_info['about_dealer']) ? $rows_info['about_dealer'] : '';?></textarea> 
                                         <label id="err_msg_about_dealer" for="about_dealer" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 col-md-3 control-label">Dealer Rating</label>
-                                    <div class="col-sm-4 col-md-3">
-                                        <input type="text" class="form-control input-sm" id="dealer_rating" name="dealer_rating" value="<?=isset($rows_info['dealer_rating']) ? $rows_info['dealer_rating'] : '';?>">
-                                        <label id="err_msg_dealer_rating" for="dealer_rating" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
                                 <div class="form-group">
