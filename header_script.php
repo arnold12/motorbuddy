@@ -60,7 +60,9 @@
     						'/change_password.php':'/change_password.php' };
         
         var pathname = window.location.pathname;
-        var match_url = url_mapping[pathname];
+        var arr = pathname.split('/');
+        var pathname_new = '/'+arr[arr.length-1];
+        var match_url = url_mapping[pathname_new];
         var url = $("#site_url_123").val()+match_url;
         
         // for sidebar menu but not for treeview submenu
