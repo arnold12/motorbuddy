@@ -66,8 +66,28 @@ switch ($action){
 
     case "delete_recom_pdf":
         delete_recom_pdf();
+        break;
+
+    case "searchEmail":
+        searchEmail();
         break;    
 }
+function searchEmail(){
+	global $DBI;
+
+	$select_pp = "SELECT id, email, fname, lname FROM tbl_mb_register_users WHERE `email` LIKE '%".addslashes($_POST['inputVal'])."%'  OR  `fname` LIKE '%".addslashes($_POST['inputVal'])."%'  OR `lname` LIKE '%".addslashes($_POST['inputVal'])."%'";
+	$pp_result = $DBI->query($select_pp);
+	$pp_row = $DBI->get_result($select_pp);
+	if(!empty($pp_row)){
+        foreach ($pp_row as $key => $value) {
+            echo "<p val=".$value['id'].">" . $value['email'] . " - " . $value['fname'] . " " . $value['lname'] . "</p>";
+        }
+    }else{
+        echo "<p>No matches found</p>";
+    }
+	exit();
+}
+
     
 function delete_brand_model(){
 	global $DBI;

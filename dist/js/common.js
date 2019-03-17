@@ -731,7 +731,7 @@ function validate_dealer_rating(){
   $(".err_msg").html("");
   $(".err_msg").hide();
   
-  if ( $.trim($("#user_id").val()) == "") {
+  if ( $.trim($("#user_id").val()) == "" || $.trim($("#merge").val()) == "") {
     $("#err_msg_user_id").show();
     $("#err_msg_user_id").html("Select User.");
     $("#user_id").focus();

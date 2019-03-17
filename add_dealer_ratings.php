@@ -74,21 +74,59 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     <head>
         <?php include_once('header_script.php'); ?>
         <style>
-                table {
-                    font-family: arial, sans-serif;
-                    border-collapse: collapse;
-                    width: 73%;
-                }
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 73%;
+            }
 
-                td, th {
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                }
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
 
-                tr:nth-child(even) {
-                    background-color: #dddddd;
-                }
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        
+            /* Formatting search box */
+            .search-box{
+                width: 400px;
+                position: relative;
+                display: inline-block;
+                font-size: 14px;
+            }
+            .search-box input[type="text"]{
+                height: 32px;
+                padding: 5px 10px;
+                border: 1px solid #CCCCCC;
+                font-size: 14px;
+            }
+            .result{
+                position: absolute;        
+                z-index: 999;
+                top: 100%;
+                left: 0;
+                max-height: 210px;
+                overflow: auto;
+            }
+            .search-box input[type="text"], .result{
+                width: 100%;
+                box-sizing: border-box;
+            }
+            /* Formatting result items */
+            .result p{
+                margin-left: 14px;
+                padding: 7px 10px;
+                border: 1px solid #CCCCCC;
+                border-top: none;
+                cursor: pointer;
+                background: white;
+            }
+            .result p:hover{
+                background: #f2f2f2;
+            }
         </style>
         
     </head>
@@ -136,15 +174,10 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 col-md-3 control-label">User Name</label>
-                                    <div class="col-sm-4 col-md-4">
-                                    	<select class="form-control input-sm" id="user_id" name="user_id">
-                                    		<option value="">Select User</option>
-                                    		<?php
-                                    			foreach ($rows_user_info as $key => $value) {
-                                    				echo "<option value=".$value['id'].">".$value['email']." - ".$value['fname']." ".$value['lname']."</option>";
-                                    			}
-                                    		?>
-                                    	</select>
+                                    <div class="col-sm-4 col-md-4 search-box" id="merge-box">
+                                        <input type="text" autocomplete="off" placeholder="Search user..." id="merge">
+                                        <input type="hidden" id="user_id" name="user_id">
+                                        <div class="result" id="merge-result"></div>
                                         <label id="err_msg_user_id" for="user_id" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
@@ -169,7 +202,6 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                         <label id="err_msg_comments" for="comments" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
-
                             </div><!-- /.box-body -->
                             <div class="box-footer">
                                 <input type="hidden" name="frm" value="1">
@@ -224,6 +256,34 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 
             </div><!-- /.content-wrapper -->
 
+            <script type="text/javascript">
+                $('#merge-box input[type="text"]').on("keyup input", function(){
+                    var inputVal = $(this).val();
+                    var resultDropdown = $(this).siblings("#merge-result");
+                    if(inputVal.length){
+                        var action = "searchEmail";
+                        $.ajax({
+                          url: "ajax_function.php",
+                          type: "POST",
+                          data: { inputVal: inputVal, action: action},
+                          success: function(result) {
+                            resultDropdown.html(result);
+                          }
+                        });
+                    } else{
+                        $('.load-img').hide();
+                        resultDropdown.empty();
+                    }
+                });
+
+                // Set search input value on click of result item
+                $(document).on("click", "#merge-result p", function(){
+                    $('#merge').val($(this).text());
+                    $('#user_id').val('');
+                    $('#user_id').val($(this).attr('val'));
+                    $(this).parent("#merge-result").empty();
+                });
+            </script>
            <?php include_once 'footer.php';?>
            
             <!-- Add the sidebar's background. This div must be placed
