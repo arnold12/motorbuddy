@@ -340,8 +340,20 @@ function calculate_avg_dealer_ratings($params){
     }
     
     return $return_data;
-    
 
+}
+
+function getBrandModelName($brandModelId){
+	$DBI = new Db();
+
+	$select = "SELECT brand_model_name FROM tbl_mb_brand_model_master WHERE id = '".$brandModelId."' ";
+	$result = $DBI->query($select);
+	if(mysql_num_rows($result)){
+		$rows = $DBI->get_result($select);
+		return $rows[0]['brand_model_name'];
+	} else {
+		return "";
+	}
 
 }
 

@@ -22,6 +22,18 @@ if(!empty($result_brand_master)){
 }
 
 if(isset($_GET['pkg_group_name']) && !empty($_GET['pkg_group_name']) ){
+    $select_pkg_brand_mapping_others =  "SELECT * FROM tbl_mb_pkg_brand_mapping WHERE pkg_group_name != '".trim($_GET['pkg_group_name'])."' ";    
+} else {
+    $select_pkg_brand_mapping_others =  "SELECT * FROM tbl_mb_pkg_brand_mapping ";    
+}
+
+$result_pkg_brand_mapping_others = $DBI->get_result($select_pkg_brand_mapping_others);
+$result_pkg_brand_mapping_new_others = array();
+foreach ($result_pkg_brand_mapping_others as $key => $value) {
+    $result_pkg_brand_mapping_new_others[$value['brand_model_id']] = $value;
+}
+
+if(isset($_GET['pkg_group_name']) && !empty($_GET['pkg_group_name']) ){
 
     $pkg_group_name = trim($_GET['pkg_group_name']);
 
@@ -298,11 +310,12 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                         <div class="col-sm-8 col-md-8">
                                             <div class="form-group">
                                                 <!-- <input type="checkbox" class="brand" name="brand_model[]" value="<?= $brand_id ?>"> -->
-                                                <label><?= $brand_name?></label>
+                                                <label><font color="red"><?= $brand_name?></font></label>
                                                 <?php
                                                 if( isset($result_brand_master_arry[$brand_id]) && count($result_brand_master_arry[$brand_id]) ){
                                                 echo "&nbsp;=>&nbsp;";    
                                                 foreach ($result_brand_master_arry[$brand_id] as $model_id => $model_name) {
+                                                    if( !array_key_exists($model_id, $result_pkg_brand_mapping_new_others) ){
                                                     $checked = '';
                                                     if( isset($result_pkg_brand_mapping_new) && array_key_exists($model_id, $result_pkg_brand_mapping_new)){
                                                         $checked = 'checked';
@@ -311,11 +324,13 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                                 &nbsp;&nbsp;
                                                 <input type="checkbox" class="brand" name="brand_model[]" value="<?= $model_id ?>" <?=$checked?>>
                                                 <label><?= $model_name?></label>
-                                                <?php                                                        
+                                                <?php
+                                                }                                                        
                                                 }
                                                 }
                                                 ?>
                                             </div>
+                                            <hr>
                                         </div>
                                         <?php
                                          

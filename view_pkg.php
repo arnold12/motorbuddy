@@ -77,10 +77,24 @@ foreach ($rows_pkges as $key => $value) {
 								  <th>Pkg Group</th>
 								  <th>Pkg Details</th>
 								  <th>Action</th>
+								  <th>Models</th>
 								</tr>
 								<?php
 								$i = 1;
 								foreach($final_pkg_details as $key => $value){
+
+									$select_pkg_brand_mapping = "SELECT bmm.brand_id, bmm.brand_model_name FROM tbl_mb_pkg_brand_mapping as pbm left join tbl_mb_brand_model_master as bmm on pbm.brand_model_id = bmm.id WHERE pkg_group_name = '".$key."' ";
+									$result_pkg_brand_mapping = $DBI->query($select_pkg_brand_mapping);
+									$rows_pkg_brand_mapping = $DBI->get_result($select_pkg_brand_mapping);
+									
+									$pkg_model_mapping_arr = array();
+									if( !empty($rows_pkg_brand_mapping)){
+										foreach ($rows_pkg_brand_mapping as $brand_mapping_id => $brand_mapping_val ) {
+											$pkg_model_mapping_arr[$brand_mapping_val['brand_id']][] = $brand_mapping_val['brand_model_name'];
+										}
+									}
+
+
 								?>
 								<tr>
 								  <td style="text-align: center;vertical-align: middle;" align="center"><?=$i?></td>
@@ -118,6 +132,18 @@ foreach ($rows_pkges as $key => $value) {
 									  <?php } else {?>
 									  <a style="color: red" href="#" onclick="delete_pkg('<?=$key?>','Active');">Enable</a>
 									  <?php }?>
+								  </td>
+								  <td style="text-align: left;vertical-align: middle;">
+								  	<?php
+
+								  		if(!empty($pkg_model_mapping_arr)){
+								  			foreach ($pkg_model_mapping_arr as $brand_id => $model_namme) {
+								  				echo "<b>".getBrandModelName($brand_id)."</b> => ".implode(', ', $model_namme);
+								  				echo "<br>";
+								  			}
+								  		}
+								  		
+								  	?>
 								  </td>
 								</tr>
 								</tr>
