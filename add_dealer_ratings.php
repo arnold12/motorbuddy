@@ -13,7 +13,7 @@ $DBI->query("SET NAMES 'utf8'");
 if(isset($_GET['dealer_id']) && $_GET['dealer_id'] != "" && !isset($_POST['frm'])){
     
     
-    $select_ratings = "SELECT dr.id, dr.user_id, dr.dealer_id, dr.ratings, dr.comment, dr.created_on, ru.email, dm.dealer_code, dm.dealer_name, dm.dealer_name2
+    $select_ratings = "SELECT dr.id, dr.user_id, dr.user_name_manually, dr.dealer_id, dr.ratings, dr.comment, dr.created_on, ru.email, dm.dealer_code, dm.dealer_name, dm.dealer_name2
     FROM `tbl_mb_dealer_ratings` AS dr LEFT JOIN `tbl_mb_register_users` AS ru ON dr.user_id = ru.id
     LEFT JOIN `tbl_mb_delaer_master` AS dm ON dr.dealer_id = dm.id
     WHERE dr.dealer_id = '".$_GET['dealer_id']."' AND dr.status = 'Active' ORDER BY id DESC";
@@ -41,6 +41,15 @@ if(isset($_GET['dealer_id']) && $_GET['dealer_id'] != "" && !isset($_POST['frm']
     
     $rows_user_info = $DBI->get_result($select_user_info);
 
+
+    if(isset($_GET['id']) && $_GET['id'] != "" ){
+        $select_rating_by_id = "SELECT * FROM tbl_mb_dealer_ratings WHERE id = ".$_GET['id']." AND dealer_id = ".$_GET['dealer_id']." ";
+        $result_rating_by_id = $DBI->query($select_rating_by_id);
+        $rows_rating_by_id = $DBI->get_result($select_rating_by_id);
+
+    }
+
+
     
        
 }
@@ -48,22 +57,45 @@ if(isset($_GET['dealer_id']) && $_GET['dealer_id'] != "" && !isset($_POST['frm']
 if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     
     $dealer_id 	= mysql_real_escape_string($_POST['dealer_id']);
-    $user_id 	= mysql_real_escape_string($_POST['user_id']);
+    //$user_id    = mysql_real_escape_string($_POST['user_id']);
+    $user_name_manually 	= mysql_real_escape_string($_POST['user_name_manually']);
     $ratings 	= mysql_real_escape_string($_POST['ratings']);
     $comments 	= mysql_real_escape_string($_POST['comments']);
 
-
-    $params['dealer_id'] 	= $dealer_id;
-    $params['ratings'] 		= $ratings;
-    
+    $params['dealer_id']    = $dealer_id;
+    $params['ratings']      = $ratings;
+    $params['mode']         = $_POST['mode'];
+    if($_POST['mode'] == 'edit'){
+        $params['old_rating']   = $_POST['old_rating'];
+    }
+        
     $avg_rating_data = calculate_avg_dealer_ratings($params);
-   	
-   	$insert = "INSERT INTO `tbl_mb_dealer_ratings` (`user_id`, `dealer_id`, `ratings`, `comment`, `total_ratings`, `total_user`, `status`, `created_by`, `created_on`) VALUES ('".$user_id."', '".$dealer_id."', '".$ratings."', '".$comments."','".$avg_rating_data['total_ratings']."','".$avg_rating_data['total_user']."', 'Active', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
-   	$res_insert = $DBI->query($insert);
-
-   	$update = "UPDATE tbl_mb_delaer_master SET dealer_rating = '".$avg_rating_data['avg_ratings']."' WHERE id = '".$dealer_id."' ";
-   	$res_update = $DBI->query($update);
     
+    
+
+    if( $_POST['mode'] == 'edit'){
+
+        $update = "UPDATE tbl_mb_dealer_ratings SET user_name_manually = '".$user_name_manually."', ratings = '".$ratings."', comment = '".$comments."', updated_by = '".$_SESSION['id']."', updated_on = '".CURRENT_DATE_TIME."' WHERE id = '".$_POST['id']."' ";
+
+        $res_update = $DBI->query($update);
+
+        
+        $update = "UPDATE tbl_mb_dealer_ratings SET total_ratings = '".$avg_rating_data['total_ratings']."' WHERE id = '".$avg_rating_data['last_id']."' ";
+
+        $res_update = $DBI->query($update);
+
+
+
+    } else {
+       	
+       	$insert = "INSERT INTO `tbl_mb_dealer_ratings` (`user_name_manually`, `dealer_id`, `ratings`, `comment`, `total_ratings`, `total_user`, `status`, `created_by`, `created_on`) VALUES ('".$user_name_manually."', '".$dealer_id."', '".$ratings."', '".$comments."','".$avg_rating_data['total_ratings']."','".$avg_rating_data['total_user']."', 'Active', '".$_SESSION['id']."', '".CURRENT_DATE_TIME."')";
+       	$res_insert = $DBI->query($insert);
+       	
+    }
+    
+    $update = "UPDATE tbl_mb_delaer_master SET dealer_rating = '".$avg_rating_data['avg_ratings']."' WHERE id = '".$dealer_id."' ";
+    $res_update = $DBI->query($update);
+
     header('Location: add_dealer_ratings.php?dealer_id='.$dealer_id);
         
 }
@@ -145,6 +177,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                         <!--<small>Preview</small>-->
                     </h1>
                     <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="index.php">View Dealers</a></div>
+                    <div style="float: right; margin-right: 15px;"><a class="btn btn-block btn-success btn-sm" href="add_dealer_ratings.php?dealer_id=<?=$_GET['dealer_id']?>">Add Ratings</a></div>
                     <br>
                 </section>
 
@@ -175,10 +208,11 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                 <div class="form-group">
                                     <label class="col-sm-3 col-md-3 control-label">User Name</label>
                                     <div class="col-sm-4 col-md-4 search-box" id="merge-box">
-                                        <input type="text" autocomplete="off" placeholder="Search user..." id="merge">
+                                        <!-- <input type="text" autocomplete="off" placeholder="Search user..." id="merge">
                                         <input type="hidden" id="user_id" name="user_id">
-                                        <div class="result" id="merge-result"></div>
-                                        <label id="err_msg_user_id" for="user_id" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
+                                        <div class="result" id="merge-result"></div> -->
+                                        <input type="text" name="user_name_manually" id="user_name_manually" value="<?=isset($rows_rating_by_id[0]['user_name_manually']) ? $rows_rating_by_id[0]['user_name_manually'] : '' ?>">
+                                        <label id="err_msg_user_name_manually" for="user_name_manually" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -186,26 +220,40 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                     <div class="col-sm-4 col-md-4">
                                         <select class="form-control input-sm" id="ratings" name="ratings">
                                         	<option value="">Select Ratings</option>
-                                        	<option value="1">1</option>
-                                        	<option value="2">2</option>
-                                        	<option value="3">3</option>
-                                        	<option value="4">4</option>
-                                        	<option value="5">5</option>
-                                        </select> 
+                                            <?php
+                                                for ($i=1; $i <= 5 ; $i++) { 
+                                                    if( isset($rows_rating_by_id[0]['ratings']) && $rows_rating_by_id[0]['ratings'] == $i ){
+                                                        echo "<option value=".$i." selected>$i</option>";
+                                                    } else {
+                                                        echo "<option value=".$i.">$i</option>";    
+                                                    }
+                                                    
+                                                }
+                                            ?>
+                                        </select>
                                         <label id="err_msg_ratings" for="ratings" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 col-md-3 control-label">Comments</label>
                                     <div class="col-sm-4 col-md-4">
-                                        <textarea rows="4" cols="50" class="form-control input-sm" id="comments" name="comments"></textarea> 
+                                        <textarea rows="4" cols="50" class="form-control input-sm" id="comments" name="comments"><?=isset($rows_rating_by_id[0]['comment']) ? $rows_rating_by_id[0]['comment'] : '' ?></textarea> 
                                         <label id="err_msg_comments" for="comments" class="control-label err_msg" style="color: #dd4b39;font-size: 11px;display: none;"></label>
                                     </div>
                                 </div>
                             </div><!-- /.box-body -->
                             <div class="box-footer">
                                 <input type="hidden" name="frm" value="1">
-                                <button type="submit" class="btn btn-primary" onclick="return validate_dealer_rating();" id="submit">Add</button>
+                                <input type="hidden" name="mode" id="mode" value="<?php echo (isset($_GET['id']) ? 'edit' : 'add' )?>">
+                                 <?php
+                                    if(isset($_GET['id'])){
+                                ?>
+                                    <input type="hidden" name="id" id="id" value="<?= $_GET['id'] ?>">
+                                    <input type="hidden" name="old_rating" id="old_rating" value="<?= $rows_rating_by_id[0]['ratings'] ?>">
+                                <?php
+                                    }
+                                ?>
+                                <button type="submit" class="btn btn-primary" onclick="return validate_dealer_rating();" id="submit"><?php echo (isset($_GET['id']) ? 'Update' : 'Add' )?></button>
                                 <a href="index.php" class="btn bg-maroon margin">cancel</a>
                                 <label id="succes_msg" class="control-label succes_msg" style="color: green;font-size: 14px;"></label>                              
                             </div>
@@ -226,7 +274,8 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 									  <th>Delaer</th>
 									  <th>Rating</th>
 									  <th>Comment</th>
-									  <th>Date</th>
+                                      <th>Date</th>
+									  <th>Action</th>
 									</tr>
 
 									<?php
@@ -236,11 +285,12 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 									
 										<tr>
 											<td><?=$i?></td>
-											<td><?=$value['email']?></td>
+											<td><?=$value['user_name_manually']?></td>
 											<td><?=$value['dealer_code']." = ".$value['dealer_name']." ".$value['dealer_name2'] ?></td>
 											<td><?=$value['ratings']?></td>
 											<td><?=$value['comment']?></td>
-											<td><?=$value['created_on']?></td>
+                                            <td><?=$value['created_on']?></td>
+											<td><a href="add_dealer_ratings.php?dealer_id=<?=$_GET['dealer_id']?>&id=<?=$value['id']?>">Edit</a></td>
 										</tr>
 									<?php
 									$i++;		
@@ -257,7 +307,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
             </div><!-- /.content-wrapper -->
 
             <script type="text/javascript">
-                $('#merge-box input[type="text"]').on("keyup input", function(){
+                /*$('#merge-box input[type="text"]').on("keyup input", function(){
                     var inputVal = $(this).val();
                     var resultDropdown = $(this).siblings("#merge-result");
                     if(inputVal.length){
@@ -282,7 +332,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                     $('#user_id').val('');
                     $('#user_id').val($(this).attr('val'));
                     $(this).parent("#merge-result").empty();
-                });
+                });*/
             </script>
            <?php include_once 'footer.php';?>
            
