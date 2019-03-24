@@ -290,7 +290,13 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
 											<td><?=$value['ratings']?></td>
 											<td><?=$value['comment']?></td>
                                             <td><?=$value['created_on']?></td>
-											<td><a href="add_dealer_ratings.php?dealer_id=<?=$_GET['dealer_id']?>&id=<?=$value['id']?>">Edit</a></td>
+											<td>
+                                                <a href="add_dealer_ratings.php?dealer_id=<?=$_GET['dealer_id']?>&id=<?=$value['id']?>">Edit</a>
+                                                <?php if( !isset($_GET['id']) || $_GET['id'] != $value['id']){?>
+                                                ||
+                                                <a href="#" onclick="delete_dealer_rating(<?=$value['id']?>, <?=$_GET['dealer_id']?>);">Delete</a>
+                                                <?php }?>
+                                            </td>
 										</tr>
 									<?php
 									$i++;		

@@ -567,6 +567,19 @@ function delete_recom_pdf(id, status) {
   });
 }
 
+function delete_dealer_rating(id, dealer_id) {
+  var action = "delete_dealer_rating";
+  $.ajax({
+    url: "ajax_function.php",
+    type: "POST",
+    data: { id: id, dealer_id : dealer_id, action: action },
+    success: function(result) {
+      alert(result);
+      location.reload();
+    }
+  });
+}
+
 function read_feedback(id){
   var action = "read_feedback";
   $.ajax({

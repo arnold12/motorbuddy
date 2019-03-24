@@ -71,6 +71,10 @@ switch ($action){
     case "searchEmail":
         searchEmail();
         break;    
+
+    case "delete_dealer_rating":
+        delete_dealer_rating();
+        break;    
 }
 function searchEmail(){
 	global $DBI;
@@ -98,6 +102,35 @@ function delete_brand_model(){
 
 	if($res_at_delete){
 		echo "Record Updated successfully";exit;
+	} else {
+		echo "SQL Error!!! Please Try again";exit;
+	}
+}
+
+function delete_dealer_rating(){
+	global $DBI;
+
+	$delete_at_row = "UPDATE `tbl_mb_dealer_ratings` SET `status` = 'Inactive' WHERE `id` = '".mysql_real_escape_string($_POST['id'])."' "; //Soft Delete
+
+	$res_at_delete = $DBI->query($delete_at_row);
+
+
+	$params['dealer_id']    = mysql_real_escape_string($_POST['dealer_id']);
+	$avg_rating_data = calculate_avg_dealer_ratings_delete($params);
+
+	if( $avg_rating_data['avg_ratings'] > 0 ){
+
+		$update = "UPDATE tbl_mb_dealer_ratings SET total_ratings = '".$avg_rating_data['total_ratings']."', total_user = '".$avg_rating_data['total_user']."' WHERE id = '".$avg_rating_data['last_id']."' ";
+
+    	$res_update = $DBI->query($update);
+	}
+
+    $update = "UPDATE tbl_mb_delaer_master SET dealer_rating = '".$avg_rating_data['avg_ratings']."' WHERE id = '".mysql_real_escape_string($_POST['dealer_id'])."' ";
+
+    $res_update = $DBI->query($update);
+
+	if($res_at_delete){
+		echo "Record Deleted successfully";exit;
 	} else {
 		echo "SQL Error!!! Please Try again";exit;
 	}

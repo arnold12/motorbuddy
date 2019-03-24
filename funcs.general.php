@@ -352,6 +352,39 @@ function calculate_avg_dealer_ratings($params){
 
 }
 
+function calculate_avg_dealer_ratings_delete($params){
+	$DBI = new Db();
+
+	$select_ratings = "SELECT  sum(ratings) as total_ratings, count(*) as total_users
+    FROM `tbl_mb_dealer_ratings`
+    WHERE `dealer_id` = '".$params['dealer_id']."' AND status = 'Active'";
+
+    $result_ratings = $DBI->query($select_ratings);
+
+    $rows_ratings = $DBI->get_result($select_ratings);
+
+    if( $rows_ratings[0]['total_users'] == 0 ){
+
+    	$return_data['avg_ratings'] 		= 0;
+    } else {
+    	$return_data['total_ratings'] 	= $rows_ratings[0]['total_ratings'];
+    	$return_data['total_user'] 		= $rows_ratings[0]['total_users'];
+    	$return_data['avg_ratings'] 	= number_format(($rows_ratings[0]['total_ratings'] / $rows_ratings[0]['total_users']), 2);
+
+
+    	$select_last_id = "SELECT  `id` FROM `tbl_mb_dealer_ratings` WHERE `dealer_id` = '".$params['dealer_id']."' AND status = 'Active' ORDER BY id DESC LIMIT 1";
+
+	    $result_last_id = $DBI->query($select_last_id);
+
+	    $rows_last_id = $DBI->get_result($select_last_id);
+
+    	$return_data['last_id'] 		= $rows_last_id[0]['id'];
+    }
+
+    return $return_data;
+
+}
+
 function getBrandModelName($brandModelId){
 	$DBI = new Db();
 
