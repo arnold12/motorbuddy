@@ -111,6 +111,10 @@ switch ($body_params['action']) {
         $result = trkUserCallAction();
 		break;
 
+	case 'dealerUserReview':
+        $result = dealerUserReview();
+		break;
+
     default:
         $result = defaultAction("Invalid Action");
         break;
@@ -1743,6 +1747,42 @@ function trkUserCallAction(){
 	}
 
 	return $final_result;
+
+}
+
+function dealerUserReview(){
+
+	GLOBAl $DBI, $body_params;
+
+	$dealer_id 		= mysql_real_escape_string(trim($body_params['dealer_id']));
+
+	$select = "SELECT dr.id, dr.user_name_manually, dr.ratings, dr.comment FROM tbl_mb_dealer_ratings as dr
+			LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm ON dr.brand_id = bmm.id
+	    	LEFT JOIN
+	    tbl_mb_brand_model_master AS bmm1 ON dr.model_id = bmm1.id 
+	    	WHERE dealer_id = '".$dealer_id."' AND status = 'Active' ORDER BY created_on DESC";
+
+	$select_res = $DBI->query($select);
+	$res_row = $DBI->get_result($select);
+	
+	$is_empty = $DBI->is_empty($select);
+		
+	if($is_empty){
+		$response = array();
+		$final_result['success'] = false;
+		$final_result['message'] = "No Record found";
+		$final_result['result'] = $response;
+	} else {
+		
+		$final_result['success'] = true;
+		$final_result['message'] = "Success";
+		$final_result['result'] = $res_row;
+	}
+	
+	return $final_result;
+
+
 
 }
 
