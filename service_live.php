@@ -1633,7 +1633,7 @@ function sendBookingPkg(){
 		$final_result['success'] = true;
 		$final_result['message'] = "Success";
 		if( empty($recommedation_pdf_res_row)){
-			$final_result['recommedation_pdf'] = '';
+			$final_result['recommedation_pdf'] = (object)(array());
 		} else {
 			$final_result['recommedation_pdf'] = $recommedation_pdf_res_row[0];	
 		}
@@ -1756,7 +1756,7 @@ function dealerUserReview(){
 
 	$dealer_id 		= mysql_real_escape_string(trim($body_params['dealer_id']));
 
-	$select = "SELECT dr.id, dr.user_name_manually, dr.ratings, dr.comment FROM tbl_mb_dealer_ratings as dr
+	$select = "SELECT dr.id, dr.user_name_manually, dr.ratings, dr.comment, dr.created_on FROM tbl_mb_dealer_ratings as dr
 			LEFT JOIN
 	    tbl_mb_brand_model_master AS bmm ON dr.brand_id = bmm.id
 	    	LEFT JOIN
