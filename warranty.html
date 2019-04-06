@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+	@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
+	.container{
+		padding-right: 0px;
+    padding-left: 0px;
+	}
+	.color-primary{
+		color: #2EA9E1;
+	}
+	.gutter-5px {
+		margin-right: 5px;
+		margin-left: 5px;
+	}
+	.gutter-5px > [class^="col-"],.gutter-5px > [class*=" col-"]{
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+
+	.card-header-title:before {
+    float: right !important;
+    font-family: FontAwesome;
+    content:"\f068";
+    padding-right: 5px;
+	}
+	.card-header-title.collapsed:before {
+			float: right !important;
+			content:"\f067";
+	}
+	.card-header-title:hover, 
+	.card-header-title:active, 
+	.card-header-title:focus  {
+			text-decoration:none;
+	}
+</style>
+<body>
+	<div class="container d-block d-sm-none">
+		<div class="row gutter-5px">
+			<div class="col-sm-12">
+				<h3 class="text-center pt-4 pb-2 mb-0 font-weight-bold">Warranty liability</h3>
+				<p class="h6">Every MotorBuddy Certified workshop shall honour repair & replacement part warranty to their customers for the paid repairs carried out at their workshop. MotorBuddy Auto Solutions Pvt. Ltd. has no liability for the repairs conducted at Certified Workshops. The warranty is honoured by same specific certified workshop which conducted the repairs and the warranty will not be honoured by other MotorBuddy Certified workshops.</p>
+			</div>
+			<div class="col-sm-12">
+				<div class="accordion" id="accordionExample">
+					<div class="card">
+						<div class="card-header p-2" id="headingOne">
+							<h6 class="card-header-title mb-0 font-weight-bold color-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								Replacement Part Warranty
+							</h6>
+						</div>
+						<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								<p>MotorBuddy Certified workshops warrants that each new replacement part purchased from and installed at workshop shall be free from any defects in material and/or workmanship, under normal use and maintenance; subject to the following terms and conditions.</p>
+								<p>Any part or component replaced under replacement parts warranty is also warranted to be free from any defects in material and/or workmanship until the original parts warranty period or mileage limitation has expired.</p>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header p-2" id="headingTwo">
+							<h6 class="card-header-title mb-0 font-weight-bold collapsed color-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								MotorBuddy.in Privacy Guarantee
+							</h6>
+						</div>
+						<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								MotorBuddy.in promises that we will not disclose your personal information to third parties for their marketing purposes without your explicit consent. From time to time we may reveal general statistical information about our Site and visitors, such as number of visitors, number and type of goods and services purchased, etc. Your trust and confidence are our highest priority.
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header p-2" id="headingThree">
+							<h6 class="card-header-title  mb-0 font-weight-bold collapsed color-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+								Warranty Period
+							</h6>
+						</div>
+						<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								<p>
+									This warranty shall exist for a period of 6 months or until the vehicle has been driven for a distance of 5,000 Kilometres from the date of installation of replacement part by MotorBuddy Certified workshops, whichever occurs first.
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header p-2" id="headingFour">
+							<h6 class="card-header-title mb-0 font-weight-bold color-primary collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+								What is covered
+							</h6>
+						</div>
+						<div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								Except as provided under “What is not Covered” hereof, our certified workshop who had sold and installed the replacement part earlier shall either repair or replace the said part that is acknowledged to be defective in material or workmanship within the warranty period stipulated above; at no cost to the owner of the vehicle for parts or labour.
+							</div>
+						</div>
+					</div>
+						<div class="card-header p-2" id="headingFive">
+							<h6 class="card-header-title mb-0 font-weight-bold color-primary collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+								What is not covered
+						</div>
+						<div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								<h6 class="mb-0 mt-2 font-weight-bold">This warranty shall not apply to</h6>
+								<ul class="mb-0 list-unstyled mt-2">
+									<li>Normal maintenance services of parts such as cleaning, adjustment or replacement (e.g. spark plugs that are oil fouled, lead fouled, or which fail due to the use of low-grade fuel/lube).</li>
+									<li>Parts that failed due to abuse, misuse, neglect, alteration or modification, accident or which have been improperly lubricated or repaired at other workshops.</li>
+									<li>Parts used in applications for which they were not fixed by certified workshop.</li>
+									<li>Failure due to normal wear of parts.</li>
+									<li>Direct or indirect failures caused by misuse and improper maintenance of vehicle.</li>
+									<li>Any vehicle on which the odometer reading has been altered so that mileage cannot be accurately determined.</li>
+									<li>Normal periodic replacement parts & routine maintenance services such as consumable items (lubricants, grease, coolants), fan belts, oil seals, hoses, repair kits, shims, spacers, nipples, wiper blades, brake items pads/liners, brake drum/disk; clutch components like plate, withdrawal bearing, covers; filters, gaskets, other electrical items & glass components. </li>
+									<li>Incidental or consequential damages, loss of time due to non-use of vehicle, inconvenience or damage caused to personal property, commercial loss such as loss of revenue and other indirect or consequential losses, during the period when vehicle is undergoing service/warranty repairs. </li>
+								</ul>
+								
+								<p class="mb-0">Warranty of OEM supplied parts viz Tires, Battery, Starter, Alternator, Shock Absorbers shall be covered under supplier’s warranty policy as applicable. It will be dealt separately with the supplier & communicated to customer directly by OEM.</p>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header p-2" id="headingSix">
+							<h6 class="card-header-title mb-0 font-weight-bold color-primary collapsed" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+								Owner’s responsibilities
+							</h6>
+						</div>
+						<div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+							<div class="card-body p-2 h6 mb-0">
+								<p>Proper use, maintenance and care of the vehicle at specified period in accordance with the instructions contained in the “Owner’s Manual” supplied by vehicle manufacturer and Service Booklet.</p>
+								<p>Retention of maintenance service records to establish that the required maintenance has been performed, as specified in “Owner’s Manual” and Service Booklet.</p>
+								<p>Retention of the customer's copy of the original repair order and its invoice/bill against which the part was replaced.</p>
+								<p>In order to maintain the validity of this Parts Replacement Warranty, the vehicle must be serviced by same MotorBuddy Certified workshop in accordance with “Owner’s Manual” and Service Booklet.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
