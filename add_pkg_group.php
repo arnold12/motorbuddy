@@ -90,7 +90,10 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $service_id = mysql_real_escape_string($_POST['service_id_'.$pkg_type_id][$service_key]);
 
                 if( empty($service_id) ){
-                    $insert = "INSERT INTO `tbl_mb_pkg_service_details` (`pkg_group_name`, `pkg_master_id`, `service_name`, `service_action`, `status`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".mysql_real_escape_string($service_name)."', '".$service_action."', '".$service_status."')";
+
+                    $pkg_master_id = $_POST['pkg_master_id_'.$pkg_type_id];
+
+                    $insert = "INSERT INTO `tbl_mb_pkg_service_details` (`pkg_group_name`, `pkg_master_id`, `service_name`, `service_action`, `status`) VALUES ('".$pkg_group_code."', '".$pkg_master_id."', '".mysql_real_escape_string($service_name)."', '".$service_action."', '".$service_status."')";
                     $res_insert = $DBI->query($insert);
                 } else {
                     $update = "UPDATE `tbl_mb_pkg_service_details` SET `service_name` = '".mysql_real_escape_string($service_name)."', `service_action` = '".$service_action."', `status` = '".$service_status."' WHERE `id` = '".$service_id."' ";
@@ -212,6 +215,7 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                                 <?php foreach ($pkg_type_arry as $pkg_type_id => $pkg_type) { ?>
                                 
                                 <!-- Inquiry form general info start -->
+                                <input type="hidden" name="pkg_master_id_<?=$pkg_type_id?>" value="<?php if( isset($result_pkg_master_new[$pkg_type_id]['id']) ) echo $result_pkg_master_new[$pkg_type_id]['id']; ?>">
                                 <label id="succes_msg" class="control-label succes_msg" style="color: green;font-size: 14px;display: none;"></label>
                                 <div class="form-group">
                                     <label class="col-sm-3 col-md-3 control-label">Package Type</label>
