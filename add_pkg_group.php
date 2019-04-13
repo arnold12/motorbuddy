@@ -69,7 +69,7 @@ if(isset($_GET['pkg_group_name']) && !empty($_GET['pkg_group_name']) ){
 if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
     
     if($_POST['mode'] == 'edit'){ // Edit mode
-
+        
         $pkg_group_code = $_POST['pkg_group_name'];
 
         foreach ($_POST['pkg_type_id'] as $key => $pkg_type_id) {
@@ -89,8 +89,13 @@ if(isset($_POST['frm']) && $_POST['frm'] == '1' ){
                 $service_status = mysql_real_escape_string($_POST['service_status_'.$pkg_type_id][$service_key]);
                 $service_id = mysql_real_escape_string($_POST['service_id_'.$pkg_type_id][$service_key]);
 
-                $update = "UPDATE `tbl_mb_pkg_service_details` SET `service_name` = '".$service_name."', `service_action` = '".$service_action."', `status` = '".$service_status."' WHERE `id` = '".$service_id."' ";
-                $res_update = $DBI->query($update);
+                if( empty($service_id) ){
+                    $insert = "INSERT INTO `tbl_mb_pkg_service_details` (`pkg_group_name`, `pkg_master_id`, `service_name`, `service_action`, `status`) VALUES ('".$pkg_group_code."', '".$pkg_type_id."', '".mysql_real_escape_string($service_name)."', '".$service_action."', '".$service_status."')";
+                    $res_insert = $DBI->query($insert);
+                } else {
+                    $update = "UPDATE `tbl_mb_pkg_service_details` SET `service_name` = '".mysql_real_escape_string($service_name)."', `service_action` = '".$service_action."', `status` = '".$service_status."' WHERE `id` = '".$service_id."' ";
+                    $res_update = $DBI->query($update);
+                }
                 
             }
             
